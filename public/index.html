@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Stormy</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <!-- AdsGram SDK -->
+  <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+  <script>
+    // عدّل blockId هنا بالقيمة التي تحصل عليها من https://partner.adsgram.ai
+    window.CONFIG = {
+      ADSGRAM_BLOCK_ID: "REPLACE_WITH_YOUR_BLOCK_ID",
+      CHANNEL_URL: "REPLACE_WITH_YOUR_CHANNEL_URL"
+    };
+  </script>
+</head>
+<body>
+
+  <!-- Splash -->
+  <div id="splash" class="splash">
+    <div class="splash__logo">⚡ Stormy</div>
+    <div class="splash__spinner"></div>
+  </div>
+
+  <div id="app">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar__left">
+        <div class="topbar__avatar" id="topAvatar">S</div>
+        <div>
+          <div class="topbar__brand">Stormy</div>
+          <div class="topbar__greet" id="topGreet">مرحبًا 👋</div>
+        </div>
+      </div>
+      <div class="topbar__balance">
+        <span class="bolt-dot">⚡</span>
+        <span id="balanceValue">0</span>
+      </div>
+    </header>
+
+    <!-- Pages -->
+    <main class="pages">
+
+      <!-- HOME -->
+      <section id="page-home" class="page page--active">
+        <div class="card hero-card">
+          <div class="hero-card__top">
+            <div>
+              <div class="hero-card__label">رصيدك الحالي</div>
+              <div class="hero-card__value"><span id="homeBalance">0</span> <span class="unit">شرارة</span></div>
+            </div>
+            <div class="level-chip" id="levelChip">
+              <span class="level-chip__icon">🌩️</span>
+              <span id="levelName">عاصفة ناشئة</span>
+            </div>
+          </div>
+          <div class="progress">
+            <div class="progress__bar" id="levelProgressBar"></div>
+          </div>
+          <div class="progress__label">
+            <span id="levelProgressText">0 / 200 للمستوى التالي</span>
+          </div>
+        </div>
+
+        <div class="card stats-row">
+          <div class="stat-box">
+            <div class="stat-box__value" id="statCheckins">0</div>
+            <div class="stat-box__label">تسجيلات يومية</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-box__value" id="statGames">0</div>
+            <div class="stat-box__label">جولات برق</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-box__value" id="statBest">0</div>
+            <div class="stat-box__label">أفضل رد فعل</div>
+          </div>
+        </div>
+
+        <div class="card checkin-card">
+          <div class="checkin-card__head">
+            <h3>تسجيل الدخول اليومي</h3>
+            <span id="streakBadge" class="badge">يوم 1</span>
+          </div>
+          <div class="checkin-days" id="checkinDays"></div>
+          <button id="checkinBtn" class="btn btn--primary">استلام مكافأة اليوم</button>
+        </div>
+
+        <div class="card ad-card">
+          <div class="checkin-card__head">
+            <h3>🎬 شاهد إعلان واربح</h3>
+          </div>
+          <p class="muted" id="adHint">جاري التحميل...</p>
+          <button id="watchAdBtn" class="btn btn--outline" disabled>شاهد إعلان</button>
+        </div>
+
+        <div class="card">
+          <h3>آخر النشاطات</h3>
+          <ul class="activity-list" id="activityList">
+            <li class="activity-empty muted">لا يوجد نشاط بعد</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- GAME: Lightning Reflex -->
+      <section id="page-game" class="page">
+        <div class="card">
+          <h3>⚡ تحدي رد الفعل</h3>
+          <p class="muted">
+            انتظر ظهور البرق داخل الدائرة ثم اضغط بأسرع ما يمكن. كل يوم عندك
+            محاولة واحدة من 5 ومضات — مكافأتك تعتمد على سرعتك الحقيقية، مو على الحظ.
+          </p>
+
+          <div class="reflex-wrap">
+            <div id="reflexZone" class="reflex-zone reflex-zone--idle">
+              <span id="reflexLabel">اضغط ابدأ</span>
+            </div>
+          </div>
+
+          <div id="reflexProgress" class="reflex-progress"></div>
+
+          <button id="reflexStartBtn" class="btn btn--primary">ابدأ التحدي</button>
+          <div id="reflexHint" class="muted center-text"></div>
+        </div>
+      </section>
+
+      <!-- QUIZ -->
+      <section id="page-quiz" class="page">
+        <div class="card">
+          <h3>🧠 سؤال اليوم</h3>
+          <p class="muted">سؤال معلومات عامة جديد كل يوم — إجابة صحيحة = مكافأة فورية.</p>
+
+          <div id="quizBody">
+            <div id="quizQuestion" class="quiz-question">جاري التحميل...</div>
+            <div id="quizOptions" class="quiz-options"></div>
+          </div>
+          <div id="quizResult" class="muted center-text"></div>
+        </div>
+      </section>
+
+      <!-- TASKS -->
+      <section id="page-tasks" class="page">
+        <div class="card task-card">
+          <div class="task-card__info">
+            <div class="task-card__icon">📢</div>
+            <div>
+              <div class="task-card__title">انضم لقناة Stormy</div>
+              <div class="task-card__reward">+50 شرارة</div>
+            </div>
+          </div>
+          <button id="taskJoinBtn" class="btn btn--outline">انضمام</button>
+          <button id="taskClaimBtn" class="btn btn--primary" disabled>استلام المكافأة</button>
+        </div>
+      </section>
+
+      <!-- PROFILE -->
+      <section id="page-profile" class="page">
+        <div class="card profile-card">
+          <div class="profile-card__avatar">🙂</div>
+          <div id="profileName" class="profile-card__name">لاعب Stormy</div>
+          <div class="profile-card__stat">
+            <span>الرصيد</span>
+            <b id="profileBalance">0</b>
+          </div>
+          <div class="profile-card__stat">
+            <span>سلسلة الأيام</span>
+            <b id="profileStreak">0</b>
+          </div>
+          <div class="profile-card__stat">
+            <span>المستوى</span>
+            <b id="profileLevel">عاصفة ناشئة</b>
+          </div>
+          <div class="profile-card__stat">
+            <span>عضو منذ</span>
+            <b id="profileSince">—</b>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom nav -->
+    <nav class="bottomnav">
+      <button class="nav-btn nav-btn--active" data-page="home">
+        <span class="nav-icon">🏠</span><span>الرئيسية</span>
+      </button>
+      <button class="nav-btn" data-page="game">
+        <span class="nav-icon">⚡</span><span>تحدي</span>
+      </button>
+      <button class="nav-btn" data-page="quiz">
+        <span class="nav-icon">🧠</span><span>سؤال</span>
+      </button>
+      <button class="nav-btn" data-page="tasks">
+        <span class="nav-icon">✅</span><span>مهام</span>
+      </button>
+      <button class="nav-btn" data-page="profile">
+        <span class="nav-icon">👤</span><span>حسابي</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
