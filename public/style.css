@@ -213,3 +213,49 @@ html, body {
   z-index: 50; white-space: nowrap;
 }
 .toast--show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Last Withdrawal */
+.last-withdrawal-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(93, 220, 255, 0.18);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(55, 210, 255, 0.12), transparent 45%),
+    linear-gradient(145deg, rgba(17, 29, 52, 0.98), rgba(10, 16, 31, 0.98));
+}
+
+.last-withdrawal__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.last-withdrawal__head h3 {
+  margin: 0 0 4px;
+}
+
+.last-withdrawal__status {
+  flex: 0 0 auto;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(65, 220, 150, 0.12);
+  border: 1px solid rgba(65, 220, 150, 0.22);
+  color: #63e6a6;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.last-withdrawal__message {
+  margin-top: 14px;
+  padding: 13px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.045);
+  color: #eef7ff;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.55;
+  text-align: center;
+  direction: ltr;
+}
+
