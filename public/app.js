@@ -1,6 +1,6 @@
 // Stormy — تطبيق مبني على localStorage (بدون خادم بيانات)، بميزات أصلية:
-// تسجيل دخول يومي بسلسلة 7 أيام، تحدي رد فعل مهارة حقيقية (لعبة البرق)،
-// سؤال يومي (كويز معلومات عامة)، مهمة انضمام لقناة، وإعلان مكافأة اختياري.
+// Daily Check-in بسلسلة 7 أيام، Challenge رد فعل مهارة حقيقية (لعبة البرق)،
+// Quiz Dayي (كويز معلومات عامة)، مهمة Join لقناة، وإعلان Reward اختياري.
 
 (function () {
   "use strict";
@@ -21,7 +21,7 @@
     return new Date().toISOString().slice(0, 10); // YYYY-MM-DD
   };
 
-  // رقم يوم ثابت لكل تاريخ، يُستخدم لاختيار سؤال الكويز اليومي بشكل حتمي
+  // رقم Day ثابت لكل تاريخ، يُستخدم لاختيار Quiz الكويز الDayي بشكل حتمي
   var dayNumber = function () {
     return Math.floor(Date.now() / 86400000);
   };
@@ -33,7 +33,7 @@
       streak: 0,
       taskJoined: false,
       taskClaimed: false,
-      name: (tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name) || "لاعب Stormy",
+      name: (tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name) || "Stormy Player",
       joinedAt: todayKey(),
       totalCheckins: 0,
       totalGames: 0,
@@ -158,7 +158,7 @@
     var maxSteps = Math.floor(state.balance / WITHDRAWAL_STEP);
     if (maxSteps < 1) {
       selectedWithdrawPoints = 0;
-      withdrawOptionsEl.innerHTML = '<div class="withdraw-empty">تحتاج إلى 500 شرارة على الأقل للسحب.</div>';
+      withdrawOptionsEl.innerHTML = '<div class="withdraw-empty">You need at least 500 Spark to withdraw.</div>';
       return;
     }
     if (!selectedWithdrawPoints || selectedWithdrawPoints > maxSteps * WITHDRAWAL_STEP) {
@@ -189,13 +189,13 @@
     var amount = (selectedWithdrawPoints / WITHDRAWAL_STEP * WITHDRAWAL_USDT_PER_STEP).toFixed(2);
     var valid = selectedWithdrawPoints >= WITHDRAWAL_STEP && selectedWithdrawPoints <= state.balance && maxSteps >= 1 && withdrawWalletEl.value.trim().length > 0;
     withdrawBtn.disabled = !valid;
-    withdrawBtn.textContent = "سحب " + amount + " USDT";
+    withdrawBtn.textContent = "Withdrawal " + amount + " USDT";
     if (state.balance < WITHDRAWAL_STEP) {
-      withdrawHintEl.textContent = "الحد الأدنى للسحب 500 شرارة = 0.10 USDT.";
+      withdrawHintEl.textContent = "Minimum withdrawal: 500 Spark = 0.10 USDT.";
     } else if (!withdrawWalletEl.value.trim()) {
-      withdrawHintEl.textContent = "أدخل عنوان الاستلام أو Binance ID لإكمال الطلب.";
+      withdrawHintEl.textContent = "Enter your wallet address or Binance ID to complete the request.";
     } else {
-      withdrawHintEl.textContent = selectedWithdrawMethod + " • سيتم تسجيل الطلب محليًا في هذا الإصدار.";
+      withdrawHintEl.textContent = selectedWithdrawMethod + " • The request will be recorded locally in this version.";
     }
   };
 
@@ -231,7 +231,7 @@
       withdrawMethodButtons.forEach(function (b) { b.classList.remove("is-selected"); });
       btn.classList.add("is-selected");
       selectedWithdrawMethod = btn.dataset.method;
-      withdrawWalletEl.placeholder = selectedWithdrawMethod === "Binance ID" ? "أدخل Binance ID" : "أدخل عنوان GRAM Wallet (TON)";
+      withdrawWalletEl.placeholder = selectedWithdrawMethod === "Binance ID" ? "Enter Binance ID" : "Enter GRAM Wallet (TON) address";
       updateWithdrawButton();
     });
   });
@@ -253,12 +253,12 @@
       status: "pending",
       date: todayKey()
     });
-    state.history.unshift({ label: "طلب سحب " + amount + " USDT", amount: -points, date: todayKey() });
+    state.history.unshift({ label: "طلب Withdrawal " + amount + " USDT", amount: -points, date: todayKey() });
     state.history = state.history.slice(0, 8);
     saveState();
     withdrawWalletEl.value = "";
     selectedWithdrawPoints = 0;
-    showToast("تم تسجيل طلب السحب محليًا 💸");
+    showToast("Withdrawal request recorded locally 💸");
     render();
   });
 
@@ -272,10 +272,10 @@
   };
 
   var LEVELS = [
-    { name: "عاصفة ناشئة", icon: "🌩️", min: 0 },
-    { name: "عاصفة متوسطة", icon: "⛈️", min: 200 },
-    { name: "عاصفة كبرى", icon: "🌪️", min: 600 },
-    { name: "إعصار Stormy", icon: "⚡", min: 1500 }
+    { name: "Rising Storm", icon: "🌩️", min: 0 },
+    { name: "Storm", icon: "⛈️", min: 200 },
+    { name: "Major Storm", icon: "🌪️", min: 600 },
+    { name: "Stormy Hurricane", icon: "⚡", min: 1500 }
   ];
 
   var getLevelInfo = function () {
@@ -301,16 +301,16 @@
       var progressed = state.balance - info.current.min;
       var pct = Math.max(0, Math.min(100, (progressed / span) * 100));
       levelProgressBarEl.style.width = pct + "%";
-      levelProgressTextEl.textContent = state.balance + " / " + info.next.min + " للمستوى التالي";
+      levelProgressTextEl.textContent = state.balance + " / " + info.next.min + " to next level";
     } else {
       levelProgressBarEl.style.width = "100%";
-      levelProgressTextEl.textContent = "وصلت لأعلى مستوى 🎉";
+      levelProgressTextEl.textContent = "You reached the highest level 🎉";
     }
   };
 
   var renderActivity = function () {
     if (!state.history.length) {
-      activityListEl.innerHTML = '<li class="activity-empty muted">لا يوجد نشاط بعد</li>';
+      activityListEl.innerHTML = '<li class="activity-empty muted">No activity yet</li>';
       return;
     }
     activityListEl.innerHTML = "";
@@ -349,17 +349,17 @@
     profileBalanceEl.textContent = state.balance;
     profileStreakEl.textContent = state.streak;
     profileNameEl.textContent = state.name;
-    streakBadgeEl.textContent = "يوم " + Math.min(state.streak + 1, 7);
+    streakBadgeEl.textContent = "Day " + Math.min(state.streak + 1, 7);
 
     var checkedInToday = state.lastCheckin === todayKey();
     checkinBtn.disabled = checkedInToday;
-    checkinBtn.textContent = checkedInToday ? "تم الاستلام اليوم ✓" : "استلام مكافأة اليوم";
+    checkinBtn.textContent = checkedInToday ? "Claimed Today ✓" : "Claim Today's Reward";
 
     renderCheckinDays();
 
     taskJoinBtn.style.display = state.taskJoined ? "none" : "block";
     taskClaimBtn.disabled = !state.taskJoined || state.taskClaimed;
-    taskClaimBtn.textContent = state.taskClaimed ? "تم الاستلام ✓" : "استلام المكافأة";
+    taskClaimBtn.textContent = state.taskClaimed ? "Claimed ✓" : "Claim Reward";
 
     renderLevel();
     renderActivity();
@@ -372,7 +372,7 @@
     statGamesEl.textContent = state.totalGames;
     statBestEl.textContent = state.bestReaction ? state.bestReaction + " ms" : "—";
     topAvatarEl.textContent = (state.name || "S").trim().charAt(0).toUpperCase();
-    topGreetEl.textContent = "مرحبًا، " + state.name;
+    topGreetEl.textContent = "Welcome, " + state.name;
     profileSinceEl.textContent = state.joinedAt;
   };
 
@@ -390,8 +390,8 @@
 
     var reward = 10 + state.streak * 5;
     state.totalCheckins += 1;
-    addBalance(reward, "تسجيل دخول يومي");
-    showToast("+" + reward + " شرارة 🎉");
+    addBalance(reward, "Daily Check-in");
+    showToast("+" + reward + " Spark 🎉");
     render();
   });
 
@@ -424,22 +424,22 @@
     buildProgressDots(0);
     if (playedToday) {
       reflexStartBtn.disabled = true;
-      reflexStartBtn.textContent = "عد غدًا لتحدٍ جديد";
-      reflexHintEl.textContent = "آخر متوسط رد فعل لك اليوم كان مسجّلًا بالفعل ⚡";
+      reflexStartBtn.textContent = "Come back tomorrow for a new challenge";
+      reflexHintEl.textContent = "Your average reaction time for today has already been recorded ⚡";
       reflexZoneEl.className = "reflex-zone reflex-zone--idle";
-      reflexLabelEl.textContent = "شكرًا على المحاولة!";
+      reflexLabelEl.textContent = "Thanks for trying!";
     } else {
       reflexStartBtn.disabled = false;
-      reflexStartBtn.textContent = "ابدأ التحدي";
+      reflexStartBtn.textContent = "Start Challenge";
       reflexHintEl.textContent = "";
       reflexZoneEl.className = "reflex-zone reflex-zone--idle";
-      reflexLabelEl.textContent = "اضغط ابدأ";
+      reflexLabelEl.textContent = "Press Start";
     }
   };
 
   var scheduleFlash = function () {
     reflexZoneEl.className = "reflex-zone reflex-zone--waiting";
-    reflexLabelEl.textContent = "انتظر...";
+    reflexLabelEl.textContent = "Wait...";
     waitingForFlash = false;
     var delay = 900 + Math.random() * 2200;
     flashTimeout = setTimeout(function () {
@@ -476,9 +476,9 @@
     if (state.bestReaction === null || avg < state.bestReaction) {
       state.bestReaction = avg;
     }
-    addBalance(reward, "تحدي البرق");
-    showToast("متوسطك " + avg + " ms — ربحت " + reward + " شرارة ⚡");
-    reflexHintEl.textContent = "متوسط رد فعلك: " + avg + " ms";
+    addBalance(reward, "Lightning Challenge");
+    showToast("Your average is " + avg + " ms — you earned " + reward + " Spark ⚡");
+    reflexHintEl.textContent = "Your reaction average: " + avg + " ms";
     render();
   };
 
@@ -496,7 +496,7 @@
       // ضغط مبكر قبل ظهور البرق — يُعاد جدولة نفس الجولة بدون احتساب وقت
       clearTimeout(flashTimeout);
       reflexZoneEl.className = "reflex-zone reflex-zone--early";
-      reflexLabelEl.textContent = "بدري! 😅";
+      reflexLabelEl.textContent = "Too early! 😅";
       setTimeout(scheduleFlash, 700);
     }
   });
@@ -513,16 +513,16 @@
 
   // ---------- Daily trivia quiz ----------
   var QUESTION_BANK = [
-    { q: "ما هو أكبر محيط في العالم؟", options: ["المحيط الهادئ", "المحيط الأطلسي", "المحيط الهندي", "المحيط المتجمد الشمالي"], correct: 0 },
-    { q: "كم عدد أضلاع المثلث؟", options: ["اثنان", "ثلاثة", "أربعة", "خمسة"], correct: 1 },
-    { q: "ما هي عاصمة اليابان؟", options: ["سيول", "بكين", "طوكيو", "بانكوك"], correct: 2 },
-    { q: "ما هو الغاز الذي يتنفسه الإنسان بشكل أساسي؟", options: ["ثاني أكسيد الكربون", "الهيدروجين", "النيتروجين", "الأكسجين"], correct: 3 },
-    { q: "كم عدد كواكب المجموعة الشمسية؟", options: ["ستة", "سبعة", "ثمانية", "تسعة"], correct: 2 },
-    { q: "من مخترع المصباح الكهربائي؟", options: ["نيوتن", "أديسون", "أينشتاين", "تسلا"], correct: 1 },
-    { q: "ما هي أطول نهر في العالم؟", options: ["نهر النيل", "نهر الأمازون", "نهر الفرات", "نهر دجلة"], correct: 0 },
-    { q: "كم عدد أيام السنة الكبيسة؟", options: ["364", "365", "366", "367"], correct: 2 },
-    { q: "ما هي وحدة قياس شدة التيار الكهربائي؟", options: ["فولت", "أوم", "أمبير", "واط"], correct: 2 },
-    { q: "أي هذه الحيوانات يعيش في الماء والبر؟", options: ["الأسد", "الضفدع", "النسر", "الجمل"], correct: 1 }
+    { q: "What is the largest ocean in the world?", options: ["Pacific Ocean", "Atlantic Ocean", "Indian Ocean", "Arctic Ocean"], correct: 0 },
+    { q: "How many sides does a triangle have?", options: ["Two", "Three", "Four", "Five"], correct: 1 },
+    { q: "What is the capital of Japan?", options: ["Seoul", "Beijing", "Tokyo", "Bangkok"], correct: 2 },
+    { q: "Which gas do humans primarily breathe?", options: ["Carbon dioxide", "Hydrogen", "Nitrogen", "Oxygen"], correct: 3 },
+    { q: "How many planets are in the Solar System?", options: ["Six", "Seven", "Eight", "Nine"], correct: 2 },
+    { q: "Who invented the electric light bulb?", options: ["Newton", "Edison", "Einstein", "Tesla"], correct: 1 },
+    { q: "What is the longest river in the world?", options: ["Nile River", "Amazon River", "Euphrates River", "Tigris River"], correct: 0 },
+    { q: "How many days are in a leap year?", options: ["364", "365", "366", "367"], correct: 2 },
+    { q: "What is the unit of electric current?", options: ["Volt", "Ohm", "Ampere", "Watt"], correct: 2 },
+    { q: "Which of these animals lives both in water and on land?", options: ["Lion", "Frog", "Eagle", "Camel"], correct: 1 }
   ];
 
   var quizQuestionEl = document.getElementById("quizQuestion");
@@ -563,7 +563,7 @@
     });
 
     if (state.quizAnswered) {
-      quizResultEl.textContent = "أجبت على سؤال اليوم بالفعل — عد غدًا لسؤال جديد 🧠";
+      quizResultEl.textContent = "You already answered today's question — come back tomorrow for a new one 🧠";
     }
   };
 
@@ -576,15 +576,15 @@
 
     if (chosenIdx === question.correct) {
       buttons[chosenIdx].classList.add("quiz-option--correct");
-      addBalance(25, "سؤال اليوم");
-      showToast("إجابة صحيحة! +25 شرارة 🧠");
-      quizResultEl.textContent = "أحسنت! إجابة صحيحة.";
+      addBalance(25, "Question of the Day");
+      showToast("Correct answer! +25 Spark 🧠");
+      quizResultEl.textContent = "Great job! Correct answer.";
     } else {
       buttons[chosenIdx].classList.add("quiz-option--wrong");
       buttons[question.correct].classList.add("quiz-option--correct");
       saveState();
-      showToast("إجابة غير صحيحة");
-      quizResultEl.textContent = "إجابة غير صحيحة — الصح موضّح بالأعلى.";
+      showToast("Incorrect answer");
+      quizResultEl.textContent = "Incorrect answer — the correct answer is shown above.";
     }
     render();
   };
@@ -604,14 +604,14 @@
   taskClaimBtn.addEventListener("click", function () {
     if (!state.taskJoined || state.taskClaimed) return;
     state.taskClaimed = true;
-    addBalance(50, "الانضمام للقناة");
-    showToast("+50 شرارة 🎁");
+    addBalance(50, "Channel Join");
+    showToast("+50 Spark 🎁");
     render();
   });
 
   // ---------- AdsGram reward ad ----------
-  // مكافأة إضافية اختيارية عبر مشاهدة إعلان — لا تؤثر على أي وظيفة أساسية بالتطبيق
-  // (تسجيل الدخول اليومي، تحدي البرق، الكويز، والمهمة تعمل جميعها بدون أي إعلان)
+  // Reward إضافية اختيارية عبر Watched Ad — لا تؤثر على أي وظيفة أساسية بالتطبيق
+  // (Daily Check-in، Lightning Challenge، الكويز، والمهمة تعمل جميعها بدون أي إعلان)
   var AD_BLOCK_ID = (window.CONFIG && window.CONFIG.ADSGRAM_BLOCK_ID) || "";
   var AD_REWARD = 20;
   var MAX_ADS_PER_DAY = 3;
@@ -639,18 +639,18 @@
 
     if (!AdController) {
       watchAdBtn.disabled = true;
-      adHintEl.textContent = "الإعلانات غير متاحة حاليًا";
+      adHintEl.textContent = "Ads are currently unavailable";
       return;
     }
 
     if (remaining > 0) {
       watchAdBtn.disabled = false;
-      watchAdBtn.textContent = "شاهد إعلان (+" + AD_REWARD + " شرارة)";
-      adHintEl.textContent = "متبقي " + remaining + " من " + MAX_ADS_PER_DAY + " مشاهدات اليوم";
+      watchAdBtn.textContent = "Watch Ad (+" + AD_REWARD + " Spark)";
+      adHintEl.textContent = "Remaining " + remaining + " of " + MAX_ADS_PER_DAY + " views today";
     } else {
       watchAdBtn.disabled = true;
-      watchAdBtn.textContent = "استخدمت كل مشاهداتك اليوم";
-      adHintEl.textContent = "عد غدًا لمزيد من المكافآت";
+      watchAdBtn.textContent = "You have used all your views for today";
+      adHintEl.textContent = "Come back tomorrow for more rewards";
     }
   };
 
@@ -663,12 +663,12 @@
     AdController.show()
       .then(function () {
         state.adsWatchedToday += 1;
-        addBalance(AD_REWARD, "مشاهدة إعلان");
-        showToast("+" + AD_REWARD + " شرارة 🎬");
+        addBalance(AD_REWARD, "Watched Ad");
+        showToast("+" + AD_REWARD + " Spark 🎬");
         render();
       })
       .catch(function () {
-        showToast("لم تكتمل مشاهدة الإعلان");
+        showToast("Ad viewing was not completed");
       })
       .finally(function () {
         updateAdButton();

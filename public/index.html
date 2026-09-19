@@ -15,7 +15,7 @@
   <!-- AdsGram SDK -->
   <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
   <script>
-    // عدّل blockId هنا بالقيمة التي تحصل عليها من https://partner.adsgram.ai
+    // عدّل blockId هنا بالقيمة التي تحصل عليها of https://partner.adsgram.ai
     window.CONFIG = {
       ADSGRAM_BLOCK_ID: "REPLACE_WITH_YOUR_BLOCK_ID",
       CHANNEL_URL: "REPLACE_WITH_YOUR_CHANNEL_URL"
@@ -38,7 +38,7 @@
         <div class="topbar__avatar" id="topAvatar">S</div>
         <div>
           <div class="topbar__brand">Stormy</div>
-          <div class="topbar__greet" id="topGreet">مرحبًا 👋</div>
+          <div class="topbar__greet" id="topGreet">Welcome 👋</div>
         </div>
       </div>
       <div class="topbar__balance">
@@ -55,59 +55,59 @@
         <div class="card hero-card">
           <div class="hero-card__top">
             <div>
-              <div class="hero-card__label">رصيدك الحالي</div>
-              <div class="hero-card__value"><span id="homeBalance">0</span> <span class="unit">شرارة</span></div>
+              <div class="hero-card__label">Your current balance</div>
+              <div class="hero-card__value"><span id="homeBalance">0</span> <span class="unit">Spark</span></div>
             </div>
             <div class="level-chip" id="levelChip">
               <span class="level-chip__icon">🌩️</span>
-              <span id="levelName">عاصفة ناشئة</span>
+              <span id="levelName">Rising Storm</span>
             </div>
           </div>
           <div class="progress">
             <div class="progress__bar" id="levelProgressBar"></div>
           </div>
           <div class="progress__label">
-            <span id="levelProgressText">0 / 200 للمستوى التالي</span>
+            <span id="levelProgressText">0 / 200 to next level</span>
           </div>
         </div>
 
         <div class="card stats-row">
           <div class="stat-box">
             <div class="stat-box__value" id="statCheckins">0</div>
-            <div class="stat-box__label">تسجيلات يومية</div>
+            <div class="stat-box__label">Daily Check-ins</div>
           </div>
           <div class="stat-box">
             <div class="stat-box__value" id="statGames">0</div>
-            <div class="stat-box__label">جولات برق</div>
+            <div class="stat-box__label">Lightning Rounds</div>
           </div>
           <div class="stat-box">
             <div class="stat-box__value" id="statBest">0</div>
-            <div class="stat-box__label">أفضل رد فعل</div>
+            <div class="stat-box__label">Best Reaction</div>
           </div>
         </div>
 
         <div class="card checkin-card">
           <div class="checkin-card__head">
-            <h3>تسجيل الدخول اليومي</h3>
-            <span id="streakBadge" class="badge">يوم 1</span>
+            <h3>Daily Check-in</h3>
+            <span id="streakBadge" class="badge">Day 1</span>
           </div>
           <div class="checkin-days" id="checkinDays"></div>
-          <button id="checkinBtn" class="btn btn--primary">استلام مكافأة اليوم</button>
+          <button id="checkinBtn" class="btn btn--primary">Claim Today's Reward</button>
         </div>
 
         <div class="card ad-card">
           <div class="checkin-card__head">
-            <h3>🎬 شاهد إعلان واربح</h3>
+            <h3>🎬 Watch an Ad & Earn</h3>
           </div>
-          <p class="muted" id="adHint">جاري التحميل...</p>
-          <button id="watchAdBtn" class="btn btn--outline" disabled>شاهد إعلان</button>
+          <p class="muted" id="adHint">Loading...</p>
+          <button id="watchAdBtn" class="btn btn--outline" disabled>Watch Ad</button>
         </div>
 
         <div class="card last-withdrawal-card">
           <div class="last-withdrawal__head">
             <div>
-              <h3>آخر سحب</h3>
-              <p class="muted">آخر دفعة مسجلة</p>
+              <h3>آخر Withdraw</h3>
+              <p class="muted">Latest Payment مسجلة</p>
             </div>
             <span class="last-withdrawal__status">تم الدفع</span>
           </div>
@@ -115,9 +115,9 @@
         </div>
 
         <div class="card">
-          <h3>آخر النشاطات</h3>
+          <h3>Recent Activity</h3>
           <ul class="activity-list" id="activityList">
-            <li class="activity-empty muted">لا يوجد نشاط بعد</li>
+            <li class="activity-empty muted">No activity yet</li>
           </ul>
         </div>
       </section>
@@ -125,21 +125,21 @@
       <!-- GAME: Lightning Reflex -->
       <section id="page-game" class="page">
         <div class="card">
-          <h3>⚡ تحدي رد الفعل</h3>
+          <h3>⚡ Reaction Challenge</h3>
           <p class="muted">
-            انتظر ظهور البرق داخل الدائرة ثم اضغط بأسرع ما يمكن. كل يوم عندك
-            محاولة واحدة من 5 ومضات — مكافأتك تعتمد على سرعتك الحقيقية، مو على الحظ.
+            Wait for the lightning to appear inside the circle, then tap as fast as possible. Every day you get
+            one attempt with 5 flashes — your reward depends on your real reaction speed, not luck.
           </p>
 
           <div class="reflex-wrap">
             <div id="reflexZone" class="reflex-zone reflex-zone--idle">
-              <span id="reflexLabel">اضغط ابدأ</span>
+              <span id="reflexLabel">Press Start</span>
             </div>
           </div>
 
           <div id="reflexProgress" class="reflex-progress"></div>
 
-          <button id="reflexStartBtn" class="btn btn--primary">ابدأ التحدي</button>
+          <button id="reflexStartBtn" class="btn btn--primary">Start Challenge</button>
           <div id="reflexHint" class="muted center-text"></div>
         </div>
       </section>
@@ -147,11 +147,11 @@
       <!-- QUIZ -->
       <section id="page-quiz" class="page">
         <div class="card">
-          <h3>🧠 سؤال اليوم</h3>
-          <p class="muted">سؤال معلومات عامة جديد كل يوم — إجابة صحيحة = مكافأة فورية.</p>
+          <h3>🧠 Question of the Day</h3>
+          <p class="muted">A new general knowledge question every day — correct answer = instant reward.</p>
 
           <div id="quizBody">
-            <div id="quizQuestion" class="quiz-question">جاري التحميل...</div>
+            <div id="quizQuestion" class="quiz-question">Loading...</div>
             <div id="quizOptions" class="quiz-options"></div>
           </div>
           <div id="quizResult" class="muted center-text"></div>
@@ -164,12 +164,12 @@
           <div class="task-card__info">
             <div class="task-card__icon">📢</div>
             <div>
-              <div class="task-card__title">انضم لقناة Stormy</div>
-              <div class="task-card__reward">+50 شرارة</div>
+              <div class="task-card__title">Join the Stormy Channel</div>
+              <div class="task-card__reward">+50 Spark</div>
             </div>
           </div>
-          <button id="taskJoinBtn" class="btn btn--outline">انضمام</button>
-          <button id="taskClaimBtn" class="btn btn--primary" disabled>استلام المكافأة</button>
+          <button id="taskJoinBtn" class="btn btn--outline">Join</button>
+          <button id="taskClaimBtn" class="btn btn--primary" disabled>Claim Reward</button>
         </div>
       </section>
 
@@ -178,18 +178,18 @@
         <div class="card withdraw-hero-card">
           <div class="withdraw-hero__icon">💸</div>
           <div>
-            <div class="withdraw-hero__title">سحب الأرباح</div>
-            <div class="muted">500 شرارة = 0.10 USDT عبر GRAM</div>
+            <div class="withdraw-hero__title">Withdraw Earnings</div>
+            <div class="muted">500 Spark = 0.10 USDT عبر GRAM</div>
           </div>
           <div class="withdraw-hero__balance"><span id="withdrawBalance">0</span> ⚡</div>
         </div>
 
         <div class="card withdraw-form-card">
-          <div class="withdraw-section-title">اختر قيمة السحب</div>
-          <div class="withdraw-rate">كل 500 نقطة = <b>0.10 USDT</b></div>
+          <div class="withdraw-section-title">Choose Withdrawal Amount</div>
+          <div class="withdraw-rate">Every 500 points = <b>0.10 USDT</b></div>
           <div id="withdrawOptions" class="withdraw-options"></div>
 
-          <div class="withdraw-methods-title">طريقة الاستلام</div>
+          <div class="withdraw-methods-title">Payment Method</div>
           <div class="withdraw-methods">
             <button type="button" class="withdraw-method is-selected" data-method="GRAM Wallet (TON)">
               <span>💎</span><b>GRAM Wallet</b><small>TON</small>
@@ -199,20 +199,20 @@
             </button>
           </div>
 
-          <label class="withdraw-label" for="withdrawWallet">عنوان المحفظة / Binance ID</label>
-          <input id="withdrawWallet" class="withdraw-input" type="text" inputmode="text" autocomplete="off" placeholder="أدخل العنوان أو Binance ID" />
-          <button id="withdrawBtn" class="btn btn--primary withdraw-submit" disabled>سحب 0.00 USDT</button>
-          <p id="withdrawHint" class="muted center-text">اختر المبلغ وأدخل بيانات الاستلام.</p>
+          <label class="withdraw-label" for="withdrawWallet">Wallet Address / Binance ID</label>
+          <input id="withdrawWallet" class="withdraw-input" type="text" inputmode="text" autocomplete="off" placeholder="Enter wallet address or Binance ID" />
+          <button id="withdrawBtn" class="btn btn--primary withdraw-submit" disabled>Withdraw 0.00 USDT</button>
+          <p id="withdrawHint" class="muted center-text">Choose an amount and enter your payment details.</p>
         </div>
 
         <div class="card last-withdrawal-card">
           <div class="last-withdrawal__head">
             <div>
-              <div class="last-withdrawal__eyebrow">آخر دفعة</div>
-              <h3>آخر سحب ناجح</h3>
-              <p class="muted">آخر سجل دفع مُدخل</p>
+              <div class="last-withdrawal__eyebrow">Latest Payment</div>
+              <h3>Latest Successful Withdrawal</h3>
+              <p class="muted">Latest recorded payment</p>
             </div>
-            <span class="last-withdrawal__status">✓ تم الدفع</span>
+            <span class="last-withdrawal__status">✓ Paid</span>
           </div>
           <div id="lastWithdrawal" class="last-withdrawal__body"></div>
         </div>
@@ -220,8 +220,8 @@
         <div class="card withdrawals-history-card">
           <div class="withdraw-history__head">
             <div>
-              <h3>سجل السحوبات</h3>
-              <p class="muted">السحوبات السابقة المسجلة</p>
+              <h3>Withdrawal History</h3>
+              <p class="muted">Previously recorded withdrawals</p>
             </div>
             <span id="withdrawalCount" class="withdraw-count">0</span>
           </div>
@@ -233,21 +233,21 @@
       <section id="page-profile" class="page">
         <div class="card profile-card">
           <div class="profile-card__avatar">🙂</div>
-          <div id="profileName" class="profile-card__name">لاعب Stormy</div>
+          <div id="profileName" class="profile-card__name">Stormy Player</div>
           <div class="profile-card__stat">
-            <span>الرصيد</span>
+            <span>Balance</span>
             <b id="profileBalance">0</b>
           </div>
           <div class="profile-card__stat">
-            <span>سلسلة الأيام</span>
+            <span>Day Streak</span>
             <b id="profileStreak">0</b>
           </div>
           <div class="profile-card__stat">
-            <span>المستوى</span>
-            <b id="profileLevel">عاصفة ناشئة</b>
+            <span>Level</span>
+            <b id="profileLevel">Rising Storm</b>
           </div>
           <div class="profile-card__stat">
-            <span>عضو منذ</span>
+            <span>Member Since</span>
             <b id="profileSince">—</b>
           </div>
         </div>
@@ -258,22 +258,22 @@
     <!-- Bottom nav -->
     <nav class="bottomnav">
       <button class="nav-btn nav-btn--active" data-page="home">
-        <span class="nav-icon">🏠</span><span>الرئيسية</span>
+        <span class="nav-icon">🏠</span><span>Home</span>
       </button>
       <button class="nav-btn" data-page="game">
-        <span class="nav-icon">⚡</span><span>تحدي</span>
+        <span class="nav-icon">⚡</span><span>Challenge</span>
       </button>
       <button class="nav-btn" data-page="quiz">
-        <span class="nav-icon">🧠</span><span>سؤال</span>
+        <span class="nav-icon">🧠</span><span>Quiz</span>
       </button>
       <button class="nav-btn" data-page="tasks">
-        <span class="nav-icon">✅</span><span>مهام</span>
+        <span class="nav-icon">✅</span><span>Tasks</span>
       </button>
       <button class="nav-btn" data-page="withdraw">
-        <span class="nav-icon">💸</span><span>سحب</span>
+        <span class="nav-icon">💸</span><span>Withdraw</span>
       </button>
       <button class="nav-btn" data-page="profile">
-        <span class="nav-icon">👤</span><span>حسابي</span>
+        <span class="nav-icon">👤</span><span>Profile</span>
       </button>
     </nav>
 

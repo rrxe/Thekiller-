@@ -1,9 +1,9 @@
 // Stormy — خادم Express يقدّم الـ Mini App + بوت تيليجرام (grammY, long polling)
 //
 // المتغيرات البيئية المطلوبة (راجع .env.example):
-// BOT_TOKEN    - توكن البوت من BotFather
+// BOT_TOKEN    - توكن البوت of BotFather
 // WEBAPP_URL   - رابط HTTPS الذي يفتح فيه التطبيق (نفس الدومين الذي يخدّمه هذا السيرفر)
-// CHANNEL_URL  - رابط قناة تيليجرام لمهمة "الانضمام للقناة"
+// CHANNEL_URL  - رابط قناة تيليجرام لمهمة "Channel Join"
 // PORT         - المنفذ (اختياري، افتراضيًا 3000)
 
 require("dotenv").config();
@@ -30,7 +30,7 @@ app.listen(PORT, () => {
 // ---------- Telegram bot ----------
 if (!BOT_TOKEN) {
   console.warn(
-    "[bot] BOT_TOKEN غير موجود — سيتم تشغيل خادم الويب فقط بدون البوت."
+    "[bot] BOT_TOKEN is missing — the web server will run without the bot."
   );
 } else {
   const bot = new Bot(BOT_TOKEN);
@@ -38,28 +38,28 @@ if (!BOT_TOKEN) {
   bot.command("start", async (ctx) => {
     if (!WEBAPP_URL) {
       await ctx.reply(
-        "أهلًا بك في Stormy ⚡\n" +
-          "لم يتم ضبط رابط التطبيق بعد (WEBAPP_URL)، تواصل مع مسؤول البوت."
+        "Welcome to Stormy ⚡\n" +
+          "The app URL is not configured yet (WEBAPP_URL). Please contact the bot administrator."
       );
       return;
     }
 
-    const keyboard = new InlineKeyboard().webApp("⚡ فتح Stormy", WEBAPP_URL);
+    const keyboard = new InlineKeyboard().webApp("⚡ Open Stormy", WEBAPP_URL);
 
     await ctx.reply(
-      "أهلًا بك في Stormy ⚡\n" +
-        "سجّل دخولك اليومي، جرّب تحدي البرق لرد الفعل، جاوب على سؤال اليوم، " +
-        "وأنجز المهام لتجمع النقاط.\n\n" +
-        "اضغط الزر أدناه لفتح التطبيق:",
+      "Welcome to Stormy ⚡\n" +
+        "Check in daily, try the lightning reaction challenge, answer the question of the day, " +
+        "complete tasks, and collect points.\n\n" +
+        "Press the button below to open the app:",
       { reply_markup: keyboard }
     );
   });
 
   bot.command("help", async (ctx) => {
     await ctx.reply(
-      "⚡ Stormy — الأوامر المتاحة:\n" +
-        "/start — فتح التطبيق\n" +
-        "/help — عرض هذه الرسالة"
+      "⚡ Stormy — Available commands:\n" +
+        "/start — Open the app\n" +
+        "/help — Show this message"
     );
   });
 
