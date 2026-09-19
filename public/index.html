@@ -173,6 +173,62 @@
         </div>
       </section>
 
+      <!-- WITHDRAW -->
+      <section id="page-withdraw" class="page">
+        <div class="card withdraw-hero-card">
+          <div class="withdraw-hero__icon">💸</div>
+          <div>
+            <div class="withdraw-hero__title">سحب الأرباح</div>
+            <div class="muted">500 شرارة = 0.10 USDT عبر GRAM</div>
+          </div>
+          <div class="withdraw-hero__balance"><span id="withdrawBalance">0</span> ⚡</div>
+        </div>
+
+        <div class="card withdraw-form-card">
+          <div class="withdraw-section-title">اختر قيمة السحب</div>
+          <div class="withdraw-rate">كل 500 نقطة = <b>0.10 USDT</b></div>
+          <div id="withdrawOptions" class="withdraw-options"></div>
+
+          <div class="withdraw-methods-title">طريقة الاستلام</div>
+          <div class="withdraw-methods">
+            <button type="button" class="withdraw-method is-selected" data-method="GRAM Wallet (TON)">
+              <span>💎</span><b>GRAM Wallet</b><small>TON</small>
+            </button>
+            <button type="button" class="withdraw-method" data-method="Binance ID">
+              <span>🟡</span><b>Binance ID</b><small>Binance</small>
+            </button>
+          </div>
+
+          <label class="withdraw-label" for="withdrawWallet">عنوان المحفظة / Binance ID</label>
+          <input id="withdrawWallet" class="withdraw-input" type="text" inputmode="text" autocomplete="off" placeholder="أدخل العنوان أو Binance ID" />
+          <button id="withdrawBtn" class="btn btn--primary withdraw-submit" disabled>سحب 0.00 USDT</button>
+          <p id="withdrawHint" class="muted center-text">اختر المبلغ وأدخل بيانات الاستلام.</p>
+        </div>
+
+        <div class="card last-withdrawal-card">
+          <div class="last-withdrawal__head">
+            <div>
+              <div class="last-withdrawal__eyebrow">آخر دفعة</div>
+              <h3>آخر سحب ناجح</h3>
+              <p class="muted">آخر سجل دفع مُدخل</p>
+            </div>
+            <span class="last-withdrawal__status">✓ تم الدفع</span>
+          </div>
+          <div id="lastWithdrawal" class="last-withdrawal__body"></div>
+        </div>
+
+        <div class="card withdrawals-history-card">
+          <div class="withdraw-history__head">
+            <div>
+              <h3>سجل السحوبات</h3>
+              <p class="muted">السحوبات السابقة المسجلة</p>
+            </div>
+            <span id="withdrawalCount" class="withdraw-count">0</span>
+          </div>
+          <div id="withdrawalHistory" class="withdrawal-history"></div>
+        </div>
+      </section>
+
       <!-- PROFILE -->
       <section id="page-profile" class="page">
         <div class="card profile-card">
@@ -212,6 +268,9 @@
       </button>
       <button class="nav-btn" data-page="tasks">
         <span class="nav-icon">✅</span><span>مهام</span>
+      </button>
+      <button class="nav-btn" data-page="withdraw">
+        <span class="nav-icon">💸</span><span>سحب</span>
       </button>
       <button class="nav-btn" data-page="profile">
         <span class="nav-icon">👤</span><span>حسابي</span>

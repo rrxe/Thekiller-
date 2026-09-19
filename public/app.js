@@ -43,7 +43,8 @@
       quizAnswered: false,
       adsWatchedToday: 0,
       adsDate: todayKey(),
-      history: []
+      history: [],
+      withdrawalRequests: []
     };
   };
 
@@ -120,6 +121,146 @@
   var levelProgressTextEl = document.getElementById("levelProgressText");
   var profileLevelEl = document.getElementById("profileLevel");
   var profileSinceEl = document.getElementById("profileSince");
+
+  // ---------- Withdrawals ----------
+  var WITHDRAWAL_STEP = 500;
+  var WITHDRAWAL_USDT_PER_STEP = 0.10;
+  var WITHDRAWAL_RECORDS_V2 = [{"user": "@zinouzahrou", "amount": "0.1300", "method": "Binance ID", "wallet": "445661890"}, {"user": "@hazemragab123", "amount": "0.1072", "method": "Binance ID", "wallet": "430575084"}, {"user": "@Shahinaz10", "amount": "0.2000", "method": "Binance ID", "wallet": "1082527333"}, {"user": "@Hosweda", "amount": "0.1149", "method": "Binance ID", "wallet": "1097873110"}, {"user": "@NHDKNFD", "amount": "0.2000", "method": "GRAM Wallet (TON)", "wallet": "UQB8BWeXQ--euMbWZpbO7wnnttrcsiXRHRcxxr-4oLeB7ptA"}, {"user": "@Xe_Reda", "amount": "0.2000", "method": "GRAM Wallet (TON)", "wallet": "UQBdagXRjoXKp8RAOE6ce2Hshv-vFoB8hLz-lm7T9Y3Succm"}, {"user": "@lIlIlIIIlIlll", "amount": "0.2000", "method": "Binance ID", "wallet": "1065526460"}, {"user": "@Samirkeb", "amount": "0.1266", "method": "Binance ID", "wallet": "438593336"}, {"user": "@fvhvcd", "amount": "0.2000", "method": "GRAM Wallet (TON)", "wallet": "UQAT4KTLb-U-hxDDCIshxOnX-TXwOO11qxZa7CHdGV942JSV"}, {"user": "@mohammed11256", "amount": "0.1328", "method": "Binance ID", "wallet": "1078918898"}, {"user": "@jjajaic", "amount": "0.1000", "method": "GRAM Wallet (TON)", "wallet": "UQAtE2BB7t2xr10XaffLArGL5-nEXnU3q7_HBTzw_lQeiM-V"}, {"user": "@LLEEO22", "amount": "0.1000", "method": "Binance ID", "wallet": "793321075"}, {"user": "@lIlIlIIIlIlll", "amount": "0.2000", "method": "Binance ID", "wallet": "1065526460"}, {"user": "@jjajaic", "amount": "0.1000", "method": "GRAM Wallet (TON)", "wallet": "UQAtE2BB7t2xr10XaffLArGL5-nEXnU3q7_HBTzw_lQeiM-V"}, {"user": "@Shahinaz10", "amount": "0.1017", "method": "Binance ID", "wallet": "1082527333"}, {"user": "@jkmsow", "amount": "0.1030", "method": "GRAM Wallet (TON)", "wallet": "UQBFuXbCKflsITzhCiOmtOwY1u5KpsuQfaLLpsKRIJONMR4f"}, {"user": "@jjajaic", "amount": "0.2000", "method": "GRAM Wallet (TON)", "wallet": "UQAtE2BB7t2xr10XaffLArGL5-nEXnU3q7_HBTzw_lQeiM-V"}, {"user": "@Jdjdjdj838655", "amount": "0.2000", "method": "GRAM Wallet (TON)", "wallet": "UQBz_HsiHDZY94hutFEZdlVIAmjqLMPWPzacyoihAZdm_Jl5"}, {"user": "@jjajaic", "amount": "0.2000", "method": "GRAM Wallet (TON)", "wallet": "UQAtE2BB7t2xr10XaffLArGL5-nEXnU3q7_HBTzw_lQeiM-V"}, {"user": "Player #0954", "amount": "0.1000", "method": "Binance ID", "wallet": "1188271952"}, {"user": "@ov_ooo", "amount": "0.1000", "method": "Binance ID", "wallet": "972801667"}];
+  var withdrawBalanceEl = document.getElementById("withdrawBalance");
+  var withdrawOptionsEl = document.getElementById("withdrawOptions");
+  var withdrawBtn = document.getElementById("withdrawBtn");
+  var withdrawHintEl = document.getElementById("withdrawHint");
+  var withdrawWalletEl = document.getElementById("withdrawWallet");
+  var lastWithdrawalEl = document.getElementById("lastWithdrawal");
+  var withdrawalHistoryEl = document.getElementById("withdrawalHistory");
+  var withdrawalCountEl = document.getElementById("withdrawalCount");
+  var withdrawMethodButtons = document.querySelectorAll(".withdraw-method");
+  var selectedWithdrawPoints = 0;
+  var selectedWithdrawMethod = "GRAM Wallet (TON)";
+
+  var maskWallet = function (value) {
+    value = String(value || "");
+    if (value.length <= 8) return value;
+    return value.slice(0, 4) + "••••" + value.slice(-4);
+  };
+
+  var escapeHtml = function (value) {
+    return String(value == null ? "" : value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/\"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  };
+
+  var renderWithdrawOptions = function () {
+    if (!withdrawOptionsEl) return;
+    var maxSteps = Math.floor(state.balance / WITHDRAWAL_STEP);
+    if (maxSteps < 1) {
+      selectedWithdrawPoints = 0;
+      withdrawOptionsEl.innerHTML = '<div class="withdraw-empty">تحتاج إلى 500 شرارة على الأقل للسحب.</div>';
+      return;
+    }
+    if (!selectedWithdrawPoints || selectedWithdrawPoints > maxSteps * WITHDRAWAL_STEP) {
+      selectedWithdrawPoints = WITHDRAWAL_STEP;
+    }
+    var html = "";
+    for (var i = 1; i <= maxSteps; i++) {
+      var points = i * WITHDRAWAL_STEP;
+      var usdt = (i * WITHDRAWAL_USDT_PER_STEP).toFixed(2);
+      html += '<button type="button" class="withdraw-option' + (points === selectedWithdrawPoints ? ' is-selected' : '') + '" data-points="' + points + '">' +
+        '<span class="withdraw-option__points">' + points.toLocaleString("en-US") + ' ⚡</span>' +
+        '<span class="withdraw-option__usdt">' + usdt + ' USDT</span>' +
+        '</button>';
+    }
+    withdrawOptionsEl.innerHTML = html;
+    withdrawOptionsEl.querySelectorAll(".withdraw-option").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        selectedWithdrawPoints = Number(btn.dataset.points);
+        renderWithdrawOptions();
+        updateWithdrawButton();
+      });
+    });
+  };
+
+  var updateWithdrawButton = function () {
+    if (!withdrawBtn || !withdrawWalletEl) return;
+    var maxSteps = Math.floor(state.balance / WITHDRAWAL_STEP);
+    var amount = (selectedWithdrawPoints / WITHDRAWAL_STEP * WITHDRAWAL_USDT_PER_STEP).toFixed(2);
+    var valid = selectedWithdrawPoints >= WITHDRAWAL_STEP && selectedWithdrawPoints <= state.balance && maxSteps >= 1 && withdrawWalletEl.value.trim().length > 0;
+    withdrawBtn.disabled = !valid;
+    withdrawBtn.textContent = "سحب " + amount + " USDT";
+    if (state.balance < WITHDRAWAL_STEP) {
+      withdrawHintEl.textContent = "الحد الأدنى للسحب 500 شرارة = 0.10 USDT.";
+    } else if (!withdrawWalletEl.value.trim()) {
+      withdrawHintEl.textContent = "أدخل عنوان الاستلام أو Binance ID لإكمال الطلب.";
+    } else {
+      withdrawHintEl.textContent = selectedWithdrawMethod + " • سيتم تسجيل الطلب محليًا في هذا الإصدار.";
+    }
+  };
+
+  var renderWithdrawalRecords = function () {
+    if (!lastWithdrawalEl || !withdrawalHistoryEl) return;
+    var latest = WITHDRAWAL_RECORDS_V2[WITHDRAWAL_RECORDS_V2.length - 1];
+    lastWithdrawalEl.innerHTML =
+      '<div class="withdraw-last-user">👤 ' + escapeHtml(latest.user) + '</div>' +
+      '<div class="withdraw-last-amount">' + escapeHtml(latest.amount) + ' <span>USDT</span></div>' +
+      '<div class="withdraw-last-meta"><span>📤 ' + escapeHtml(latest.method) + '</span><span>💳 ' + escapeHtml(maskWallet(latest.wallet)) + '</span></div>' +
+      '<div class="withdraw-last-success">🚀 Payment has been sent successfully.</div>';
+
+    withdrawalCountEl.textContent = WITHDRAWAL_RECORDS_V2.length;
+    withdrawalHistoryEl.innerHTML = WITHDRAWAL_RECORDS_V2.slice().reverse().map(function (item) {
+      return '<div class="withdrawal-item">' +
+        '<div class="withdrawal-item__top"><b>' + escapeHtml(item.user) + '</b><strong>' + escapeHtml(item.amount) + ' USDT</strong></div>' +
+        '<div class="withdrawal-item__meta"><span>' + escapeHtml(item.method) + '</span><span>' + escapeHtml(maskWallet(item.wallet)) + '</span></div>' +
+        '<div class="withdrawal-item__success">✓ Payment sent successfully</div>' +
+      '</div>';
+    }).join("");
+  };
+
+  var renderWithdrawals = function () {
+    if (!withdrawBalanceEl) return;
+    withdrawBalanceEl.textContent = state.balance.toLocaleString("en-US");
+    renderWithdrawOptions();
+    updateWithdrawButton();
+    renderWithdrawalRecords();
+  };
+
+  withdrawMethodButtons.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      withdrawMethodButtons.forEach(function (b) { b.classList.remove("is-selected"); });
+      btn.classList.add("is-selected");
+      selectedWithdrawMethod = btn.dataset.method;
+      withdrawWalletEl.placeholder = selectedWithdrawMethod === "Binance ID" ? "أدخل Binance ID" : "أدخل عنوان GRAM Wallet (TON)";
+      updateWithdrawButton();
+    });
+  });
+
+  if (withdrawWalletEl) withdrawWalletEl.addEventListener("input", updateWithdrawButton);
+
+  if (withdrawBtn) withdrawBtn.addEventListener("click", function () {
+    if (withdrawBtn.disabled) return;
+    var points = selectedWithdrawPoints;
+    var amount = (points / WITHDRAWAL_STEP * WITHDRAWAL_USDT_PER_STEP).toFixed(2);
+    var destination = withdrawWalletEl.value.trim();
+    state.balance -= points;
+    state.withdrawalRequests = state.withdrawalRequests || [];
+    state.withdrawalRequests.unshift({
+      points: points,
+      amount: amount,
+      method: selectedWithdrawMethod,
+      destination: destination,
+      status: "pending",
+      date: todayKey()
+    });
+    state.history.unshift({ label: "طلب سحب " + amount + " USDT", amount: -points, date: todayKey() });
+    state.history = state.history.slice(0, 8);
+    saveState();
+    withdrawWalletEl.value = "";
+    selectedWithdrawPoints = 0;
+    showToast("تم تسجيل طلب السحب محليًا 💸");
+    render();
+  });
 
   var addBalance = function (amount, label) {
     state.balance += amount;
@@ -222,6 +363,7 @@
 
     renderLevel();
     renderActivity();
+    renderWithdrawals();
     updateAdButton();
     renderReflexState();
     renderQuiz();
