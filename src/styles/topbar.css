@@ -1,0 +1,17 @@
+.topbar { position: absolute; left: 0; right: 0; top: 0; z-index: 12; height: var(--header-h); display:flex; align-items:center; justify-content:space-between; gap:10px; padding: 10px 14px; border-bottom: 1px solid rgba(192,216,229,.06); background: linear-gradient(180deg, rgba(6,14,22,.92), rgba(6,14,22,.68)); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
+.topbar-left { display:flex; align-items:center; min-width:0; gap:9px; }
+.topbar-avatar { width:38px; height:38px; border-radius:14px; display:grid; place-items:center; flex:0 0 auto; background: linear-gradient(135deg, #123348, #0f1f2c); border:1px solid rgba(65,213,255,.24); color:#eaf9ff; font-size:15px; font-weight:950; letter-spacing:-1px; box-shadow: inset 0 0 18px rgba(65,213,255,.05); }
+.topbar-avatar span { color: var(--cyan); }
+.topbar-copy { min-width:0; display:flex; flex-direction:column; gap:2px; }
+.topbar-copy strong { color:#f4f8fb; font-size:14px; line-height:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.topbar-copy span { color:#718593; font-size:7px; font-weight:800; letter-spacing:.8px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.topbar-wallet { display:flex; align-items:center; gap:6px; flex:0 0 auto; }
+.topbar-balance { min-width:74px; height:42px; padding:6px 8px; border-radius:14px; display:flex; align-items:center; gap:6px; border:1px solid rgba(178,208,223,.07); background:rgba(13,27,39,.72); }
+.topbar-balance-icon { width:16px; height:16px; flex:0 0 auto; }
+.topbar-balance.coins .topbar-balance-icon { color:var(--gold); }
+.topbar-balance.cash .topbar-balance-icon { color:var(--cyan); }
+.topbar-balance div { min-width:0; display:flex; flex-direction:column; gap:2px; }
+.topbar-balance span { color:#647683; font-size:6px; font-weight:850; text-transform:uppercase; letter-spacing:.6px; }
+.topbar-balance strong { color:#eef5f9; font-size:10px; font-weight:950; line-height:1; white-space:nowrap; }
+@media (max-width:460px) { .topbar { padding:9px 10px; } .topbar-copy span { max-width:90px; } .topbar-balance { min-width:66px; padding:6px; } .topbar-balance strong { font-size:9.5px; } .topbar-avatar { width:36px; height:36px; } }
+@media (max-width:360px) { .topbar-copy span { display:none; } .topbar-balance { min-width:61px; } .topbar-balance-icon { width:14px; height:14px; } }

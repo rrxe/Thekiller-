@@ -1,0 +1,106 @@
+.gx-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 50% 44%, rgba(114,232,200,.08), transparent 27%),
+    linear-gradient(180deg, #06100e 0%, #030908 100%);
+  color: #eefbf7;
+  font-family: "Tajawal", system-ui, sans-serif;
+  transition: opacity .45s ease, transform .45s ease;
+}
+.gx-splash.fading { opacity:0; transform:scale(1.015); pointer-events:none; }
+.gx-splash-noise {
+  position:absolute; inset:-50%; opacity:.032;
+  background-image:radial-gradient(rgba(255,255,255,.9) .5px, transparent .6px);
+  background-size:5px 5px; transform:rotate(7deg);
+}
+.gx-splash-grid {
+  position:absolute; inset:0; opacity:.20;
+  background-image:
+    linear-gradient(rgba(114,232,200,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(114,232,200,.04) 1px, transparent 1px);
+  background-size:34px 34px;
+  mask-image:linear-gradient(to bottom, black 0%, black 54%, transparent 100%);
+}
+.gx-splash-glow {
+  position:absolute; width:300px; height:300px; border-radius:50%;
+  background:rgba(114,232,200,.08); filter:blur(70px);
+}
+.gx-splash-glow-a { left:-130px; top:-110px; }
+.gx-splash-glow-b { right:-130px; bottom:-110px; }
+.gx-splash-top,
+.gx-splash-bottom,
+.gx-splash-side {
+  position:absolute; left:18px; right:18px; display:flex; justify-content:space-between;
+  color:#607c73; font-size:7px; font-weight:900; letter-spacing:1.3px;
+}
+.gx-splash-top { top:20px; }
+.gx-splash-bottom { bottom:20px; }
+.gx-splash-side {
+  top:50%; left:10px; right:auto; width:0;
+  transform:translateY(-50%);
+  display:flex; flex-direction:column; gap:78px;
+  white-space:nowrap;
+  writing-mode:vertical-rl;
+  color:#49655d; letter-spacing:1px;
+}
+.gx-splash-center {
+  width:min(86vw, 330px);
+  text-align:center;
+  position:relative;
+}
+.gx-loader-mark {
+  position:relative;
+  width:148px; height:148px; margin:0 auto 22px;
+  display:grid; place-items:center;
+}
+.gx-loader-mark > span {
+  width:58px; height:58px; border-radius:18px;
+  display:grid; place-items:center;
+  background:rgba(114,232,200,.09);
+  border:1px solid rgba(114,232,200,.24);
+  color:#bffff0; font-size:25px; font-weight:900;
+  box-shadow:0 0 35px rgba(114,232,200,.09);
+}
+.gx-x, .gx-ring, .gx-dot { position:absolute; }
+.gx-ring { border:1px solid rgba(114,232,200,.14); border-radius:50%; }
+.ring-one { inset:12px; animation:splash-spin 13s linear infinite; }
+.ring-two { inset:30px; border-style:dashed; animation:splash-spin-reverse 9s linear infinite; }
+.gx-x { width:54px; height:1px; background:linear-gradient(90deg, transparent, rgba(114,232,200,.52), transparent); }
+.x-one { transform:rotate(45deg); }
+.x-two { transform:rotate(-45deg); }
+.gx-dot { width:6px; height:6px; border-radius:50%; background:#72e8c8; box-shadow:0 0 13px rgba(114,232,200,.75); }
+.dot-one { transform:translate(55px,-18px); }
+.dot-two { transform:translate(-55px,18px); }
+.gx-splash-wordmark { font-size:30px; font-weight:900; letter-spacing:-1.2px; }
+.gx-splash-wordmark b { color:#72e8c8; }
+.gx-splash-center > p { margin-top:5px; color:#6c8a80; font-size:7px; font-weight:800; letter-spacing:2px; }
+.gx-splash-readout {
+  margin-top:28px;
+  display:flex; justify-content:space-between; align-items:center;
+  color:#668279; font-size:7px; font-weight:900; letter-spacing:1px;
+}
+.gx-splash-readout strong { color:#b5f5e6; font-size:10px; }
+.gx-splash-rail {
+  position:relative; height:3px; margin-top:9px; overflow:visible;
+  background:rgba(114,232,200,.10); border-radius:999px;
+}
+.gx-splash-rail i {
+  position:absolute; left:0; bottom:0; width:100%;
+  background:linear-gradient(90deg,#3fc8a5,#72e8c8);
+  border-radius:999px; transition:height .12s linear;
+}
+.gx-splash-rail b {
+  position:absolute; right:0; width:8px; height:8px; border-radius:50%;
+  background:#72e8c8; box-shadow:0 0 15px rgba(114,232,200,.6);
+  transform:translate(3px,2px);
+}
+@keyframes splash-spin { to{ transform:rotate(360deg); } }
+@keyframes splash-spin-reverse { to{ transform:rotate(-360deg); } }
+@media(max-width:420px){
+  .gx-splash-center{width:min(84vw,310px)}
+}

@@ -1,0 +1,207 @@
+.withdrawal-channel-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(7, 9, 13, 0.82);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.withdrawal-channel-modal {
+  position: relative;
+  width: min(100%, 420px);
+  max-height: min(680px, calc(100dvh - 30px));
+  overflow: auto;
+  padding: 20px;
+  border: 4px solid #11131a;
+  border-radius: 22px;
+  background: #fffbed;
+  color: #11131a;
+  box-shadow: 10px 11px 0 #11131a;
+}
+
+.withdrawal-channel-modal::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.15;
+  background-image: radial-gradient(#11131a 0.8px, transparent 0.9px);
+  background-size: 7px 7px;
+}
+
+.withdrawal-channel-modal > * {
+  position: relative;
+  z-index: 1;
+}
+
+.withdrawal-channel-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.withdrawal-channel-topline span {
+  display: inline-flex;
+  padding: 5px 8px;
+  border: 2px solid #11131a;
+  border-radius: 7px;
+  background: #ffd447;
+  font-size: 10px;
+  font-weight: 1000;
+  letter-spacing: 0.9px;
+}
+
+.withdrawal-channel-close {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #11131a;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #11131a;
+  font-size: 24px;
+  line-height: 1;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 #11131a;
+}
+
+.withdrawal-channel-burst {
+  width: 92px;
+  height: 92px;
+  margin: 4px auto 14px;
+  display: grid;
+  place-items: center;
+  clip-path: polygon(50% 0%, 61% 15%, 79% 4%, 80% 23%, 100% 28%, 84% 42%, 98% 58%, 78% 61%, 80% 81%, 61% 77%, 50% 100%, 39% 78%, 20% 96%, 21% 77%, 0% 71%, 16% 57%, 3% 40%, 21% 37%, 17% 18%, 38% 22%);
+  background: #ef4058;
+  border: 4px solid #11131a;
+  filter: drop-shadow(5px 5px 0 #11131a);
+}
+
+.withdrawal-channel-burst span {
+  font-family: Impact, "Arial Black", sans-serif;
+  font-size: 24px;
+  letter-spacing: 1px;
+  color: #fffbed;
+  transform: rotate(-7deg);
+  text-shadow: 2px 2px 0 #11131a;
+}
+
+.withdrawal-channel-copy {
+  text-align: center;
+}
+
+.withdrawal-channel-kicker {
+  margin: 0 0 4px;
+  color: #d12945;
+  font-size: 11px;
+  font-weight: 1000;
+  letter-spacing: 1.25px;
+}
+
+.withdrawal-channel-copy h2 {
+  margin: 0;
+  font-size: clamp(28px, 8vw, 36px);
+  line-height: 1.05;
+  font-weight: 1000;
+}
+
+.withdrawal-channel-copy p:last-child {
+  margin: 10px auto 18px;
+  max-width: 330px;
+  color: #5f5b50;
+  font-size: 14px;
+  line-height: 1.75;
+  font-weight: 700;
+}
+
+.withdrawal-channel-link {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 12px;
+  border: 3px solid #11131a;
+  border-radius: 14px;
+  background: #dff0ff;
+  color: #11131a;
+  text-decoration: none;
+  box-shadow: 4px 5px 0 #11131a;
+}
+
+.withdrawal-channel-link-icon {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 2px solid #11131a;
+  border-radius: 10px;
+  background: #3d9be9;
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 1000;
+}
+
+.withdrawal-channel-link span:last-child {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.withdrawal-channel-link strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 1000;
+}
+
+.withdrawal-channel-link small {
+  color: #666154;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.withdrawal-channel-actions {
+  display: grid;
+  gap: 9px;
+  margin-top: 18px;
+}
+
+.withdrawal-channel-actions button {
+  min-height: 48px;
+  border: 3px solid #11131a;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 1000;
+  cursor: pointer;
+  box-shadow: 4px 5px 0 #11131a;
+}
+
+.withdrawal-channel-primary {
+  background: #ef4058;
+  color: #fffbed;
+}
+
+.withdrawal-channel-secondary {
+  background: #ffd447;
+  color: #11131a;
+}
+
+.withdrawal-channel-actions button:active,
+.withdrawal-channel-close:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 3px 0 #11131a;
+}
+
+@media (max-width: 380px) {
+  .withdrawal-channel-backdrop { padding: 12px; }
+  .withdrawal-channel-modal { padding: 16px; border-width: 3px; box-shadow: 7px 8px 0 #11131a; }
+  .withdrawal-channel-copy h2 { font-size: 28px; }
+}

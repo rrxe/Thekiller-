@@ -1,0 +1,30 @@
+.app-bg {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 8%, rgba(114,232,200,.055), transparent 28%),
+    linear-gradient(180deg, #071311 0%, #06100e 52%, #040b0a 100%);
+}
+.app-bg__wash,
+.app-bg__orb,
+.app-bg__line { display:none; }
+.app-bg__grid {
+  position:absolute;
+  inset:0;
+  opacity:.16;
+  background-image:
+    linear-gradient(rgba(114,232,200,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(114,232,200,.035) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: linear-gradient(to bottom, black 0%, rgba(0,0,0,.7) 42%, transparent 100%);
+}
+.app-bg__grain {
+  position:absolute;
+  inset:-50%;
+  opacity:.035;
+  background-image: radial-gradient(rgba(255,255,255,.9) .5px, transparent .6px);
+  background-size: 5px 5px;
+  transform: rotate(7deg);
+}

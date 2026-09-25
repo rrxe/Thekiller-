@@ -1,0 +1,4042 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>STORMY Admin Panel</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #142238 0%, #0b0f17 45%);
+      color: #ffffff;
+      padding: 16px;
+      margin: 0;
+      min-height: 100vh;
+    }
+    h2, h3 { margin-top: 0; color: #40a7e3; }
+    h2 { margin-bottom: 20px; font-size: 27px; font-weight: 800; }
+    h3 { margin-bottom: 14px; font-size: 18px; }
+    .card {
+      background: rgba(21, 28, 41, 0.94);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.22);
+    }
+    input, textarea, button, select {
+      width: 100%;
+      padding: 12px;
+      margin: 6px 0;
+      border-radius: 11px;
+      border: 1px solid #303b4d;
+      background: #0f1520;
+      color: white;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+    }
+    input:focus, textarea:focus, select:focus { border-color: #40a7e3; }
+    textarea { resize: vertical; min-height: 90px; }
+    button {
+      background: #40a7e3;
+      border: none;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.15s ease;
+    }
+    button:hover { opacity: 0.9; }
+    button:active { transform: scale(0.98); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .refresh-btn { background: #273449; margin-top: 10px; }
+    .nav-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .nav-btn {
+      width: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 16px 10px;
+      background: #1a2333;
+      border: 1px solid #303b4d;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 12.5px;
+      color: #d7e2f2;
+      text-align: center;
+    }
+    .nav-btn-icon { font-size: 22px; }
+    .nav-btn.active {
+      background: rgba(64, 167, 227, 0.16);
+      border-color: #40a7e3;
+      color: #ffffff;
+    }
+    .admin-section {
+      animation: sectionFadeIn 0.18s ease;
+    }
+    @keyframes sectionFadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (max-width: 380px) {
+      .nav-grid { grid-template-columns: 1fr 1fr; }
+      .nav-btn { padding: 14px 8px; font-size: 11.5px; }
+    }
+    .approve { background: #4caf50; }
+    .reject { background: #e53935; }
+    .toggle { background: #273449; }
+    .delete-btn { background: #b71c1c; }
+    .ban-btn { background: #d32f2f; color: white; width: auto; margin: 0; padding: 6px 12px; }
+    .unban-btn { background: #388e3c; color: white; width: auto; margin: 0; padding: 6px 12px; }
+    .muted { color: #92a1b7; }
+    .error { color: #ff6b6b; }
+    .success { color: #81c784; }
+    .loading { color: #92a1b7; }
+    code { color: #b9dfff; word-break: break-all; }
+    a { color: #40a7e3; word-break: break-all; }
+    .admin-status {
+      padding: 10px 12px;
+      border-radius: 10px;
+      margin-top: 10px;
+      background: rgba(255, 255, 255, 0.04);
+      font-size: 13px;
+    }
+    .user-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .user-info { font-size: 13px; }
+    .user-info strong { font-size: 15px; color: #fff; }
+    .badge-banned {
+      background: rgba(211, 47, 47, 0.2);
+      color: #ff8a80;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+    }
+    .badge-duplicate {
+      background: rgba(255, 179, 0, 0.18);
+      color: #ffca57;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+    }
+    .stars-rank {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ffe08a, #b8860b);
+      color: #2a1d00;
+      font-weight: 800;
+      font-size: 12px;
+      margin-inline-end: 8px;
+    }
+    #starsTimeList {
+      max-height: 320px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+    #duplicatesList {
+      max-height: 260px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+    #usersList {
+      max-height: 420px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+    .tasks-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .show-disabled {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: auto;
+      margin: 0;
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 11px;
+      cursor: pointer;
+      user-select: none;
+      color: #dbe7f5;
+      font-size: 13px;
+    }
+    .show-disabled input {
+      width: auto;
+      margin: 0;
+      padding: 0;
+    }
+    .task-card {
+      background: linear-gradient(145deg, #172235 0%, #0f1623 100%);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 13px;
+      padding: 10px 11px;
+      margin-bottom: 8px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+      overflow: hidden;
+    }
+    .task-card.disabled {
+      opacity: 0.65;
+      border-color: rgba(229, 57, 53, 0.2);
+    }
+    .task-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .task-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.3;
+    }
+    .task-id {
+      color: #77869c;
+      font-size: 10px;
+      margin-top: 2px;
+    }
+    .badge {
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .badge-active {
+      color: #8be59a;
+      background: rgba(76, 175, 80, 0.13);
+      border: 1px solid rgba(76, 175, 80, 0.22);
+    }
+    .badge-disabled {
+      color: #ff9999;
+      background: rgba(229, 57, 53, 0.12);
+      border: 1px solid rgba(229, 57, 53, 0.2);
+    }
+    .task-info { display: grid; gap: 5px; }
+    .info-box {
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 9px;
+      padding: 6px 9px;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    .info-label {
+      color: #8fa0b6;
+      font-size: 10px;
+      margin-bottom: 1px;
+    }
+    .info-value {
+      color: #eef5ff;
+      font-weight: 600;
+    }
+    .task-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .task-actions button { margin: 0; }
+    .task-reorder {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .task-reorder button {
+      margin: 0;
+      padding: 7px 8px;
+      font-size: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 9px;
+      color: #dbe7f5;
+      cursor: pointer;
+    }
+    .task-reorder button:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+    .task-row-wrap {
+      background: linear-gradient(145deg, #172235 0%, #0f1623 100%);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-right: 4px solid var(--type-color, #40a7e3);
+      border-radius: 10px;
+      margin-bottom: 6px;
+      overflow: hidden;
+    }
+    .task-row-wrap.disabled { opacity: 0.55; }
+    .task-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 9px;
+      cursor: pointer;
+    }
+    .task-row-main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .task-row-title-line {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .task-row-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #ffffff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 42vw;
+    }
+    .task-row-meta {
+      font-size: 10px;
+      color: #8fa0b6;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .task-row-meta .task-row-coins { color: #8be59a; font-weight: 700; }
+    .task-row-controls {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .task-mini-btn {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #dbe7f5;
+      font-size: 13px;
+      cursor: pointer;
+      padding: 0;
+      margin: 0;
+    }
+    .task-mini-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+    .task-details {
+      padding: 0 10px 10px 10px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.08);
+      margin-top: 2px;
+    }
+    .task-details.hidden { display: none; }
+    .empty {
+      text-align: center;
+      padding: 22px 10px;
+      color: #92a1b7;
+      background: rgba(255, 255, 255, 0.025);
+      border-radius: 12px;
+    }
+
+    .field-hint {
+      font-size: 12px;
+      color: #8fa0b6;
+      margin-top: -2px;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .mini-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .mini-grid > div { min-width: 0; }
+    .label {
+      font-size: 12px;
+      color: #8fa0b6;
+      margin: 4px 0 2px;
+    }
+    .value {
+      color: #eef5ff;
+      font-weight: 700;
+    }
+    .task-type-tag {
+      display: inline-block;
+      margin-top: 4px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 800;
+      background: rgba(64, 167, 227, 0.12);
+      color: #8fd5ff;
+      border: 1px solid rgba(64, 167, 227, 0.2);
+    }
+    .task-summary { display: grid; gap: 6px; }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .stat-box {
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 13px;
+      padding: 14px;
+      text-align: center;
+    }
+
+    .stat-box .stat-value {
+      font-size: 28px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.2;
+    }
+    .stat-box.online .stat-value { color: #81c784; }
+    .stat-box .stat-label {
+      font-size: 12px;
+      color: #8fa0b6;
+      margin-top: 4px;
+    }
+
+    .photo-upload-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 6px 0;
+    }
+    .photo-upload-row input[type="file"] {
+      margin: 0;
+      padding: 8px;
+    }
+    .photo-preview-wrap {
+      position: relative;
+      margin: 8px 0;
+      display: none;
+    }
+    .photo-preview-wrap.visible { display: block; }
+    .photo-preview-wrap img {
+      max-width: 100%;
+      max-height: 220px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: block;
+    }
+    .photo-remove-btn {
+      width: auto;
+      margin: 8px 0 0;
+      padding: 6px 12px;
+      background: #273449;
+      font-size: 12px;
+    }
+
+    .withdrawal-card {
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .withdrawal-card p {
+      margin: 6px 0;
+      font-size: 13.5px;
+      line-height: 1.6;
+    }
+    .withdraw-method-tag {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      background: rgba(64, 167, 227, 0.14);
+      color: #8fd5ff;
+      border: 1px solid rgba(64, 167, 227, 0.22);
+      margin-inline-start: 6px;
+    }
+    .wallet-address-block {
+      margin: 4px 0 6px;
+    }
+    .wallet-address-code {
+      display: block;
+      width: 100%;
+      word-break: break-all;
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: #b9dfff;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      padding: 8px 10px;
+      margin-bottom: 6px;
+      box-sizing: border-box;
+    }
+    .copy-btn {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(64, 167, 227, 0.3);
+      background: rgba(64, 167, 227, 0.12);
+      color: #8fd5ff;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .copy-btn:active {
+      transform: scale(0.95);
+    }
+    .copy-btn.copied {
+      background: rgba(94, 226, 143, 0.18);
+      border-color: rgba(94, 226, 143, 0.4);
+      color: #7de8a5;
+    }
+    .status-pending {
+      color: #ffca28;
+      font-weight: 800;
+    }
+    .status-completed {
+      color: #81c784;
+      font-weight: 800;
+    }
+    .status-rejected {
+      color: #ff6b6b;
+      font-weight: 800;
+    }
+    .withdraw-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .withdraw-actions button { margin: 0; }
+
+    @media (max-width: 430px) {
+      .task-actions, .mini-grid, .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .investigate-btn {
+      background: #40a7e3;
+      color: #06131f;
+      width: auto;
+      margin: 0;
+      padding: 6px 12px;
+      font-weight: 800;
+    }
+    .investigate-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 8, 14, 0.72);
+      z-index: 999;
+      padding: 16px;
+      overflow-y: auto;
+    }
+    .investigate-overlay.open { display: block; }
+    .investigate-box {
+      background: #101826;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      max-width: 560px;
+      margin: 20px auto;
+      padding: 18px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .investigate-box h3 { margin-top: 0; }
+    .investigate-close {
+      background: #273449;
+      width: auto;
+      padding: 6px 14px;
+      margin: 0 0 14px 0;
+      float: left;
+    }
+    .investigate-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      font-size: 14px;
+    }
+    .investigate-flag {
+      background: rgba(211, 47, 47, 0.18);
+      border: 1px solid #d32f2f;
+      color: #ff8a80;
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-weight: 800;
+      margin: 10px 0;
+      font-size: 13px;
+    }
+    .investigate-ok {
+      background: rgba(56, 142, 60, 0.18);
+      border: 1px solid #388e3c;
+      color: #a5d6a7;
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-weight: 800;
+      margin: 10px 0;
+      font-size: 13px;
+    }
+    .investigate-section { margin-top: 14px; }
+    .investigate-section h4 {
+      margin: 0 0 6px 0;
+      font-size: 14px;
+      color: #8fa19e;
+    }
+    .investigate-list-item {
+      background: #0f1520;
+      border-radius: 10px;
+      padding: 8px 10px;
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
+    /* investigate-v2 css */
+    .inv-card { background:#0f1520; border-radius:12px; padding:10px 12px; margin-top:12px; }
+    .inv-card h4 { margin:0 0 6px 0; font-size:15px; color:#cfd8e3; }
+    .inv-line { display:flex; justify-content:space-between; align-items:flex-start; gap:10px; padding:6px 0; font-size:14px; border-bottom:1px solid rgba(255,255,255,0.05); }
+    .inv-line:last-child { border-bottom:0; }
+    .inv-line small { display:block; color:#8fa19e; font-size:12px; margin-top:2px; line-height:1.5; }
+    .inv-line strong { white-space:nowrap; direction:ltr; }
+    .inv-total { border-top:1px solid rgba(255,255,255,0.18); font-weight:800; }
+    .inv-note { color:#8fa19e; font-size:12px; margin-top:8px; line-height:1.7; }
+    .inv-chips { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin:8px 0; }
+    .inv-chip { background:#131c2b; border-radius:10px; padding:6px 2px; text-align:center; font-size:11px; color:#8fa19e; }
+    .inv-chip b { display:block; font-size:17px; color:#fff; }
+    .inv-ad { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:7px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:13px; }
+    .inv-ad:last-child { border-bottom:0; }
+    .inv-ad .inv-time { color:#8fa19e; font-size:12px; text-align:left; direction:ltr; white-space:nowrap; }
+    .inv-ad .inv-time i { display:block; font-style:normal; color:#607086; }
+    .inv-good { color:#a5d6a7; }
+    .inv-warn { color:#ffb74d; }
+    .inv-bad { color:#ff8a80; }
+    .inv-muted { color:#8fa19e; }
+    .inv-flags { margin:0; padding:0 18px 0 0; }
+    .inv-flags li { margin:4px 0; }
+    .investigate-box details { margin-top:8px; }
+    .investigate-box summary { cursor:pointer; color:#8fa19e; font-size:13px; }
+    /* ledger-v3 css */
+    .inv-src { display:flex; justify-content:space-between; gap:8px; font-size:12px; color:#9fb0c3; padding:3px 0; }
+    .inv-ref-btn { background:#1c2a44; color:#cfd8e3; border:0; border-radius:8px; padding:4px 9px; font-size:12px; cursor:pointer; }
+    .inv-tag { display:inline-block; font-size:11px; border-radius:6px; padding:1px 6px; margin-inline-start:4px; background:#2a1f26; color:#ff8a80; }
+    .inv-tag.ok { background:#1e2b22; color:#a5d6a7; }
+    .inv-tag.wait { background:#2b2a1e; color:#ffb74d; }
+    /* ledger-v4 css */
+    .iv-name { margin:0; font-size:20px; }
+    .iv-id { color:#8fa19e; font-size:13px; margin-top:2px; direction:ltr; text-align:right; }
+    .iv-tiles { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:12px 0 10px; }
+    .iv-tile { background:#0f1520; border-radius:14px; padding:12px 8px; text-align:center; }
+    .iv-tile b { display:block; font-size:22px; color:#fff; direction:ltr; }
+    .iv-tile span { font-size:12px; color:#8fa19e; }
+    .iv-flags { background:#3a1f28; border:1px solid #e0454f; border-radius:12px; padding:8px 12px; color:#ffb4ac; font-size:13px; line-height:1.7; }
+    .iv-ok { color:#7fcf8e; font-size:13px; padding:2px 2px 0; }
+    .iv-tabs { display:flex; gap:6px; margin:14px 0 6px; }
+    .iv-tab { flex:1; min-width:0; white-space:nowrap; background:#131c2b; color:#9fb0c3; border:0; border-radius:10px; padding:10px 4px; font-size:13px; font-family:inherit; cursor:pointer; }
+    .iv-tab.active { background:#2b6cff; color:#fff; font-weight:700; }
+    .iv-pane { display:none; }
+    .iv-chips { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin:6px 0; }
+    .iv-chip { background:#0f1520; border-radius:12px; padding:8px 4px; text-align:center; font-size:11px; color:#8fa19e; }
+    .iv-chip b { display:block; font-size:17px; color:#fff; direction:ltr; }
+    .iv-srcs { display:flex; flex-wrap:wrap; gap:6px; margin:8px 0 2px; }
+    .iv-src { background:#131c2b; border-radius:999px; padding:4px 10px; font-size:12px; color:#cfd8e3; }
+    .iv-day { margin:14px 0 2px; font-size:12px; color:#8fa19e; }
+    .iv-row { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.06); }
+    .iv-ico { width:36px; height:36px; border-radius:50%; background:#131c2b; display:flex; align-items:center; justify-content:center; font-size:18px; flex:none; }
+    .iv-main { flex:1; min-width:0; }
+    .iv-main b { display:block; font-size:14px; color:#e8eef5; font-weight:600; }
+    .iv-main small { display:block; color:#8fa19e; font-size:12px; margin-top:2px; overflow-wrap:anywhere; }
+    .iv-side { text-align:left; direction:ltr; flex:none; white-space:nowrap; }
+    .iv-side span { display:block; font-weight:800; font-size:15px; }
+    .iv-side small { display:block; color:#8fa19e; font-size:11px; margin-top:2px; }
+    .iv-up { color:#66d17a; }
+    .iv-down { color:#ff7b72; }
+    .iv-warn { color:#ffb74d; }
+    .iv-muted { color:#8fa19e; }
+    .iv-card { background:#0f1520; border-radius:14px; padding:6px 12px 10px; margin-top:12px; }
+    .iv-card h4 { margin:8px 0 2px; font-size:15px; color:#cfd8e3; }
+    .iv-kv { display:flex; justify-content:space-between; align-items:flex-start; gap:10px; padding:8px 0; font-size:14px; border-bottom:1px solid rgba(255,255,255,0.05); }
+    .iv-kv:last-child { border-bottom:0; }
+    .iv-kv small { display:block; color:#8fa19e; font-size:12px; margin-top:2px; line-height:1.5; }
+    .iv-kv strong { direction:ltr; white-space:nowrap; }
+    .iv-kv.total { font-weight:800; border-top:1px solid rgba(255,255,255,0.18); }
+    .iv-note { color:#8fa19e; font-size:12px; line-height:1.7; margin-top:10px; }
+    .iv-tag { display:inline-block; font-size:11px; border-radius:6px; padding:1px 6px; margin-inline-start:4px; background:#2a1f26; color:#ff8a80; }
+    .iv-tag.ok { background:#1e2b22; color:#a5d6a7; }
+    .iv-tag.wait { background:#2b2a1e; color:#ffb74d; }
+    .iv-btn { background:#1c2a44; color:#cfd8e3; border:0; border-radius:8px; padding:6px 10px; font-size:12px; font-family:inherit; cursor:pointer; flex:none; }
+    .investigate-box details { margin-top:8px; }
+    .investigate-box summary { cursor:pointer; color:#8fa19e; font-size:13px; padding:6px 0; }
+    /* linked-v5 css */
+    .iv-btn, .iv-tab { width:auto; margin:0; }
+    .iv-btn { padding:7px 12px; }
+    .iv-tabs { overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+    .iv-tabs::-webkit-scrollbar { display:none; }
+    .iv-tab { flex:1 0 auto; padding:10px 12px; border:0; }
+    .iv-tag.weak { background:#1c2333; color:#9fb0c3; }
+  </style>
+
+</head>
+<body>
+
+<div class="investigate-overlay" id="investigateOverlay">
+  <div class="investigate-box">
+    <button class="investigate-close" onclick="closeUserDetail()">✕ إغلاق</button>
+    <div style="clear:both;"></div>
+    <div id="investigateContent">جاري التحميل...</div>
+  </div>
+</div>
+
+  <h2>STORMY Admin Panel</h2>
+  
+  <div class="card">
+    <h3>إعدادات المشرف</h3>
+    <input
+      type="password"
+      id="adminSecretInput"
+      placeholder="أدخل ADMIN_SECRET"
+      autocomplete="off"
+      onchange="saveSecret(this.value)"
+    />
+    <button onclick="testConnection()">اختبار الاتصال</button>
+    <div id="adminStatus" class="admin-status muted">
+      أدخل ADMIN_SECRET ثم اضغط اختبار الاتصال.
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📊 إحصائيات عامة</h3>
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-value" id="statTotalPlayers">—</div>
+        <div class="stat-label">إجمالي اللاعبين المسجلين</div>
+      </div>
+      <div class="stat-box online">
+        <div class="stat-value" id="statOnlineNow">—</div>
+        <div class="stat-label">متصل الآن</div>
+      </div>
+    </div>
+    <button class="refresh-btn" onclick="loadStats()">تحديث الإحصائيات</button>
+  </div>
+
+  <div class="card">
+    <h3>الأقسام</h3>
+    <div class="nav-grid">
+      <button class="nav-btn" data-target="section-settings" onclick="showSection('section-settings')">
+        <span class="nav-btn-icon">⚙️</span>
+        <span>إعدادات النظام</span>
+      </button>
+      <button class="nav-btn" data-target="section-mandatory" onclick="showSection('section-mandatory')">
+        <span class="nav-btn-icon">🔒</span>
+        <span>الاشتراك الإجباري</span>
+      </button>
+      <button class="nav-btn" data-target="section-broadcast" onclick="showSection('section-broadcast')">
+        <span class="nav-btn-icon">📢</span>
+        <span>رسالة جماعية</span>
+      </button>
+      <button class="nav-btn" data-target="section-addtask" onclick="showSection('section-addtask')">
+        <span class="nav-btn-icon">➕</span>
+        <span>إضافة مهمة</span>
+      </button>
+      <button class="nav-btn" data-target="section-managetasks" onclick="showSection('section-managetasks')">
+        <span class="nav-btn-icon">📋</span>
+        <span>إدارة المهام</span>
+      </button>
+      <button class="nav-btn" data-target="section-giftcodes" onclick="showSection('section-giftcodes')">
+        <span class="nav-btn-icon">🎁</span>
+        <span>أكواد الهدايا</span>
+      </button>
+      <button class="nav-btn" data-target="section-withdrawals" onclick="showSection('section-withdrawals')">
+        <span class="nav-btn-icon">💸</span>
+        <span>طلبات السحب</span>
+      </button>
+      <button class="nav-btn" data-target="section-users" onclick="showSection('section-users')">
+        <span class="nav-btn-icon">🛡️</span>
+        <span>اللاعبين والحظر</span>
+      </button>
+      <button class="nav-btn" data-target="section-starstime" onclick="showSection('section-starstime')">
+        <span class="nav-btn-icon">🌟</span>
+        <span>نجوم الوقت</span>
+      </button>
+      <button class="nav-btn" data-target="section-duplicates" onclick="showSection('section-duplicates')">
+        <span class="nav-btn-icon">🧩</span>
+        <span>حسابات مكررة</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="card admin-section" id="section-settings" style="display:none;">
+    <h3>إعدادات النظام</h3>
+
+    <div class="mini-grid">
+      <div>
+        <div class="label">Mining Reward</div>
+        <input
+          type="number"
+          id="settingMiningReward"
+          min="1"
+          step="1"
+          placeholder="2500"
+        >
+      </div>
+
+      <div>
+        <div class="label">Mining Cycle (Hours)</div>
+        <input
+          type="number"
+          id="settingMiningHours"
+          min="1"
+          step="1"
+          placeholder="2"
+        >
+      </div>
+
+      <div>
+        <div class="label">Referral Reward (USDT)</div>
+        <input
+          type="number"
+          id="settingReferralReward"
+          min="0"
+          step="0.001"
+          placeholder="0.01"
+        >
+      </div>
+
+      <div>
+        <div class="label">Referral Tasks</div>
+        <input
+          type="number"
+          id="settingReferralTasks"
+          min="1"
+          step="1"
+          placeholder="5"
+        >
+      </div>
+    </div>
+
+    <button onclick="loadSettings()">
+      تحميل الإعدادات
+    </button>
+
+    <button onclick="saveSettings()">
+      حفظ الإعدادات
+    </button>
+
+    <div
+      id="settingsStatus"
+      class="admin-status muted"
+    >
+      الإعدادات الحالية
+    </div>
+  </div>
+
+  <div class="card admin-section" id="section-mandatory" style="display:none;">
+    <h3>🔒 الاشتراك الإجباري</h3>
+
+    <div class="field-hint">
+      أضف القنوات التي يجب على اللاعب الانضمام إليها قبل دخول STORMY.
+      يجب أن يكون البوت Administrator في القناة للتحقق من العضوية.
+    </div>
+
+    <input
+      type="text"
+      id="mandatoryChannelTitle"
+      placeholder="اسم القناة"
+    />
+
+    <input
+      type="text"
+      id="mandatoryChannelUrl"
+      placeholder="رابط القناة مثل https://t.me/channel"
+    />
+
+    <button
+      onclick="addMandatoryChannel()"
+    >
+      إضافة قناة
+    </button>
+
+    <div
+      id="mandatoryChannelsList"
+      style="margin-top:12px;"
+    >
+      جاري تحميل القنوات...
+    </div>
+
+    <button
+      class="refresh-btn"
+      onclick="loadMandatoryChannels()"
+    >
+      تحديث القنوات
+    </button>
+  </div>
+
+  <div class="card admin-section" id="section-broadcast" style="display:none;">
+    <h3>إرسال رسالة جماعية</h3>
+
+    <textarea
+      id="broadcastMsg"
+      rows="4"
+      placeholder="اكتب الرسالة التي تريد إرسالها لجميع اللاعبين..."
+    ></textarea>
+
+    <div class="field-hint">
+      يمكنك إرفاق صورة اختيارياً (سترسل مع النص كـ caption).
+      الحجم الأنسب أقل من 3 ميجابايت.
+    </div>
+
+    <div class="photo-upload-row">
+      <input
+        type="file"
+        id="broadcastPhoto"
+        accept="image/*"
+        onchange="handlePhotoSelect(event)"
+      />
+    </div>
+
+    <div class="photo-preview-wrap" id="photoPreviewWrap">
+      <img id="photoPreviewImg" alt="معاينة الصورة" />
+      <button
+        type="button"
+        class="photo-remove-btn"
+        onclick="clearBroadcastPhoto()"
+      >
+        إزالة الصورة
+      </button>
+    </div>
+
+    <div class="field-hint" style="margin-top:12px;">
+      رابط اختياري يترسل كزر تحت الرسالة (مثلاً رابط القناة أو البوت).
+    </div>
+
+    <input
+      type="url"
+      id="broadcastLinkUrl"
+      placeholder="https://t.me/..."
+    />
+
+    <input
+      type="text"
+      id="broadcastLinkText"
+      placeholder="نص الزر (مثلاً: افتح القناة)"
+    />
+
+    <button onclick="sendBroadcast()">إرسال للجميع</button>
+  </div>
+
+  <div class="card admin-section" id="section-addtask" style="display:none;">
+    <h3>إضافة مهمة جديدة</h3>
+
+    <input
+      type="text"
+      id="taskTitle"
+      placeholder="عنوان المهمة"
+    />
+
+    <div class="field-hint">
+      مثال: زيارة قناة، إكمال تحدي، أو الانضمام إلى بوت.
+    </div>
+
+    <select
+      id="taskType"
+      onchange="document.getElementById('joinBotHint').style.display = this.value === 'join_bot' ? 'block' : 'none';"
+    >
+      
+      <option value="join_channel">الانضمام إلى قناة</option>
+      <option value="join_bot">الانضمام إلى بوت</option>
+    </select>
+
+    <div class="field-hint" id="joinBotHint" style="display: none;">
+      🤖 مهام الانضمام لبوت تُحتسب الآن ضمن متطلبات الإحالة (Referrals) مثل باقي المهام.
+    </div>
+
+    <div class="mini-grid">
+      <div>
+        <input
+          type="number"
+          id="taskCoins"
+          placeholder="مكافأة العملات"
+          min="0"
+          step="1"
+        />
+      </div>
+
+      <div>
+        <input
+          type="number"
+          id="taskMaxCompletions"
+          placeholder="عدد مرات لكل لاعب"
+          min="1"
+          step="1"
+          value="1"
+        />
+      </div>
+    </div>
+
+    <input
+      type="url"
+      id="taskLink"
+      placeholder="رابط المهمة URL (للمهام العادية فقط)"
+    />
+
+    <button onclick="addTask()">إضافة المهمة</button>
+  </div>
+
+  <div class="card admin-section" id="section-managetasks" style="display:none;">
+    <h3>إدارة المهام</h3>
+
+    <div class="tasks-toolbar">
+      <label class="show-disabled">
+        <input
+          type="checkbox"
+          id="showDisabledTasks"
+          onchange="loadTasks()"
+        />
+        <span>إظهار المعطلة</span>
+      </label>
+    </div>
+
+    <div id="tasksList">
+      <p class="loading">جاري تحميل المهام...</p>
+    </div>
+
+    <button
+      class="refresh-btn"
+      onclick="loadTasks()"
+    >
+      تحديث المهام
+    </button>
+  </div>
+
+  <div class="card admin-section" id="section-giftcodes" style="display:none;">
+    <h3>🎁 أكواد الهدايا (Gift Codes)</h3>
+
+    <input type="text" id="giftCodeInput" placeholder="مثال: the-stormy123" />
+
+    <div class="mini-grid">
+      <div>
+        <input
+          type="number"
+          id="giftCodeReward"
+          placeholder="مكافأة العملات"
+          min="0"
+          step="1"
+          value="0"
+        />
+      </div>
+
+      <div>
+        <input
+          type="number"
+          id="giftCodeMaxUses"
+          placeholder="عدد مرات الاستخدام"
+          min="1"
+          step="1"
+          value="200"
+        />
+      </div>
+    </div>
+
+    <div class="field-hint">
+      كل مستخدم يقدر يستخدم الكود مرة وحدة بس. الكود يتوقف تلقائياً بعد
+      ما يوصل لعدد الاستخدامات المحدد أعلاه.
+    </div>
+
+    <button onclick="addGiftCode()">إنشاء كود جديد</button>
+
+    <div id="giftCodesList" style="margin-top: 14px;">
+      <p class="loading">جاري تحميل الأكواد...</p>
+    </div>
+
+    <button class="refresh-btn" onclick="loadGiftCodes()">
+      تحديث الأكواد
+    </button>
+  </div>
+
+  <div class="card admin-section" id="section-withdrawals" style="display:none;">
+    <h3>طلبات السحب</h3>
+
+    <div id="withdrawalsList" class="loading">
+      جاري التحميل...
+    </div>
+
+    <button
+      class="refresh-btn"
+      onclick="loadWithdrawals()"
+    >
+      تحديث طلبات السحب
+    </button>
+  </div>
+
+  <div class="card admin-section" id="section-users" style="display:none;">
+    <h3>🛡️ إدارة اللاعبين والحظر</h3>
+
+    <input
+      type="text"
+      id="userSearch"
+      placeholder="ابحث باسم المستخدم أو Telegram ID..."
+      oninput="filterUsers()"
+    />
+
+    <div id="usersList" class="loading">
+      جاري التحميل...
+    </div>
+
+    <button
+      class="refresh-btn"
+      onclick="loadUsers()"
+    >
+      تحديث قائمة اللاعبين
+    </button>
+  </div>
+
+  <div class="card admin-section" id="section-starstime" style="display:none;">
+    <h3>🌟 نجوم الوقت الأسبوعية (Stars Time)</h3>
+
+    <p class="muted" style="margin-bottom:10px;font-size:12px;line-height:1.6;">
+      ترتيب اللاعبين حسب الوقت اللي قضوه فاتحين البوت هذا الأسبوع (نفس البيانات
+      المعروضة بصفحة Stars بالتطبيق). أول 3 مراكز تربح نجوم تيليجرام حقيقية
+      توزعها أنت يدوياً (٥٠ - ٥٠٠ ⭐). بعد ما توزع الجوائز بنهاية الأسبوع اضغط
+      "تصفير وقت الأسبوع" - هذا ما يأثر إطلاقاً على عملات أو أرصدة اللاعبين،
+      بس يصفر عداد الوقت ليبدأ أسبوع جديد.
+    </p>
+
+    <div id="starsTimeList" class="loading">جاري التحميل...</div>
+
+    <button class="refresh-btn" onclick="loadUsers()">
+      تحديث
+    </button>
+
+    <button
+      class="ban-btn"
+      style="width:100%;margin-top:8px;"
+      onclick="resetStarsTime()"
+    >
+      🔄 تصفير وقت الأسبوع لكل اللاعبين
+    </button>
+  </div>
+
+  <div class="card admin-section" id="section-duplicates" style="display:none;">
+    <h3>🧩 حسابات مكررة (نفس الجهاز/الشبكة)</h3>
+
+    <div id="duplicatesList" class="loading">
+      جاري التحميل...
+    </div>
+
+    <button
+      class="refresh-btn"
+      onclick="loadUsers()"
+    >
+      تحديث
+    </button>
+  </div>
+
+  <script>
+    const tg = window.Telegram?.WebApp;
+
+    if (tg) {
+      tg.expand();
+    }
+
+    const API_BASE = "";
+
+    let allUsers = [];
+    let broadcastPhotoBase64 = null;
+    let broadcastPhotoMime = null;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const savedSecret =
+        localStorage.getItem("admin_secret") || "";
+
+      document.getElementById("adminSecretInput").value =
+        savedSecret;
+
+      loadStats();
+      loadTasks();
+      loadWithdrawals();
+      loadSettings();
+      loadMandatoryChannels();
+      loadUsers();
+      loadGiftCodes();
+    });
+
+    function showSection(id) {
+      const target = document.getElementById(id);
+      if (!target) return;
+
+      const isOpen = target.style.display !== "none";
+
+      document.querySelectorAll(".admin-section").forEach((el) => {
+        el.style.display = "none";
+      });
+      document.querySelectorAll(".nav-btn").forEach((btn) => {
+        btn.classList.remove("active");
+      });
+
+      if (isOpen) return;
+
+      target.style.display = "block";
+      const btn = document.querySelector('.nav-btn[data-target="' + id + '"]');
+      if (btn) btn.classList.add("active");
+
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function saveSecret(value) {
+      localStorage.setItem(
+        "admin_secret",
+        String(value || "").trim()
+      );
+
+      setAdminStatus(
+        "تم حفظ مفتاح المشرف محلياً.",
+        "success"
+      );
+    }
+
+    function getSecret() {
+      return (
+        localStorage.getItem("admin_secret") ||
+        document.getElementById("adminSecretInput").value ||
+        ""
+      ).trim();
+    }
+
+    function setAdminStatus(
+      message,
+      type = "muted"
+    ) {
+      const element =
+        document.getElementById("adminStatus");
+
+      element.className =
+        "admin-status " + type;
+
+      element.textContent = message;
+    }
+
+    async function apiCall(
+      endpoint,
+      method = "GET",
+      body = null
+    ) {
+      const secret = getSecret();
+
+      const headers = {
+        "Content-Type": "application/json",
+        "x-admin-secret": secret,
+      };
+
+      if (tg && tg.initData) {
+        headers["Authorization"] =
+          `tga ${tg.initData}`;
+      }
+
+      const options = {
+        method,
+        headers,
+        cache: "no-store",
+      };
+
+      if (body !== null) {
+        options.body =
+          JSON.stringify(body);
+      }
+
+      const bustUrl =
+        method === "GET"
+          ? `${API_BASE}${endpoint}${endpoint.includes("?") ? "&" : "?"}_ts=${Date.now()}`
+          : `${API_BASE}${endpoint}`;
+
+      const response =
+        await fetch(
+          bustUrl,
+          options
+        );
+
+      const text =
+        await response.text();
+
+      let data = {};
+
+      try {
+        data = text
+          ? JSON.parse(text)
+          : {};
+      } catch {
+        data = {
+          success: false,
+          error:
+            text ||
+            `HTTP ${response.status}`,
+        };
+      }
+
+      if (!response.ok) {
+        throw new Error(
+          data.error ||
+          data.message ||
+          `Request failed (${response.status})`
+        );
+      }
+
+      return data;
+    }
+
+    async function testConnection() {
+      const secret = getSecret();
+
+      if (!secret) {
+        setAdminStatus(
+          "أدخل ADMIN_SECRET أولاً.",
+          "error"
+        );
+        return;
+      }
+
+      saveSecret(secret);
+
+      try {
+        const data =
+          await apiCall(
+            "/api/tasks/manage",
+            "GET"
+          );
+
+        if (
+          data &&
+          data.success !== false
+        ) {
+          setAdminStatus(
+            "الاتصال بالسيرفر ناجح وصلاحيات المشرف تعمل.",
+            "success"
+          );
+        } else {
+          setAdminStatus(
+            data.error ||
+            "فشل التحقق من صلاحيات المشرف.",
+            "error"
+          );
+        }
+      } catch (err) {
+        setAdminStatus(
+          err.message ||
+          "تعذر الاتصال بالسيرفر.",
+          "error"
+        );
+      }
+    }
+
+    async function loadStats() {
+      const totalEl =
+        document.getElementById(
+          "statTotalPlayers"
+        );
+
+      const onlineEl =
+        document.getElementById(
+          "statOnlineNow"
+        );
+
+      try {
+        const data =
+          await apiCall(
+            "/api/auth/me?admin=stats",
+            "GET"
+          );
+
+        if (
+          data &&
+          data.success
+        ) {
+          totalEl.textContent =
+            Number(
+              data.totalPlayers || 0
+            ).toLocaleString();
+
+          onlineEl.textContent =
+            Number(
+              data.onlineNow || 0
+            ).toLocaleString();
+        } else {
+          totalEl.textContent = "—";
+          onlineEl.textContent = "—";
+        }
+      } catch (err) {
+        totalEl.textContent = "—";
+        onlineEl.textContent = "—";
+      }
+    }
+
+    async function loadUsers() {
+      const container =
+        document.getElementById(
+          "usersList"
+        );
+
+      if (!container) return;
+
+      container.innerHTML =
+        '<p class="loading">جاري التحميل...</p>';
+
+      try {
+        const data =
+          await apiCall(
+            "/api/auth/me?admin=users",
+            "GET"
+          );
+
+        if (
+          data &&
+          data.success &&
+          Array.isArray(data.users)
+        ) {
+          allUsers = data.users;
+          renderUsers(allUsers);
+          renderDuplicates(allUsers);
+          renderStarsTime(allUsers);
+        } else {
+          container.innerHTML =
+            `<p class="error">${
+              escapeHtml(
+                data.error ||
+                "فشل تحميل قائمة اللاعبين"
+              )
+            }</p>`;
+        }
+      } catch (err) {
+        container.innerHTML =
+          `<p class="error">${
+            escapeHtml(
+              err.message ||
+              "خطأ في الاتصال"
+            )
+          }</p>`;
+      }
+    }
+
+    function renderStarsTime(users) {
+      const container =
+        document.getElementById("starsTimeList");
+
+      if (!container) return;
+
+      const ranked = (users || [])
+        .slice()
+        .filter((u) => (u.weekly_time_seconds || 0) > 0)
+        .sort(
+          (a, b) =>
+            (b.weekly_time_seconds || 0) - (a.weekly_time_seconds || 0)
+        )
+        .slice(0, 30);
+
+      if (ranked.length === 0) {
+        container.innerHTML =
+          '<div class="empty">ماكو وقت متسجل لهذا الأسبوع بعد.</div>';
+        return;
+      }
+
+      container.innerHTML = ranked
+        .map((user, index) => {
+          const username = user.username
+            ? `@${escapeHtml(user.username)}`
+            : "بدون معرف";
+
+          const seconds = user.weekly_time_seconds || 0;
+          const hours = Math.floor(seconds / 3600);
+          const minutes = Math.floor((seconds % 3600) / 60);
+          const timeLabel =
+            hours > 0 ? `${hours}س ${minutes}د` : `${minutes}د`;
+
+          return `
+            <div class="user-card">
+              <div class="user-info">
+                <span class="stars-rank">${index + 1}</span>
+                <strong>${username}</strong>
+                <div>
+                  ID:
+                  <code>${escapeHtml(String(user.telegram_id))}</code>
+                </div>
+              </div>
+              <div style="color:#ffca57;font-weight:800;">
+                ${timeLabel}
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    async function resetStarsTime() {
+      if (
+        !confirm(
+          "متأكد تريد تصفير وقت هذا الأسبوع لكل اللاعبين؟ هذا الإجراء ما ينرجع."
+        )
+      ) {
+        return;
+      }
+
+      try {
+        await apiCall(
+          "/api/leaderboard",
+          "POST",
+          { action: "reset_weekly_time" }
+        );
+
+        setAdminStatus(
+          "تم تصفير وقت الأسبوع لكل اللاعبين بنجاح.",
+          "success"
+        );
+
+        loadUsers();
+      } catch (err) {
+        setAdminStatus(
+          err.message || "فشل تصفير الوقت",
+          "error"
+        );
+      }
+    }
+
+    function renderDuplicates(users) {
+      const container =
+        document.getElementById("duplicatesList");
+
+      if (!container) return;
+
+      const duplicates =
+        (users || []).filter(
+          (u) => Boolean(u.is_duplicate_device)
+        );
+
+      if (duplicates.length === 0) {
+        container.innerHTML =
+          '<div class="empty">لا يوجد حسابات مكررة حالياً.</div>';
+        return;
+      }
+
+      container.innerHTML =
+        `<p class="muted">العدد: ${duplicates.length}</p>` +
+        duplicates.map((user) => {
+          const username =
+            user.username
+              ? `@${escapeHtml(user.username)}`
+              : "بدون معرف";
+
+          const tgId =
+            escapeHtml(String(user.telegram_id));
+
+          const isBanned = Boolean(user.is_banned);
+
+          return `
+            <div class="user-card">
+              <div class="user-info">
+                <div>
+                  <strong>${username}</strong>
+                  <span class="badge-duplicate">مكرر</span>
+                  ${isBanned ? '<span class="badge-banned">محظور</span>' : ''}
+                </div>
+                <div>ID: <code>${tgId}</code></div>
+              </div>
+            </div>
+          `;
+        }).join("");
+    }
+
+    function renderUsers(users) {
+      const container =
+        document.getElementById(
+          "usersList"
+        );
+
+      if (
+        !users ||
+        users.length === 0
+      ) {
+        container.innerHTML =
+          '<div class="empty">لا يوجد لاعبين مطابقين للبحث.</div>';
+
+        return;
+      }
+
+      container.innerHTML =
+        users.map(user => {
+          const isBanned =
+            Boolean(user.is_banned);
+
+          const username =
+            user.username
+              ? `@${escapeHtml(
+                  user.username
+                )}`
+              : "بدون معرف";
+
+          const coin =
+            Number(
+              user.coin || 0
+            ).toLocaleString();
+
+          const tgId =
+            escapeHtml(
+              String(
+                user.telegram_id
+              )
+            );
+
+          return `
+            <div class="user-card">
+              <div class="user-info">
+                <div>
+                  <strong>${username}</strong>
+                  ${
+                    isBanned
+                      ? '<span class="badge-banned">محظور</span>'
+                      : ''
+                  }
+                </div>
+
+                <div>
+                  ID:
+                  <code>${tgId}</code>
+                </div>
+
+                <div>
+                  العملات:
+                  <span
+                    style="color:#81c784;font-weight:bold;"
+                  >
+                    ${coin}
+                  </span>
+                </div>
+
+                <div>
+                  الإحالات:
+                  <span
+                    style="color:#64b5f6;font-weight:bold;"
+                  >
+                    ${Number(user.referralsQualified || 0)}
+                  </span>
+                  <span style="color:#8fa19e;font-size:12px;">
+                    (من أصل ${Number(user.referralsTotal || 0)} دخلوا بالرابط)
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                ${
+                  isBanned
+                    ? `
+                      <button
+                        class="unban-btn"
+                        onclick="toggleBan(
+                          '${escapeJs(tgId)}',
+                          'admin_unban'
+                        )"
+                      >
+                        فك الحظر
+                      </button>
+                    `
+                    : `
+                      <button
+                        class="ban-btn"
+                        onclick="toggleBan(
+                          '${escapeJs(tgId)}',
+                          'admin_ban'
+                        )"
+                      >
+                        حظر 🚫
+                      </button>
+                    `
+                }
+
+                <button
+                  class="investigate-btn"
+                  onclick="showUserDetail('${escapeJs(tgId)}')"
+                >
+                  🔍 تحقيق
+                </button>
+              </div>
+            </div>
+          `;
+        }).join("");
+    }
+
+    async function showUserDetail(telegramId) {
+      const overlay = document.getElementById("investigateOverlay");
+      const content = document.getElementById("investigateContent");
+
+      overlay.classList.add("open");
+      content.innerHTML = '<p class="loading">جاري التحميل...</p>';
+
+      try {
+        const data = await apiCall(
+          `/api/auth/me?admin=user_detail&q=${encodeURIComponent(telegramId)}`,
+          "GET"
+        );
+
+        if (!data || !data.success) {
+          content.innerHTML = `<p class="error">${escapeHtml(data.error || "فشل تحميل بيانات اللاعب")}</p>`;
+          return;
+        }
+
+        content.innerHTML = renderUserDetail(data);
+        overlay.scrollTop = 0;
+      } catch (err) {
+        content.innerHTML = `<p class="error">${escapeHtml(err.message || "خطأ في الاتصال")}</p>`;
+      }
+    }
+
+    function closeUserDetail() {
+      document.getElementById("investigateOverlay").classList.remove("open");
+    }
+
+    // [ledger-v4] js
+    function invNum(x) {
+      return Number(x || 0).toLocaleString("en-US");
+    }
+
+    function invUsdt(x) {
+      return Number(x || 0).toFixed(4);
+    }
+
+    // أجزاء الوقت بتوقيت بغداد، بنظام 12 ساعة (1-12) مع ص/م
+    function invParts(value) {
+      if (!value) return null;
+      const d = new Date(value);
+      if (Number.isNaN(d.getTime())) return null;
+      const p = {};
+      new Intl.DateTimeFormat("en-GB", {
+        timeZone: "Asia/Baghdad",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hourCycle: "h23",
+      })
+        .formatToParts(d)
+        .forEach((x) => {
+          p[x.type] = x.value;
+        });
+      const h24 = Number(p.hour) % 24;
+      return {
+        day: p.day,
+        month: p.month,
+        year: p.year,
+        h12: h24 % 12 || 12,
+        min: p.minute,
+        sec: p.second,
+        ampm: h24 < 12 ? "ص" : "م",
+      };
+    }
+
+    function invTime(value, withSeconds) {
+      const t = invParts(value);
+      if (!t) return "—";
+      return `<bdi dir="ltr">${t.h12}:${t.min}${withSeconds ? ":" + t.sec : ""} ${t.ampm}</bdi>`;
+    }
+
+    function invDate(value) {
+      const t = invParts(value);
+      if (!t) return "—";
+      return `<bdi dir="ltr">${t.day}/${t.month}/${t.year} ${t.h12}:${t.min}:${t.sec} ${t.ampm}</bdi>`;
+    }
+
+    function invDayKey(value) {
+      const t = invParts(value);
+      return t ? `${t.year}-${t.month}-${t.day}` : "";
+    }
+
+    function invDayLabel(value) {
+      const key = invDayKey(value);
+      if (!key) return "—";
+      if (key === invDayKey(Date.now())) return "اليوم";
+      if (key === invDayKey(Date.now() - 24 * 3600 * 1000)) return "أمس";
+      const t = invParts(value);
+      return `<bdi dir="ltr">${t.day}/${t.month}/${t.year}</bdi>`;
+    }
+
+    function invGap(sec) {
+      if (sec === null || sec === undefined) return "";
+      if (sec < 60) return `${sec} ث`;
+      if (sec < 3600) return `${Math.floor(sec / 60)} د ${sec % 60} ث`;
+      const h = Math.floor(sec / 3600);
+      return `${h} س ${Math.floor((sec % 3600) / 60)} د`;
+    }
+
+    // تجميع الأسطر حسب اليوم
+    function invGrouped(rows, rowFn) {
+      let last = null;
+      let out = "";
+      rows.forEach((r) => {
+        const key = invDayKey(r.created_at);
+        if (key !== last) {
+          out += `<div class="iv-day">${invDayLabel(r.created_at)}</div>`;
+          last = key;
+        }
+        out += rowFn(r);
+      });
+      return out;
+    }
+
+    const INV_SRC = {
+      task: ["📋", "مهمة"],
+      game_run: ["🎮", "جولة لعب"],
+      daily_checkin: ["📅", "تسجيل يومي"],
+      native_task_ad: ["📋", "مكافأة مهمة"],
+      mining_claim: ["⛏️", "استلم مكافأة التعدين"],
+      gift_code: ["🎟️", "كود هدية"],
+      exchange: ["🔁", "حوّل عملات إلى USDT"],
+      referral: ["👥", "مكافأة إحالة"],
+      withdrawal: ["💸", "طلب سحب"],
+      withdrawal_refund: ["↩️", "سحب مرفوض (رجع الرصيد)"],
+    };
+
+    function invSrcInfo(source) {
+      return INV_SRC[source] || ["❔", escapeHtml(String(source || "غير معروف"))];
+    }
+
+    function invLedgerRow(row) {
+      const info = invSrcInfo(row.source);
+      const c = Number(row.coins_delta || 0);
+      const u = Number(row.usdt_delta || 0);
+      const amt = [];
+      if (c) {
+        amt.push(`<span class="${c > 0 ? "iv-up" : "iv-down"}">${c > 0 ? "+" : "−"}${invNum(Math.abs(c))} 🪙</span>`);
+      }
+      if (u) {
+        amt.push(`<span class="${u > 0 ? "iv-up" : "iv-down"}">${u > 0 ? "+" : "−"}${invUsdt(Math.abs(u))} 💵</span>`);
+      }
+      const detail = row.detail && row.detail.trim() !== info[1] ? escapeHtml(row.detail) : "";
+      const after =
+        row.balance_after === null || row.balance_after === undefined
+          ? ""
+          : `الرصيد بعدها ${invNum(row.balance_after)}`;
+      const sub = [detail, after].filter(Boolean).join(" · ");
+      return `
+        <div class="iv-row">
+          <div class="iv-ico">${info[0]}</div>
+          <div class="iv-main"><b>${info[1]}</b>${sub ? `<small>${sub}</small>` : ""}</div>
+          <div class="iv-side">${amt.join("")}<small>${invTime(row.created_at, true)}</small></div>
+        </div>`;
+    }
+    function invKv(label, value, hint, cls, extra) {
+      return `
+        <div class="iv-kv ${extra || ""}">
+          <span>${label}${hint ? `<small>${hint}</small>` : ""}</span>
+          <strong class="${cls || ""}">${value}</strong>
+        </div>`;
+    }
+
+    function invPlayerName(p) {
+      return p.username ? `@${escapeHtml(p.username)}` : "بدون معرّف";
+    }
+
+    function invTab(name) {
+      document.querySelectorAll(".iv-pane").forEach((el) => {
+        el.style.display = el.dataset.pane === name ? "block" : "none";
+      });
+      document.querySelectorAll(".iv-tab").forEach((el) => {
+        el.classList.toggle("active", el.dataset.tab === name);
+      });
+    }
+
+    function renderUserDetail(data) {
+      const p = data.player || {};
+      const r = data.referrals || {};
+      const u = data.usdtFlow || {};
+      const c = data.coinFlow || {};
+      const withdrawals = data.withdrawals || [];
+      const ledger = data.ledger || [];
+      const refList = data.referralList || [];
+      const now = Date.now();
+
+      // ---------- تحليل الكسب ----------
+      let gainHour = 0;
+      let gainDay = 0;
+      let countDay = 0;
+      const bySource = {};
+      ledger.forEach((row) => {
+        const t = new Date(row.created_at).getTime();
+        const coins = Number(row.coins_delta || 0);
+        if (Number.isFinite(t)) {
+          if (coins > 0 && now - t <= 3600 * 1000) gainHour += coins;
+          if (coins > 0 && now - t <= 24 * 3600 * 1000) gainDay += coins;
+          if (now - t <= 24 * 3600 * 1000) countDay += 1;
+        }
+        if (!bySource[row.source]) bySource[row.source] = { coins: 0, usdt: 0, count: 0 };
+        bySource[row.source].coins += coins;
+        bySource[row.source].usdt += Number(row.usdt_delta || 0);
+        bySource[row.source].count += 1;
+      });
+      // ---------- تبويب الإحالات ----------
+      const refBy = data.referredBy;
+      const refRows = refList
+        .map((x) => {
+          const tags = [
+            x.qualified ? `<span class="iv-tag ok">✅ مستحقة</span>` : `<span class="iv-tag wait">⏳ ما أكمل الشرط</span>`,
+            x.is_banned ? `<span class="iv-tag">محظور</span>` : "",
+            x.is_duplicate_device ? `<span class="iv-tag">جهاز مكرر</span>` : "",
+          ].join("");
+          const id = escapeHtml(String(x.telegram_id));
+          return `
+            <div class="iv-row">
+              <div class="iv-main"><b>${invPlayerName(x)} ${tags}</b><small><bdi dir="ltr">${id} · ${invNum(x.coin)} 🪙 · ${invUsdt(x.usdt_balance)} 💵</bdi></small></div>
+              <button class="iv-btn" onclick="showUserDetail('${id}')">🔍 تحقيق</button>
+            </div>`;
+        })
+        .join("");
+
+      const refsHtml = `
+        <div class="iv-card">
+          ${refBy ? `<div class="iv-row"><div class="iv-main"><b>جاء عن طريق</b><small>${invPlayerName(refBy)}</small></div><button class="iv-btn" onclick="showUserDetail('${escapeHtml(String(refBy.telegram_id))}')">🔍 تحقيق</button></div>` : ""}
+          ${invKv("دخلوا برابطه", invNum(r.total || 0))}
+          ${invKv("مستحقة (أكملوا الشرط)", invNum(r.qualified || 0), `× ${r.rewardPerReferral || 0} USDT لكل وحدة`)}
+        </div>
+        <div class="iv-card">
+          ${refRows || `<div class="iv-note">ما جاب أي إحالة.</div>`}
+          ${(r.total || 0) > refList.length ? `<div class="iv-note">معروض ${refList.length} من ${r.total}</div>` : ""}
+        </div>`;
+
+      // ---------- تبويب الملخص ----------
+      const WD = {
+        pending: ["🟡", "معلّق", "iv-warn"],
+        completed: ["✅", "تم", "iv-up"],
+        rejected: ["❌", "مرفوض", "iv-down"],
+      };
+      const wdRows = withdrawals
+        .slice(0, 10)
+        .map((w) => {
+          const st = WD[w.status] || ["•", escapeHtml(w.status || ""), ""];
+          return `
+            <div class="iv-row">
+              <div class="iv-main"><b>${invUsdt(w.amount)} USDT</b><small class="${st[2]}">${st[0]} ${st[1]} · ${escapeHtml(w.method || "")}</small></div>
+              <div class="iv-side"><small>${invDate(w.created_at)}</small></div>
+            </div>`;
+        })
+        .join("");
+
+      const tasksList = (data.taskBreakdown || [])
+        .slice()
+        .sort((a, b) => b.totalCoins - a.totalCoins)
+        .map((t) => invKv(escapeHtml(t.title), invNum(t.totalCoins), `${t.completionCount} مرة × ${invNum(t.rewardPerCompletion)}`))
+        .join("");
+
+      const summaryHtml = `
+        <div class="iv-card">
+          <h4>💵 من وين إجا USDT؟</h4>
+          ${invKv("رصيده الحالي", invUsdt(u.balance))}
+          ${invKv("سحب (تم + معلّق)", invUsdt(Number(u.withdrawnCompleted || 0) + Number(u.withdrawnPending || 0)))}
+          ${invKv("المجموع اللي كسبه", invUsdt(u.totalEarned), "", "", "total")}
+          ${invKv("من الإحالات", invUsdt(u.fromReferrals), `${r.qualified || 0} إحالة مستحقة`)}
+          ${invKv("من تحويل العملات", invUsdt(u.fromExchange), `تقريباً ${invNum(u.coinsExchanged)} عملة`, u.fromExchange > 0 ? "iv-warn" : "")}
+        </div>
+        <div class="iv-card">
+          <h4>🪙 من وين إجت العملات؟</h4>
+          ${invKv("عملاته الحالية", invNum(c.current))}
+          ${invKv("حوّلها لـ USDT (تقريباً)", invNum(c.exchanged))}
+          ${invKv("المجموع اللي كسبه", invNum(c.earnedTotal), "", "", "total")}
+          ${invKv("مهام", invNum(c.tasks), `${c.tasksCount || 0} مهمة`)}
+          ${invKv("أكواد هدايا", invNum(c.gifts), `${c.giftsCount || 0} كود`)}
+          ${invKv("غير مصنّف", invNum(c.other), `ألعاب / تسجيل يومي (سلسلة ${c.streak || 0} يوم) / تعدين / قديم`, c.other > 0 ? "iv-warn" : "")}
+        </div>
+        ${tasksList ? `<details><summary>تفاصيل المهام (${(data.taskBreakdown || []).length})</summary><div class="iv-card">${tasksList}</div></details>` : ""}
+        <div class="iv-card">
+          <h4>💸 آخر السحوبات</h4>
+          ${wdRows || `<div class="iv-note">ما سحب أي مبلغ لحد الآن.</div>`}
+        </div>
+        <div class="iv-note">"من تحويل العملات" و"غير مصنّف" محسوبين بالطرح لأن التفاصيل ما كانت تنسجّل قبل السجل.${u.withdrawalsTruncated ? " (عنده أكثر من 50 سحب، الحساب تقريبي)" : ""}</div>`;
+      // ---------- تبويب الحسابات المرتبطة ----------
+      // [linked-v6] مرتبط = نفس بصمة الجهاز و/أو نفس معرّف الجهاز فقط
+      const linkTag = (reason) => {
+        if (reason === "fp") return `<span class="iv-tag">🔥 نفس بصمة الجهاز</span>`;
+        if (reason === "device") return `<span class="iv-tag">📱 نفس معرّف الجهاز</span>`;
+        return `<span class="iv-tag weak">${escapeHtml(String(reason))}</span>`;
+      };
+      const linkedRows = linked
+        .map((x) => {
+          const id = escapeHtml(String(x.telegram_id));
+          const both = x.reasons.includes("fp") && x.reasons.includes("device");
+          const extra = [
+            both ? `<span class="iv-tag">⛓️ مؤكد (الاثنين)</span>` : "",
+            x.is_banned ? `<span class="iv-tag weak">محظور</span>` : "",
+          ].join("");
+          return `
+            <div class="iv-row">
+              <div class="iv-main">
+                <b>${invPlayerName(x)}</b>
+                <div style="margin-top:4px;">${extra} ${x.reasons.map(linkTag).join(" ")}</div>
+                <small><bdi dir="ltr">${id} · ${invNum(x.coin)} 🪙 · ${invUsdt(x.usdt_balance)} 💵</bdi></small>
+              </div>
+              <button class="iv-btn" onclick="showUserDetail('${id}')">🔍 تحقيق</button>
+            </div>`;
+        })
+        .join("");
+
+      let linkedEmpty = "";
+      if (!linked.length) {
+        linkedEmpty = p.is_duplicate_device
+          ? `<div class="iv-note iv-warn">معلّم جهاز مكرر بسبب تشابه شبكة (IP + متصفح) فقط. ما في أي حساب بنفس بصمة الجهاز أو معرّف الجهاز، فما نعتبره حساب مرتبط.</div>`
+          : `<div class="iv-note">✅ ما في حسابات بنفس بصمة الجهاز أو معرّف الجهاز.</div>`;
+      }
+
+      const linkedHtml = `
+        <div class="iv-card">
+          ${invKv("حسابات مرتبطة", invNum(linked.length), "نفس بصمة الجهاز و/أو نفس معرّف الجهاز", linked.length > 0 ? "iv-warn" : "")}
+          ${invKv("منها مؤكد (الاثنين معاً)", invNum(linkedInfo.both || 0), "نفس البصمة ونفس المعرّف", (linkedInfo.both || 0) > 0 ? "iv-warn" : "")}
+          ${invKv("مجموع عملات المجموعة", `${invNum(Number(p.coin || 0) + Number(linkedInfo.coins || 0))} 🪙`, "مع هذا الحساب")}
+          ${invKv("مجموع USDT المجموعة", `${invUsdt(Number(p.usdt_balance || 0) + Number(linkedInfo.usdt || 0))} 💵`, "رصيد حالي فقط")}
+        </div>
+        <div class="iv-card">
+          ${linkedRows || linkedEmpty}
+        </div>
+        <div class="iv-note">الحساب يظهر هون فقط إذا نفس البصمة أو نفس معرّف الجهاز (أو الاثنين). نفس الـ IP لحاله ما يكفي.</div>`;
+
+      return `
+        <h3 class="iv-name">${invPlayerName(p)}</h3>
+        <div class="iv-id">${escapeHtml(String(p.telegram_id))}</div>
+        <div class="iv-tiles">
+          <div class="iv-tile"><b>${invNum(p.coin)}</b><span>🪙 عملات</span></div>
+          <div class="iv-tile"><b>${invUsdt(p.usdt_balance)}</b><span>💵 USDT</span></div>
+        </div>
+        ${flagsHtml}
+        <div class="iv-tabs">
+          <button class="iv-tab active" data-tab="earn" onclick="invTab('earn')">🕒 الكسب</button>
+          <button class="iv-tab" data-tab="refs" onclick="invTab('refs')">👥 إحالات (${r.total || 0})</button>
+          <button class="iv-tab" data-tab="linked" onclick="invTab('linked')">🔗 مرتبطة (${linked.length})</button>
+          <button class="iv-tab" data-tab="sum" onclick="invTab('sum')">📊 ملخص</button>
+        </div>
+        <div class="iv-pane" data-pane="earn" style="display:block;">${earnHtml}</div>
+        <div class="iv-pane" data-pane="refs">${refsHtml}</div>
+        <div class="iv-pane" data-pane="linked">${linkedHtml}</div>
+        <div class="iv-pane" data-pane="sum">${summaryHtml}</div>
+      `;
+    }
+
+    function filterUsers() {
+
+      const query =
+        document
+          .getElementById("userSearch")
+          .value
+          .toLowerCase()
+          .trim();
+
+      const filtered =
+        allUsers.filter(u =>
+          (
+            u.username &&
+            u.username
+              .toLowerCase()
+              .includes(query)
+          ) ||
+          String(
+            u.telegram_id
+          ).includes(query)
+        );
+
+      renderUsers(filtered);
+    }
+
+    async function toggleBan(
+      telegramId,
+      action
+    ) {
+      const confirmText =
+        action === "admin_ban"
+          ? "هل أنت متأكد من حظر هذا المستخدم وتصفير عملاته؟"
+          : "هل أنت متأكد من فك الحظر عن هذا المستخدم؟";
+
+      if (!confirm(confirmText)) {
+        return;
+      }
+
+      try {
+        const result =
+          await apiCall(
+            "/api/auth/me",
+            "POST",
+            {
+              action,
+              targetTelegramId:
+                telegramId,
+            }
+          );
+
+        if (result && result.success) {
+          alert(
+            action === "admin_ban"
+              ? "تم حظر المستخدم وتصفير رصيده."
+              : "تم فك الحظر عن المستخدم."
+          );
+
+          await loadUsers();
+        } else {
+          alert(
+            result.error ||
+            "فشلت العملية."
+          );
+        }
+      } catch (err) {
+        alert(
+          err.message ||
+          "خطأ في تنفيذ العملية."
+        );
+      }
+    }
+
+    async function loadSettings() {
+      const status =
+        document.getElementById(
+          "settingsStatus"
+        );
+
+      try {
+        status.textContent =
+          "جاري تحميل الإعدادات...";
+
+        const data =
+          await apiCall(
+            "/api/tasks/manage",
+            "POST",
+            {
+              action:
+                "get_settings"
+            }
+          );
+
+        const settings =
+          data.settings || {};
+
+        document.getElementById(
+          "settingMiningReward"
+        ).value =
+          settings.mining_reward_coins ||
+          2500;
+
+        document.getElementById(
+          "settingMiningHours"
+        ).value =
+          settings.mining_cycle_hours ||
+          2;
+
+        document.getElementById(
+          "settingReferralReward"
+        ).value =
+          settings.referral_reward_usdt ||
+          0.01;
+
+        document.getElementById(
+          "settingReferralTasks"
+        ).value =
+          settings.referral_required_tasks ||
+          5;
+
+        status.textContent =
+          "تم تحميل الإعدادات.";
+
+        status.className =
+          "admin-status success";
+      } catch (err) {
+        status.textContent =
+          err.message ||
+          "تعذر تحميل الإعدادات.";
+
+        status.className =
+          "admin-status error";
+      }
+    }
+
+    async function saveSettings() {
+      const status =
+        document.getElementById(
+          "settingsStatus"
+        );
+
+      const miningReward =
+        Number(
+          document.getElementById(
+            "settingMiningReward"
+          ).value
+        );
+
+      const miningHours =
+        Number(
+          document.getElementById(
+            "settingMiningHours"
+          ).value
+        );
+
+      const referralReward =
+        Number(
+          document.getElementById(
+            "settingReferralReward"
+          ).value
+        );
+
+      const referralTasks =
+        Number(
+          document.getElementById(
+            "settingReferralTasks"
+          ).value
+        );
+
+      if (
+        !Number.isFinite(
+          miningReward
+        ) ||
+        miningReward < 1
+      ) {
+        alert(
+          "Mining Reward غير صحيح."
+        );
+        return;
+      }
+
+      if (
+        !Number.isFinite(
+          miningHours
+        ) ||
+        miningHours < 1
+      ) {
+        alert(
+          "Mining Cycle غير صحيح."
+        );
+        return;
+      }
+
+      if (
+        !Number.isFinite(
+          referralReward
+        ) ||
+        referralReward < 0
+      ) {
+        alert(
+          "Referral Reward غير صحيح."
+        );
+        return;
+      }
+
+      if (
+        !Number.isFinite(
+          referralTasks
+        ) ||
+        referralTasks < 1
+      ) {
+        alert(
+          "Referral Tasks غير صحيح."
+        );
+        return;
+      }
+
+      try {
+        const data =
+          await apiCall(
+            "/api/tasks/manage",
+            "POST",
+            {
+              action:
+                "update_settings",
+
+              settings: {
+                mining_reward_coins:
+                  String(
+                    Math.trunc(
+                      miningReward
+                    )
+                  ),
+
+                mining_cycle_hours:
+                  String(
+                    miningHours
+                  ),
+
+                referral_reward_usdt:
+                  String(
+                    referralReward
+                  ),
+
+                referral_required_tasks:
+                  String(
+                    Math.trunc(
+                      referralTasks
+                    )
+                  ),
+              },
+            }
+          );
+
+        if (
+          !data.success
+        ) {
+          throw new Error(
+            data.error ||
+              "فشل حفظ الإعدادات."
+          );
+        }
+
+        status.textContent =
+          "تم حفظ الإعدادات بنجاح.";
+
+        status.className =
+          "admin-status success";
+
+        await loadSettings();
+      } catch (err) {
+        status.textContent =
+          err.message ||
+          "تعذر حفظ الإعدادات.";
+
+        status.className =
+          "admin-status error";
+      }
+    }
+
+    let lastRenderedTasks = [];
+    const expandedTaskIds = new Set();
+
+    function taskTypeColor(type) {
+      const palette = {
+        join_channel: "#40a7e3",
+        join_bot: "#54e6d4",
+        referral: "#8e6cff",
+        normal: "#4caf50",
+      };
+
+      if (palette[type]) return palette[type];
+
+      let hash = 0;
+
+      for (let i = 0; i < type.length; i++) {
+        hash = type.charCodeAt(i) + ((hash << 5) - hash);
+      }
+
+      const hue = Math.abs(hash) % 360;
+
+      return `hsl(${hue}, 60%, 55%)`;
+    }
+
+    function toggleTaskExpand(taskId) {
+      const key = String(taskId);
+
+      if (expandedTaskIds.has(key)) {
+        expandedTaskIds.delete(key);
+      } else {
+        expandedTaskIds.add(key);
+      }
+
+      renderTaskRows(lastRenderedTasks);
+    }
+
+    function renderTaskRows(tasks) {
+      const container =
+        document.getElementById(
+          "tasksList"
+        );
+
+      if (!container) return;
+
+      lastRenderedTasks = tasks;
+
+      if (
+        tasks.length === 0
+      ) {
+        const showDisabled =
+          document
+            .getElementById(
+              "showDisabledTasks"
+            )
+            ?.checked;
+
+        container.innerHTML =
+          showDisabled
+            ? '<div class="empty">لا توجد مهام حالياً.</div>'
+            : '<div class="empty">لا توجد مهام مفعلة حالياً.</div>';
+
+        return;
+      }
+
+      container.innerHTML =
+        tasks.map((task, index) => {
+          const taskId =
+            task.id;
+
+          const title =
+            escapeHtml(
+              task.title || ""
+            );
+
+          const reward =
+            Number(
+              task.reward || 0
+            );
+
+          const url =
+            escapeHtml(
+              task.url || ""
+            );
+
+          const active =
+            Boolean(
+              task.is_active
+            );
+
+          const maxCompletions =
+            Number(
+              task.max_completions || 1
+            );
+
+          const taskTypeRaw =
+            String(
+              task.task_type ||
+              "normal"
+            );
+
+          const taskType =
+            escapeHtml(taskTypeRaw);
+
+          const typeColor =
+            taskTypeColor(taskTypeRaw);
+
+          const isFirst =
+            index === 0;
+
+          const isLast =
+            index === tasks.length - 1;
+
+          const isExpanded =
+            expandedTaskIds.has(
+              String(taskId)
+            );
+
+          return `
+            <div
+              class="task-row-wrap ${
+                active ? "" : "disabled"
+              }"
+              style="--type-color: ${typeColor}"
+            >
+              <div
+                class="task-row"
+                onclick="toggleTaskExpand('${escapeJs(
+                  String(taskId)
+                )}')"
+              >
+                <div class="task-row-main">
+                  <div class="task-row-title-line">
+                    <span class="task-row-title">
+                      ${title}
+                    </span>
+
+                    <span
+                      class="badge ${
+                        active
+                          ? "badge-active"
+                          : "badge-disabled"
+                      }"
+                    >
+                      ${
+                        active
+                          ? "مفعلة"
+                          : "معطلة"
+                      }
+                    </span>
+                  </div>
+
+                  <div class="task-row-meta">
+                    <span>ID: ${escapeHtml(String(taskId))}</span>
+                    <span class="task-type-tag">${taskType}</span>
+                    <span class="task-row-coins">💰 ${reward.toLocaleString()}</span>
+                  </div>
+                </div>
+
+                <div
+                  class="task-row-controls"
+                  onclick="event.stopPropagation()"
+                >
+                  <button
+                    class="task-mini-btn"
+                    title="نقل فوق"
+                    onclick="moveTask(
+                      '${escapeJs(
+                        String(taskId)
+                      )}',
+                      'up'
+                    )"
+                    ${isFirst ? "disabled" : ""}
+                  >
+                    ⬆️
+                  </button>
+
+                  <button
+                    class="task-mini-btn"
+                    title="نقل تحت"
+                    onclick="moveTask(
+                      '${escapeJs(
+                        String(taskId)
+                      )}',
+                      'down'
+                    )"
+                    ${isLast ? "disabled" : ""}
+                  >
+                    ⬇️
+                  </button>
+
+                  <button
+                    class="task-mini-btn"
+                    title="تفاصيل"
+                    onclick="toggleTaskExpand('${escapeJs(
+                      String(taskId)
+                    )}')"
+                  >
+                    ${isExpanded ? "▲" : "▼"}
+                  </button>
+                </div>
+              </div>
+
+              <div class="task-details ${isExpanded ? "" : "hidden"}">
+                <div class="task-summary">
+                  <div class="task-info">
+
+                    <div class="info-box">
+                      <div class="info-label">
+                        المكافأة
+                      </div>
+
+                      <div class="info-value">
+                        ${reward.toLocaleString()}
+                        Coins
+                      </div>
+                    </div>
+
+                    <div class="info-box">
+                      <div class="info-label">
+                        عدد مرات الإكمال لكل لاعب
+                      </div>
+
+                      <div class="info-value">
+                        ${maxCompletions}
+                        مرة
+                      </div>
+                    </div>
+
+                    <div class="info-box">
+                      <div class="info-label">
+                        رابط المهمة
+                      </div>
+
+                      <div class="info-value">
+                        ${
+                          url
+                            ? `
+                              <a
+                                href="${url}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                ${url}
+                              </a>
+                            `
+                            : "لا يوجد"
+                        }
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+                <div class="task-actions">
+                  <button
+                    class="toggle"
+                    onclick="toggleTask(
+                      '${escapeJs(
+                        String(taskId)
+                      )}'
+                    )"
+                  >
+                    ${
+                      active
+                        ? "⏸️ تعطيل"
+                        : "▶️ تفعيل"
+                    }
+                  </button>
+
+                  <button
+                    class="delete-btn"
+                    onclick="deleteTask(
+                      '${escapeJs(
+                        String(taskId)
+                      )}'
+                    )"
+                  >
+                    🗑️ حذف نهائي
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join("");
+    }
+
+    async function loadMandatoryChannels() {
+      const container =
+        document.getElementById(
+          "mandatoryChannelsList"
+        );
+
+      container.innerHTML =
+        '<p class="loading">جاري تحميل القنوات...</p>';
+
+      try {
+        const data =
+          await apiCall(
+            "/api/tasks/manage",
+            "POST",
+            {
+              action:
+                "get_mandatory_channels"
+            }
+          );
+
+        const channels =
+          Array.isArray(data.channels)
+            ? data.channels
+            : [];
+
+        if (channels.length === 0) {
+          container.innerHTML =
+            '<div class="empty">لا توجد قنوات اشتراك إجباري حالياً.</div>';
+          return;
+        }
+
+        container.innerHTML =
+          channels.map((channel) => `
+            <div
+              class="task-card"
+              style="margin-top:8px;"
+            >
+              <div class="task-top">
+                <div>
+                  <div class="task-title">
+                    ${escapeHtml(
+                      channel.title || ""
+                    )}
+                  </div>
+
+                  <div
+                    class="task-id"
+                  >
+                    ${escapeHtml(
+                      channel.channel_url || ""
+                    )}
+                  </div>
+                </div>
+
+                <button
+                  class="delete-btn"
+                  onclick="deleteMandatoryChannel('${escapeJs(String(channel.id))}')"
+                >
+                  حذف
+                </button>
+              </div>
+            </div>
+          `).join("");
+
+      } catch (err) {
+        container.innerHTML =
+          `<p class="error">${escapeHtml(
+            err.message ||
+            "تعذر تحميل القنوات."
+          )}</p>`;
+      }
+    }
+
+    async function addMandatoryChannel() {
+      const title =
+        document
+          .getElementById(
+            "mandatoryChannelTitle"
+          )
+          .value
+          .trim();
+
+      const channelUrl =
+        document
+          .getElementById(
+            "mandatoryChannelUrl"
+          )
+          .value
+          .trim();
+
+      if (!title) {
+        alert(
+          "اكتب اسم القناة."
+        );
+        return;
+      }
+
+      if (!channelUrl) {
+        alert(
+          "اكتب رابط القناة."
+        );
+        return;
+      }
+
+      try {
+        const data =
+          await apiCall(
+            "/api/tasks/manage",
+            "POST",
+            {
+              action:
+                "add_mandatory_channel",
+              title,
+              channelUrl,
+            }
+          );
+
+        if (!data.success) {
+          throw new Error(
+            data.error ||
+            "فشل إضافة القناة."
+          );
+        }
+
+        document
+          .getElementById(
+            "mandatoryChannelTitle"
+          )
+          .value = "";
+
+        document
+          .getElementById(
+            "mandatoryChannelUrl"
+          )
+          .value = "";
+
+        await loadMandatoryChannels();
+
+      } catch (err) {
+        alert(
+          err.message ||
+          "تعذر إضافة القناة."
+        );
+      }
+    }
+
+    async function deleteMandatoryChannel(id) {
+      if (!id) return;
+
+      const confirmed =
+        confirm(
+          "هل تريد حذف قناة الاشتراك الإجباري؟"
+        );
+
+      if (!confirmed) {
+        return;
+      }
+
+      try {
+        const data =
+          await apiCall(
+            "/api/tasks/manage",
+            "POST",
+            {
+              action:
+                "delete_mandatory_channel",
+              id,
+            }
+          );
+
+        if (!data.success) {
+          throw new Error(
+            data.error ||
+            "فشل حذف القناة."
+          );
+        }
+
+        await loadMandatoryChannels();
+
+      } catch (err) {
+        alert(
+          err.message ||
+          "تعذر حذف القناة."
+        );
+      }
+    }
+
+    async function loadTasks() {
+      const container =
+        document.getElementById(
+          "tasksList"
+        );
+
+      const showDisabled =
+        document
+          .getElementById(
+            "showDisabledTasks"
+          )
+          ?.checked;
+
+      container.innerHTML =
+        '<p class="loading">جاري تحميل المهام...</p>';
+
+      try {
+        const data =
+          await apiCall(
+            "/api/tasks/manage",
+            "GET"
+          );
+
+        if (!data.success) {
+          container.innerHTML =
+            `<p class="error">${
+              escapeHtml(
+                data.error ||
+                "خطأ في الصلاحيات"
+              )
+            }</p>`;
+
+          return;
+        }
+
+        let tasks =
+          Array.isArray(data.tasks)
+            ? data.tasks
+            : [];
+
+        if (!showDisabled) {
+          tasks =
+            tasks.filter(
+              task =>
+                Boolean(
+                  task.is_active
+                )
+            );
+        }
+
+        renderTaskRows(tasks);
+      } catch (err) {
+        container.innerHTML =
+          `<p class="error">${
+            escapeHtml(
+              err.message ||
+              "خطأ في الاتصال بالسيرفر."
+            )
+          }</p>`;
+      }
+    }
+
+
+    async function moveTask(taskId, direction) {
+      if (!taskId) {
+        alert("Task ID غير موجود.");
+        return;
+      }
+
+      try {
+        const result =
+          await apiCall(
+            "/api/tasks/manage",
+            "POST",
+            {
+              id: taskId,
+              action: "move",
+              direction: direction,
+            }
+          );
+
+        if (result.success) {
+          await loadTasks();
+        } else {
+          alert(
+            result.error ||
+            "فشل تغيير ترتيب المهمة."
+          );
+        }
+      } catch (err) {
+        alert(
+          err.message ||
+          "تعذر تغيير ترتيب المهمة."
+        );
+      }
+    }
+
+    async function toggleTask(taskId) {
+      if (!taskId) {
+        alert("Task ID غير موجود.");
+        return;
+      }
+
+      try {
+        const result =
+          await apiCall(
+            "/api/tasks/manage",
+            "POST",
+            {
+              id: taskId,
+              action: "toggle",
+            }
+          );
+
+        if (result.success) {
+          await loadTasks();
+        } else {
+          alert(
+            result.error ||
+            "فشل تغيير حالة المهمة."
+          );
+        }
+      } catch (err) {
+        alert(
+          err.message ||
+          "تعذر تغيير حالة المهمة."
+        );
+      }
+    }
+
+    async function deleteTask(taskId) {
+      if (!taskId) {
+        alert("Task ID غير موجود.");
+        return;
+      }
+
+      if (
+        !confirm(
+          "⚠️ تحذير\n\n" +
+          "سيتم حذف المهمة نهائياً من قاعدة البيانات.\n" +
+          "لا يمكن التراجع عن هذا الإجراء.\n\n" +
+          "هل أنت متأكد؟"
+        )
+      ) {
+        return;
+      }
+
+      try {
+        const result =
+          await apiCall(
+            "/api/tasks/manage",
+            "POST",
+            {
+              id: taskId,
+              action: "delete",
+            }
+          );
+
+        if (result.success) {
+          alert(
+            "تم حذف المهمة نهائياً."
+          );
+
+          await loadTasks();
+        } else {
+          alert(
+            result.error ||
+            "فشل حذف المهمة."
+          );
+        }
+      } catch (err) {
+        alert(
+          err.message ||
+          "تعذر حذف المهمة."
+        );
+      }
+    }
+
+    async function addTask() {
+      const title =
+        document
+          .getElementById(
+            "taskTitle"
+          )
+          .value
+          .trim();
+
+      const reward =
+        Number(
+          document
+            .getElementById(
+              "taskCoins"
+            )
+            .value
+        );
+
+      const rawUrl =
+        document
+          .getElementById(
+            "taskLink"
+          )
+          .value
+          .trim();
+
+      const taskType =
+        document
+          .getElementById(
+            "taskType"
+
+          )
+          .value;
+
+      const maxCompletions =
+        Number(
+          document
+            .getElementById(
+              "taskMaxCompletions"
+            )
+            .value
+        );
+
+      const normalizedTaskType =
+        taskType === "custom"
+          ? "normal"
+          : taskType;
+
+      const isAdType = false;
+      const url = rawUrl;
+
+      if (
+        !title ||
+        !Number.isFinite(
+          reward
+        ) ||
+        reward <= 0
+      ) {
+        alert(
+          "يرجى تعبئة العنوان والمكافأة بشكل صحيح."
+        );
+
+        return;
+      }
+
+      // كل مهمة تحتاج رابطاً صالحاً
+      if (
+        !isAdType &&
+        !url
+      ) {
+        alert(
+          "يرجى إدخال رابط المهمة للمهام العادية."
+        );
+
+        return;
+      }
+
+      if (
+        !Number.isFinite(
+          maxCompletions
+        ) ||
+        maxCompletions < 1
+      ) {
+        alert(
+          "عدد مرات الإكمال يجب أن يكون 1 أو أكثر."
+        );
+
+        return;
+      }
+
+      try {
+        const payload = {
+          title,
+          reward,
+          url,
+          is_active: true,
+          task_type:
+            normalizedTaskType,
+          max_completions:
+            maxCompletions,
+        };
+
+        const result =
+          await apiCall(
+            "/api/tasks/manage",
+            "POST",
+            payload
+          );
+
+        if (result.success) {
+          alert(
+            "تمت إضافة المهمة بنجاح."
+          );
+
+          document.getElementById(
+            "taskTitle"
+          ).value = "";
+
+          document.getElementById(
+            "taskCoins"
+          ).value = "";
+
+          document.getElementById(
+            "taskLink"
+          ).value = "";
+
+          document.getElementById(
+            "taskType"
+          ).value = "join_channel";
+
+          document.getElementById(
+            "joinBotHint"
+          ).style.display = "none";
+
+          document.getElementById(
+            "taskMaxCompletions"
+          ).value = "1";
+
+          await loadTasks();
+        } else {
+          alert(
+            result.error ||
+            "فشل حفظ المهمة."
+          );
+        }
+      } catch (err) {
+        alert(
+          err.message ||
+          "تعذر الاتصال بالسيرفر."
+        );
+      }
+    }
+
+    async function loadGiftCodes() {
+      const container = document.getElementById("giftCodesList");
+      container.innerHTML = '<p class="loading">جاري تحميل الأكواد...</p>';
+
+      try {
+        const data = await apiCall("/api/admin/gift-codes", "GET");
+
+        if (!data.success) {
+          container.innerHTML =
+            `<p class="error">${escapeHtml(data.error || "خطأ في الصلاحيات")}</p>`;
+          return;
+        }
+
+        const codes = Array.isArray(data.giftCodes) ? data.giftCodes : [];
+        renderGiftCodeRows(codes);
+      } catch (err) {
+        container.innerHTML =
+          `<p class="error">${escapeHtml(err.message || "خطأ في الاتصال بالسيرفر.")}</p>`;
+      }
+    }
+
+    function renderGiftCodeRows(codes) {
+      const container = document.getElementById("giftCodesList");
+      if (!container) return;
+
+      if (codes.length === 0) {
+        container.innerHTML = '<div class="empty">لا توجد أكواد حالياً.</div>';
+        return;
+      }
+
+      container.innerHTML = codes.map((gc) => {
+        const code = escapeHtml(gc.code || "");
+        const reward = Number(gc.reward_coins || 0);
+        const maxUses = Number(gc.max_uses || 0);
+        const currentUses = Number(gc.current_uses || 0);
+        const active = Boolean(gc.is_active);
+
+        return `
+          <div class="user-card">
+            <div class="user-info">
+              <strong>${code}</strong><br />
+              <span class="muted">مكافأة: ${reward.toLocaleString()} كوين</span><br />
+              <span class="muted">الاستخدام: ${currentUses} / ${maxUses}</span>
+              ${!active ? '<br /><span class="badge-banned">معطل</span>' : ""}
+            </div>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <button
+                class="toggle"
+                style="width:auto; padding:6px 12px;"
+                onclick="toggleGiftCode('${gc.id}')"
+              >
+                ${active ? "تعطيل" : "تفعيل"}
+              </button>
+              <button
+                class="delete-btn"
+                style="width:auto; padding:6px 12px;"
+                onclick="deleteGiftCode('${gc.id}')"
+              >
+                حذف
+              </button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    async function addGiftCode() {
+      const code = document.getElementById("giftCodeInput").value.trim();
+      const rewardCoins = Number(document.getElementById("giftCodeReward").value);
+      const maxUses = Number(document.getElementById("giftCodeMaxUses").value);
+
+      if (!code) {
+        alert("اكتب الكود أولاً.");
+        return;
+      }
+
+      if (!Number.isFinite(maxUses) || maxUses < 1) {
+        alert("عدد الاستخدامات لازم يكون 1 على الأقل.");
+        return;
+      }
+
+      try {
+        const result = await apiCall("/api/admin/gift-codes", "POST", {
+          action: "create",
+          code,
+          rewardCoins,
+          maxUses,
+        });
+
+        if (result.success) {
+          document.getElementById("giftCodeInput").value = "";
+          document.getElementById("giftCodeReward").value = "0";
+          document.getElementById("giftCodeMaxUses").value = "200";
+          await loadGiftCodes();
+        } else {
+          alert(result.error || "فشل إنشاء الكود.");
+        }
+      } catch (err) {
+        alert(err.message || "تعذر إنشاء الكود.");
+      }
+    }
+
+    async function toggleGiftCode(id) {
+      try {
+        const result = await apiCall("/api/admin/gift-codes", "POST", {
+          id,
+          action: "toggle",
+        });
+
+        if (result.success) {
+          await loadGiftCodes();
+        } else {
+          alert(result.error || "فشل تغيير حالة الكود.");
+        }
+      } catch (err) {
+        alert(err.message || "تعذر تغيير حالة الكود.");
+      }
+    }
+
+    async function deleteGiftCode(id) {
+      if (!confirm("⚠️ سيتم حذف الكود نهائياً من قاعدة البيانات.\nهل أنت متأكد؟")) {
+        return;
+      }
+
+      try {
+        const result = await apiCall("/api/admin/gift-codes", "POST", {
+          id,
+          action: "delete",
+        });
+
+        if (result.success) {
+          await loadGiftCodes();
+        } else {
+          alert(result.error || "فشل حذف الكود.");
+        }
+      } catch (err) {
+        alert(err.message || "تعذر حذف الكود.");
+      }
+    }
+
+    async function loadWithdrawals() {
+      const container =
+        document.getElementById(
+          "withdrawalsList"
+        );
+
+      container.innerHTML =
+        '<p class="loading">جاري تحميل طلبات السحب...</p>';
+
+      try {
+        const data =
+          await apiCall(
+            "/api/admin/withdrawals",
+            "GET"
+          );
+
+        let withdrawals = [];
+
+        if (
+          Array.isArray(data)
+        ) {
+          withdrawals = data;
+        } else if (
+          Array.isArray(
+            data.withdrawals
+          )
+        ) {
+          withdrawals =
+            data.withdrawals;
+        } else if (
+          Array.isArray(
+            data.data
+          )
+        ) {
+          withdrawals =
+            data.data;
+        }
+
+        if (
+          withdrawals.length === 0
+        ) {
+          container.innerHTML =
+            '<p class="muted">لا توجد طلبات سحب معلقة.</p>';
+
+          return;
+        }
+
+        container.innerHTML =
+          withdrawals
+            .map(withdrawal => {
+              const telegramId =
+                withdrawal.telegram_id ||
+                withdrawal.telegramId ||
+                "";
+
+              const username =
+                withdrawal.username ||
+                "NoUsername";
+
+              const amount =
+                withdrawal.amount_usdt ??
+                withdrawal.withdrawal_amount ??
+                withdrawal.amount ??
+                0;
+
+              const method =
+                withdrawal.method ||
+                (
+                  withdrawal.wallet_address
+                    ? "bnb"
+                    : "binance"
+                );
+
+              const target =
+                withdrawal.target ||
+                withdrawal.wallet_address ||
+                withdrawal.walletAddress ||
+                "";
+
+              const bnbAmount =
+                withdrawal.bnb_amount ??
+                withdrawal.bnbAmount ??
+                null;
+
+              const bnbPriceUsd =
+                withdrawal.bnb_price_usd ??
+                withdrawal.bnbPriceUsd ??
+                null;
+
+              const rawStatus =
+                withdrawal.status ||
+                withdrawal.withdrawal_status ||
+                "pending";
+
+              const status =
+                String(rawStatus)
+                  .toLowerCase();
+
+              const isPending =
+                status === "pending";
+
+              const methodLabel =
+                method === "binance"
+                  ? "Binance ID"
+                  : "GRAM Wallet (TON)";
+
+              const targetDisplay =
+                target
+                  ? escapeHtml(
+                      String(target)
+                    )
+                  : "غير محددة";
+
+              const bnbLine =
+                method === "bnb" &&
+                bnbAmount !== null
+                  ? `
+                    <p>
+                      <strong>
+                        الكمية بـ GRAM:
+                      </strong>
+
+                      ${Number(
+                        bnbAmount
+                      ).toFixed(8)}
+                      GRAM
+
+                      ${
+                        bnbPriceUsd
+                          ? `
+                            <span class="muted">
+                              (سعر GRAM وقت الطلب:
+                              $${Number(
+                                bnbPriceUsd
+                              ).toFixed(2)})
+                            </span>
+                          `
+                          : ""
+                      }
+                    </p>
+                  `
+                  : "";
+
+              return `
+                <div class="withdrawal-card">
+
+                  <p>
+                    <strong>
+                      المستخدم:
+                    </strong>
+
+                    @${escapeHtml(
+                      String(username)
+                    )}
+                  </p>
+
+                  <p>
+                    <strong>
+                      Telegram ID:
+                    </strong>
+
+                    <code>
+                      ${escapeHtml(
+                        String(
+                          telegramId
+                        )
+                      )}
+                    </code>
+                  </p>
+
+                  <p>
+                    <strong>
+                      المبلغ:
+                    </strong>
+
+                    $${Number(
+                      amount
+                    ).toFixed(4)}
+                    USDT
+                  </p>
+
+                  <p>
+                    <strong>
+                      طريقة الاستلام:
+                    </strong>
+
+                    <span class="withdraw-method-tag">
+                      ${methodLabel}
+                    </span>
+                  </p>
+
+                  <p>
+                    <strong>
+                      ${
+                        method === "binance"
+                          ? "Binance ID"
+                          : "عنوان المحفظة"
+                      }:
+                    </strong>
+                  </p>
+
+                  <div class="wallet-address-block">
+                    <code class="wallet-address-code">
+                      ${targetDisplay}
+                    </code>
+
+                    <button
+                      type="button"
+                      class="copy-btn"
+                      data-copy="${escapeHtml(
+                        String(target)
+                      )}"
+                      onclick="copyWalletAddress(this)"
+                    >
+                      نسخ العنوان
+                    </button>
+                  </div>
+
+                  ${bnbLine}
+
+                  <p>
+                    <strong>
+                      الحالة:
+                    </strong>
+
+                    <span
+                      class="status-${escapeHtml(
+                        status
+                      )}"
+                    >
+                      ${escapeHtml(
+                        String(
+                          rawStatus
+                        )
+                      )}
+                    </span>
+                  </p>
+
+                  ${
+                    isPending
+                      ? `
+                        <div class="withdraw-actions">
+                          <button
+                            class="approve"
+                            onclick="updateWithdrawal(
+                              '${escapeJs(
+                                String(
+                                  telegramId
+                                )
+                              )}',
+                              'approve'
+                            )"
+                          >
+                            موافقة
+                          </button>
+
+                          <button
+                            class="reject"
+                            onclick="updateWithdrawal(
+                              '${escapeJs(
+                                String(
+                                  telegramId
+                                )
+                              )}',
+                              'reject'
+                            )"
+                          >
+                            رفض
+                          </button>
+                        </div>
+                      `
+                      : ""
+                  }
+
+                </div>
+              `;
+            })
+            .join("");
+      } catch (err) {
+        container.innerHTML =
+          `<p class="error">${
+            escapeHtml(
+              err.message ||
+              "خطأ في تحميل طلبات السحب."
+            )
+          }</p>`;
+      }
+    }
+
+    async function updateWithdrawal(
+      telegramId,
+      action
+    ) {
+      if (!telegramId) {
+        alert(
+          "Telegram ID غير موجود."
+        );
+        return;
+      }
+
+      if (
+        ![
+          "approve",
+          "reject",
+        ].includes(action)
+      ) {
+        alert(
+          "إجراء غير صالح."
+        );
+        return;
+      }
+
+      const confirmationText =
+        action === "approve"
+          ? "هل أنت متأكد من الموافقة على طلب السحب؟"
+          : "هل أنت متأكد من رفض طلب السحب وإعادة المبلغ للاعب؟";
+
+      if (
+        !confirm(
+          confirmationText
+        )
+      ) {
+        return;
+      }
+
+      try {
+        const result =
+          await apiCall(
+            "/api/admin/withdrawals/status",
+            "POST",
+            {
+              telegramId,
+              action,
+            }
+          );
+
+        if (result.success) {
+          alert(
+            action === "approve"
+              ? "تمت الموافقة على طلب السحب."
+              : "تم رفض طلب السحب وإعادة المبلغ."
+          );
+
+          await loadWithdrawals();
+        } else {
+          alert(
+            result.error ||
+            "فشل تنفيذ العملية."
+          );
+        }
+      } catch (err) {
+        alert(
+          err.message ||
+          "تعذر تنفيذ العملية."
+        );
+      }
+    }
+
+    function handlePhotoSelect(
+      event
+    ) {
+      const file =
+        event.target.files &&
+        event.target.files[0];
+
+      if (!file) {
+        clearBroadcastPhoto();
+        return;
+      }
+
+      if (
+        !file.type.startsWith(
+          "image/"
+        )
+      ) {
+        alert(
+          "الملف المختار مو صورة."
+        );
+
+        event.target.value = "";
+
+        return;
+      }
+
+      if (
+        file.size >
+        5 * 1024 * 1024
+      ) {
+        alert(
+          "حجم الصورة كبير جداً، اختر صورة أقل من 5 ميجابايت."
+        );
+
+        event.target.value = "";
+
+        return;
+      }
+
+      const reader =
+        new FileReader();
+
+      reader.onload = () => {
+        const result =
+          String(
+            reader.result || ""
+          );
+
+        const base64 =
+          result.split(",")[1] ||
+          "";
+
+        broadcastPhotoBase64 =
+          base64;
+
+        broadcastPhotoMime =
+          file.type;
+
+        document.getElementById(
+          "photoPreviewImg"
+        ).src = result;
+
+        document.getElementById(
+          "photoPreviewWrap"
+        ).classList.add(
+          "visible"
+        );
+      };
+
+      reader.onerror = () => {
+        alert(
+          "تعذر قراءة الصورة."
+        );
+
+        clearBroadcastPhoto();
+      };
+
+      reader.readAsDataURL(file);
+    }
+
+    function clearBroadcastPhoto() {
+      broadcastPhotoBase64 =
+        null;
+
+      broadcastPhotoMime =
+        null;
+
+      const fileInput =
+        document.getElementById(
+          "broadcastPhoto"
+        );
+
+      if (fileInput) {
+        fileInput.value = "";
+      }
+
+      document.getElementById(
+        "photoPreviewWrap"
+      ).classList.remove(
+        "visible"
+      );
+
+      document.getElementById(
+        "photoPreviewImg"
+      ).src = "";
+    }
+
+    async function sendBroadcast() {
+      const textarea =
+        document.getElementById(
+          "broadcastMsg"
+        );
+
+      const message =
+        textarea.value.trim();
+
+      if (
+        !message &&
+        !broadcastPhotoBase64
+      ) {
+        alert(
+          "يرجى كتابة رسالة أو إرفاق صورة على الأقل."
+        );
+
+        return;
+      }
+
+      const confirmText =
+        broadcastPhotoBase64
+          ? "هل تريد إرسال هذه الصورة (مع الرسالة إن وجدت) إلى جميع اللاعبين؟"
+          : "هل تريد إرسال هذه الرسالة إلى جميع اللاعبين؟";
+
+      if (
+        !confirm(
+          confirmText
+        )
+      ) {
+        return;
+      }
+
+      const btn = document.querySelector(
+        'button[onclick="sendBroadcast()"]'
+      );
+      const originalLabel = btn
+        ? btn.textContent
+        : "";
+
+      if (btn) {
+        btn.disabled = true;
+      }
+
+      try {
+        const payload = {
+          message,
+        };
+
+        if (
+          broadcastPhotoBase64
+        ) {
+          payload.photoBase64 =
+            broadcastPhotoBase64;
+
+          payload.photoMime =
+            broadcastPhotoMime;
+        }
+
+        const linkUrl = document
+          .getElementById("broadcastLinkUrl")
+          .value.trim();
+
+        const linkText = document
+          .getElementById("broadcastLinkText")
+          .value.trim();
+
+        if (linkUrl) {
+          payload.linkUrl = linkUrl;
+          payload.linkText = linkText || "فتح الرابط";
+        }
+
+        const startResult =
+          await apiCall(
+            "/api/admin/broadcast",
+            "POST",
+            payload
+          );
+
+        if (!startResult.success) {
+          // لو فيه إرسال "شغال" عالق من محاولة سابقة تعلّقت بالشبكة،
+          // نعطي الأدمن خيار يلغيه يدوياً بدل ما ينتظر التصفير التلقائي
+          const isBusyError =
+            typeof startResult.error === "string" &&
+            startResult.error.includes("شغال حالياً");
+
+          if (
+            isBusyError &&
+            confirm(
+              (startResult.error || "") +
+              "\n\nإذا متأكد إنه ما فيه إرسال حقيقي شغال (مثلاً علق بسبب مشكلة شبكة)، اضغط OK لإلغائه والبدء من جديد."
+            )
+          ) {
+            const forcedResult =
+              await apiCall(
+                "/api/admin/broadcast",
+                "POST",
+                { ...payload, forceReset: true }
+              );
+
+            if (!forcedResult.success) {
+              alert(
+                forcedResult.error ||
+                "فشل بدء الإرسال."
+              );
+
+              return;
+            }
+          } else {
+            alert(
+              startResult.error ||
+              "فشل بدء الإرسال."
+            );
+
+            return;
+          }
+        }
+
+        // السيرفر يرد فوراً ببدء الإرسال ويكمل بالخلفية، فنستعلم كل
+        // ثانية ونص عن حالة التقدم لين يخلص - بدون ما نحتاج نضل
+        // مسؤولين إحنا عن تكرار الإرسال من المتصفح
+        let done = false;
+
+        while (!done) {
+          await new Promise((resolve) =>
+            setTimeout(resolve, 1500)
+          );
+
+          const status =
+            await apiCall(
+              "/api/admin/broadcast",
+              "GET"
+            );
+
+          if (!status.success) {
+            alert(
+              status.error ||
+              "تعذر متابعة حالة الإرسال."
+            );
+
+            return;
+          }
+
+          done = !!status.done;
+
+          if (btn && !done) {
+            btn.textContent = `جاري الإرسال... ${status.sentCount}/${status.totalPlayers}`;
+          }
+
+          if (done) {
+            if (status.error) {
+              alert(
+                `توقف الإرسال بسبب خطأ: ${status.error}\nتم الإرسال لـ ${status.sentCount} من أصل ${status.totalPlayers}.`
+              );
+            } else {
+              const failedNote =
+                status.failedCount > 0
+                  ? ` (فشل ${status.failedCount} - غالباً مستخدمين حاظرين البوت)`
+                  : "";
+
+              alert(
+                `تم الإرسال بنجاح إلى ${status.sentCount} من أصل ${status.totalPlayers} مستخدم.${failedNote}`
+              );
+            }
+
+            textarea.value = "";
+            clearBroadcastPhoto();
+            document.getElementById("broadcastLinkUrl").value = "";
+            document.getElementById("broadcastLinkText").value = "";
+          }
+        }
+      } catch (err) {
+        alert(
+          err.message ||
+          "تعذر الاتصال بالسيرفر."
+        );
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = originalLabel;
+        }
+      }
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(
+          /&/g,
+          "&amp;"
+        )
+        .replace(
+          /</g,
+          "&lt;"
+        )
+        .replace(
+          />/g,
+          "&gt;"
+        )
+        .replace(
+          /"/g,
+          "&quot;"
+        )
+        .replace(
+          /'/g,
+          "&#039;"
+        );
+    }
+
+    function copyWalletAddress(btn) {
+      const text =
+        btn.getAttribute(
+          "data-copy"
+        ) || "";
+
+      if (!text) return;
+
+      const done = () => {
+        const original =
+          btn.textContent;
+
+        btn.textContent = "تم النسخ ✓";
+        btn.classList.add("copied");
+
+        window.setTimeout(() => {
+          btn.textContent = original;
+          btn.classList.remove(
+            "copied"
+          );
+        }, 1500);
+      };
+
+      if (
+        navigator.clipboard &&
+        navigator.clipboard.writeText
+      ) {
+        navigator.clipboard
+          .writeText(text)
+          .then(done)
+          .catch(() => {
+            alert(
+              "تعذر نسخ العنوان."
+            );
+          });
+
+        return;
+      }
+
+      // احتياطي لو الكليبورد API مو متوفرة
+      const helper =
+        document.createElement(
+          "textarea"
+        );
+
+      helper.value = text;
+      helper.style.position =
+        "fixed";
+      helper.style.opacity = "0";
+
+      document.body.appendChild(
+        helper
+      );
+
+      helper.focus();
+      helper.select();
+
+      try {
+        document.execCommand(
+          "copy"
+        );
+        done();
+      } catch {
+        alert(
+          "تعذر نسخ العنوان."
+        );
+      }
+
+      document.body.removeChild(
+        helper
+      );
+    }
+
+    function escapeJs(value) {
+      return String(value)
+        .replace(
+          /\\/g,
+          "\\\\"
+        )
+        .replace(
+          /'/g,
+          "\\'"
+        )
+        .replace(
+          /"/g,
+          '\\"'
+        )
+        .replace(
+          /\n/g,
+          "\\n"
+        )
+        .replace(
+          /\r/g,
+          "\\r"
+        );
+    }
+  </script>
+</body>
+</html>
