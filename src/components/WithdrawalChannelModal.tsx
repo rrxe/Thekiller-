@@ -70,8 +70,8 @@ export default function WithdrawalChannelModal({
         >
           <span className="withdrawal-channel-link-icon">↗</span>
           <span>
-            <strong>SLYMintX_payment</strong>
-            <small>t.me / official withdrawal channel</small>
+            <strong>ComicX Payment</strong>
+            <small>Official payment channel</small>
           </span>
         </a>
 
