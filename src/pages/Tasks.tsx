@@ -121,6 +121,11 @@ export default function Tasks({ onRewardCoins }: Props) {
       })}</div>
 
       <section className="tasks-feed">
+        {(activeCategory === "all" || activeCategory === "other") && <article className="task-item adsgram-placement">
+          <div className="task-index">AD</div><div className="task-glyph-wrap"><TaskGlyph /></div>
+          <div className="task-content"><div className="task-meta-row"><span>Adsgram ads</span><strong>+AD</strong></div><h2>Adsgram ads</h2><p>Ad placement - Tasks page</p></div>
+          <div className="task-side"><span>AD</span><button type="button">WATCH</button></div>
+        </article>}
         {loadingTasks ? <div className="task-empty"><span className="empty-spinner"/>{t("tasks.loadingTasks")}</div> : visibleTasks.length === 0 ? <div className="task-empty"><strong>—</strong>{t("tasks.noTasks")}</div> : visibleTasks.map((task, index) => {
           const progress = progressById[String(task.id)] || { completed: 0, max_completions: Math.max(1, Number(task.max_completions || 1)) };
           const openedAt = openedAtById[String(task.id)]; const opened = Boolean(openedAt); const waitedEnough = opened && Date.now() - openedAt >= CLAIM_DELAY_MS; const claimedAll = progress.completed >= progress.max_completions; const opening = Boolean(openingIds[String(task.id)]); const claiming = Boolean(claimingIds[String(task.id)]);
