@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#000000" />
+<title>ODDXS — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
+<style>
+:root{--bg:#000000;--card:#080d13;--card2:#101b29;--line:rgba(115,158,201,.2);--ink:#FFE8DB;--paper:#FFE8DB;--mut:rgba(255,232,219,.56);--acc:#5682B1;--blue:#739EC9;--loss:#739EC9;--warn:#9bb8d5;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,"Noto Sans Arabic",system-ui,sans-serif;font-size:13px;min-width:320px}button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}.ltr{direction:ltr;unicode-bidi:plaintext;text-align:left}.num{font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate}td.num,th.num{text-align:right}.stat b{text-align:right}.hidden{display:none!important}
+#login{min-height:100dvh;display:grid;place-items:center;padding:20px;background:#000}.login-box{width:min(100%,390px);background:var(--card);border:1px solid var(--line);border-radius:5px;padding:27px}.logo{font-weight:900;font-size:27px;letter-spacing:2px}.logo b{color:var(--blue)}.login-box p{color:var(--mut);margin:7px 0 18px}
+input,select,textarea{width:100%;background:#030609;border:1px solid var(--line);border-radius:3px;padding:11px 12px;outline:none}input:focus,select:focus,textarea:focus{border-color:var(--blue)}textarea{min-height:96px;resize:vertical}.btn{border:1px solid var(--acc);border-radius:3px;padding:10px 14px;font-weight:800;background:var(--acc);color:#000}.btn.soft{background:#0a1119;color:var(--ink);border-color:var(--line)}.btn.red{background:#172538;color:var(--paper);border-color:var(--line)}.btn.green{background:#15263a;color:var(--paper);border-color:var(--acc)}.btn.sm{padding:6px 10px;font-size:11px}.btn:disabled{opacity:.45;cursor:not-allowed}
+.top{position:sticky;top:0;z-index:20;background:rgba(0,0,0,.97);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:12px 18px}.top .sp{flex:1}.pill{font-size:10px;padding:4px 9px;border-radius:3px;background:#101a27;border:1px solid var(--line);color:var(--mut)}.shell{max-width:1320px;margin:auto;display:grid;grid-template-columns:220px 1fr;gap:18px;padding:18px}nav.side{position:sticky;top:70px;align-self:start;background:var(--card);border:1px solid var(--line);border-radius:4px;padding:7px}nav.side button{display:flex;gap:10px;align-items:center;width:100%;text-align:start;background:none;border:0;border-radius:3px;padding:11px 12px;color:var(--mut);font-weight:700}nav.side button.on{background:#13243a;color:var(--ink);box-shadow:inset 2px 0 0 var(--blue)}nav.side .badge{margin-inline-start:auto;background:var(--blue);color:#000;border-radius:3px;font-size:10px;padding:1px 7px}
+h1{font-size:22px;margin:0 0 14px;letter-spacing:-.4px}h2{font-size:15px;margin:0 0 12px}.grid{display:grid;gap:12px}.g4{grid-template-columns:repeat(4,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:1fr 1fr}.card{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:16px;min-width:0}.stat span{display:block;color:var(--mut);font-size:11px}.stat b{display:block;font-size:24px;margin-top:6px;letter-spacing:-.5px}.stat small{color:var(--mut);font-size:10px}.acc{color:var(--blue)}.loss{color:var(--blue)}.warn{color:var(--warn)}
+table{width:100%;border-collapse:collapse}th,td{padding:10px 8px;border-top:1px solid var(--line);text-align:start;font-size:12px;vertical-align:middle}th{color:var(--mut);font-weight:700;font-size:10px;border-top:0}tr.click{cursor:pointer}tr.click:hover{background:#739EC90A}.tw{overflow:auto}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.row.sp{justify-content:space-between}.tag{display:inline-block;padding:3px 8px;border-radius:3px;font-size:10px;font-weight:800;background:#101a27;color:var(--mut)}.tag.paid,.tag.win{background:#17283b;color:var(--paper)}.tag.rejected,.tag.lose{background:#101b29;color:var(--blue)}.tag.pending,.tag.open{background:#172536;color:var(--warn)}.tag.gram{background:#122238;color:var(--blue)}.tag.binance{background:#172536;color:var(--paper)}
+.wd{display:grid;grid-template-columns:1.3fr 1.4fr auto;gap:14px;align-items:center;padding:14px 0;border-top:1px solid var(--line)}.wd:first-child{border-top:0}.wd small{color:var(--mut);display:block;margin-top:3px}.copy{background:#0b131e;border:1px solid var(--line);border-radius:3px;padding:4px 8px;font-size:10px;color:var(--mut)}.code{font-family:ui-monospace,Menlo,monospace;font-size:11px;word-break:break-all}.bars{display:flex;align-items:flex-end;gap:10px;height:150px}.bars div.col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}.bars .b{display:flex;gap:3px;align-items:flex-end;height:110px;width:100%;justify-content:center}.bars i{display:block;width:34%;border-radius:1px 1px 0 0;min-height:2px;background:var(--acc)}.bars small{color:var(--mut);font-size:9px}.fields{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}.f label{display:block;color:var(--mut);font-size:11px;margin-bottom:5px}.sw{display:flex;align-items:center;gap:8px;background:#030609;border:1px solid var(--line);border-radius:3px;padding:10px 12px}.sw input{width:auto}.modal{position:fixed;inset:0;background:#000c;display:none;align-items:center;justify-content:center;padding:16px;z-index:50}.modal.open{display:flex}.modal .box{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:18px;width:min(100%,720px);max-height:92vh;overflow:auto}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#101a27;border:1px solid var(--acc);border-radius:3px;padding:11px 16px;z-index:99}.toast.err{border-color:var(--blue);color:var(--paper)}.empty{color:var(--mut);text-align:center;padding:26px}.pager{display:flex;gap:8px;align-items:center;justify-content:center;margin-top:12px;color:var(--mut)}
+@media(max-width:900px){.shell{grid-template-columns:1fr;padding:12px}nav.side{position:static;display:flex;overflow:auto;gap:4px}nav.side button{width:auto;white-space:nowrap}.g4{grid-template-columns:1fr 1fr}.g3,.g2{grid-template-columns:1fr}.wd{grid-template-columns:1fr}.top{padding-inline:12px}}
+</style>
+</head>
+<body>
+<div id="login">
+  <form class="login-box" id="loginForm">
+    <div class="logo">ODD<b>X</b>S</div>
+    <p>لوحة التحكم — أدخل ADMIN_SECRET</p>
+    <input id="secret" type="password" class="ltr" placeholder="ADMIN_SECRET" autocomplete="current-password" />
+    <button class="btn" style="width:100%;margin-top:12px">دخول</button>
+    <div id="loginErr" class="loss" style="margin-top:10px;font-size:13px"></div>
+  </form>
+</div>
+
+<div id="app" class="hidden">
+  <div class="top">
+    <div class="logo" style="font-size:20px">ODD<b>X</b>S</div><span class="pill">Admin</span>
+    <div class="sp"></div><span class="pill" id="meRole"></span>
+    <button class="btn soft sm" id="refreshBtn">تحديث ↻</button>
+    <button class="btn soft sm" id="logoutBtn">خروج</button>
+  </div>
+  <div class="shell">
+    <nav class="side" id="nav"></nav>
+    <main id="main"></main>
+  </div>
+</div>
+
+<div class="modal" id="modal"><div class="box" id="modalBox"></div></div>
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const pts = (cp) => (Number(cp || 0) / 100).toLocaleString('en', { maximumFractionDigits: 2, minimumFractionDigits: 2 });
+const dt = (s) => s ? new Date(s).toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' }) : '—';
+let PPU = 2000, ME = null, tab = 'dash', SECRET = '';
+const usd = (cp) => '$' + (Number(cp || 0) / 100 / PPU).toFixed(3);
+const who = (r) => `${esc(r.first_name || '')} ${r.username ? '<span class="ltr acc">@' + esc(r.username) + '</span>' : ''}<small class="ltr">${esc(r.telegram_id)}</small>`;
+
+function toast(m, err) { const t = document.createElement('div'); t.className = 'toast' + (err ? ' err' : ''); t.textContent = m; document.body.appendChild(t); setTimeout(() => t.remove(), 3200); }
+async function api(action, body = {}) {
+  const headers = { 'content-type': 'application/json', 'x-admin-secret': SECRET };
+  const tg = window.Telegram?.WebApp?.initData; if (tg) headers['x-telegram-init-data'] = tg;
+  const r = await fetch('/api/admin', { method: 'POST', headers, body: JSON.stringify({ action, ...body }) });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.error || 'Request failed (' + r.status + ')');
+  return j;
+}
+const guard = (fn) => async (...a) => { try { return await fn(...a); } catch (e) { toast(e.message, true); } };
+function modal(html) { $('#modalBox').innerHTML = html; $('#modal').classList.add('open'); }
+function closeModal() { $('#modal').classList.remove('open'); }
+$('#modal').addEventListener('click', (e) => { if (e.target.id === 'modal') closeModal(); });
+document.addEventListener('click', (e) => { const c = e.target.closest('[data-copy]'); if (c) { navigator.clipboard?.writeText(c.dataset.copy); toast('تم النسخ ✓'); } });
+
+/* ───────── login ───────── */
+$('#loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault(); SECRET = $('#secret').value.trim(); $('#loginErr').textContent = '';
+  try { const j = await api('stats'); ME = j.me; sessionStorage.setItem('oddxs_admin', SECRET); start(j); }
+  catch (err) { $('#loginErr').textContent = err.message; SECRET = ''; }
+});
+$('#logoutBtn').onclick = () => { sessionStorage.removeItem('oddxs_admin'); location.reload(); };
+$('#refreshBtn').onclick = () => render();
+(async () => { SECRET = sessionStorage.getItem('oddxs_admin') || ''; if (SECRET || window.Telegram?.WebApp?.initData) { try { const j = await api('stats'); ME = j.me; start(j); } catch { /* show login */ } } })();
+
+const TABS = [['dash', '📊', 'لوحة التحكم', 'dashboard'], ['wd', '💸', 'السحوبات', 'withdrawals'], ['users', '👥', 'المستخدمون', 'users'], ['tasks', '✅', 'المهام', 'tasks'], ['rounds', '🎲', 'الجولات', 'rounds'], ['ledger', '📒', 'السجل المالي', 'ledger'], ['force', '🔒', 'الاشتراك الإجباري', 'settings'], ['settings', '⚙️', 'الإعدادات', 'settings'], ['admins', '🛡️', 'المشرفون', 'moderators'], ['bc', '📣', 'بث رسالة', 'broadcast'], ['audit', '🧾', 'سجل التدقيق', 'audit']];
+function start(first) {
+  $('#login').classList.add('hidden'); $('#app').classList.remove('hidden');
+  $('#meRole').textContent = ME.role === 'owner' ? 'Owner' : 'Moderator';
+  api('get_settings').then((j) => { PPU = Number(j.settings.points_per_usd) || 2000; }).catch(() => {});
+  const perms = ME.permissions || [];
+  $('#nav').innerHTML = TABS.filter((t) => ME.role === 'owner' || t[3] === 'dashboard' || perms.includes(t[3])).map((t) => `<button data-t="${t[0]}">${t[1]} ${t[2]}<span class="badge hidden" id="b-${t[0]}"></span></button>`).join('');
+  $('#nav').onclick = (e) => { const b = e.target.closest('button'); if (b) { tab = b.dataset.t; render(); } };
+  render(first);
+}
+const state = { wd: { status: 'pending', offset: 0 }, users: { q: '', sort: 'new', offset: 0 }, rounds: { game: '', status: '', tid: '', offset: 0 }, ledger: { kind: '', tid: '', offset: 0 }, audit: { offset: 0 } };
+async function render(pre) {
+  document.querySelectorAll('#nav button').forEach((b) => b.classList.toggle('on', b.dataset.t === tab));
+  const m = $('#main'); m.innerHTML = '<div class="empty">جاري التحميل…</div>';
+  try { await VIEWS[tab](m, pre); } catch (e) { m.innerHTML = `<div class="empty loss">${esc(e.message)}</div>`; }
+}
+const pager = (st, total, per, cb) => `<div class="pager"><button class="btn soft sm" ${st.offset <= 0 ? 'disabled' : ''} onclick="${cb}(-1)">السابق</button><span>${total ? st.offset + 1 : 0}–${Math.min(total, st.offset + per)} / ${total}</span><button class="btn soft sm" ${st.offset + per >= total ? 'disabled' : ''} onclick="${cb}(1)">التالي</button></div>`;
+
+/* ───────── views ───────── */
+const VIEWS = {
+  async dash(m, pre) {
+    const s = (pre || await api('stats')).stats; const profit = s.wagered_cp - s.payouts_cp;
+    const rtp = s.wagered_cp ? (s.payouts_cp / s.wagered_cp * 100).toFixed(2) : '—';
+    const card = (l, v, sub = '', cls = '') => `<div class="card stat"><span>${l}</span><b class="num ${cls}">${v}</b><small>${sub}</small></div>`;
+    const maxv = Math.max(1, ...s.daily.map((d) => Math.max(d.wagered_cp, d.payouts_cp)));
+    const gn = { crash: 'Crash', mines: 'Mines', dice: 'Dice', blackjack: 'Blackjack' };
+    m.innerHTML = `<h1>لوحة التحكم</h1>
+    <div class="grid g4">
+      ${card('المستخدمون', s.users, `جدد اليوم ${s.new_today} · نشطون 24س ${s.active_24h}`)}
+      ${card('متصلون الآن (5د)', s.online_5m, `محظورون ${s.banned}`, 'acc')}
+      ${card('إعلانات اليوم', s.ads_today, `الإجمالي ${s.ads_total}`)}
+      ${card('جولات مفتوحة', s.open_rounds, 'Mines/Crash/BJ لم تُنهَ')}
+      ${card('أرباح المنصة (نقاط)', pts(profit), `RTP الفعلي ${rtp}%`, profit >= 0 ? 'acc' : 'loss')}
+      ${card('إجمالي الرهانات', pts(s.wagered_cp), usd(s.wagered_cp))}
+      ${card('التزامات (أرصدة المستخدمين)', pts(s.liabilities_cp), usd(s.liabilities_cp), 'warn')}
+      ${card('أرصدة USDT الداخلية', Number(s.usdt_balance_total || 0).toFixed(4) + ' USDT', `تحويلات مكتملة ${s.exchange_count || 0}`, 'acc')}
+      ${card('إجمالي USDT المحوّل', Number(s.exchange_usdt_total || 0).toFixed(4) + ' USDT', 'Exchange volume')}
+      ${card('مكافآت الإعلانات الممنوحة', pts(s.ad_rewards_cp), usd(s.ad_rewards_cp))}
+      ${card('سحوبات معلّقة', s.wd_pending, `${pts(s.wd_pending_cp)} نقطة · ${usd(s.wd_pending_cp)}`, s.wd_pending ? 'warn' : '')}
+      ${card('تم دفعه', '$' + Number(s.wd_paid_usd).toFixed(2), `${pts(s.wd_paid_cp)} نقطة`)}
+    </div>
+    <div class="grid g2" style="margin-top:12px">
+      <div class="card"><h2>آخر 7 أيام — رهانات <span class="acc">■</span> / مدفوعات <span class="loss">■</span></h2>
+        <div class="bars">${s.daily.map((d) => `<div class="col"><div class="b"><i style="height:${d.wagered_cp / maxv * 100}%;background:var(--acc)" title="${pts(d.wagered_cp)}"></i><i style="height:${d.payouts_cp / maxv * 100}%;background:var(--loss)" title="${pts(d.payouts_cp)}"></i></div><small>${d.day.slice(5)}</small><small>👤${d.users} 📺${d.ads}</small></div>`).join('')}</div></div>
+      <div class="card"><h2>الألعاب</h2><div class="tw"><table><tr><th>اللعبة</th><th>جولات</th><th>رهانات</th><th>أرباح المنصة</th><th>RTP</th></tr>
+        ${Object.entries(s.games).map(([g, v]) => `<tr><td>${gn[g] || g}</td><td class="num">${v.rounds}</td><td class="num">${pts(v.wagered_cp)}</td><td class="num ${v.wagered_cp - v.payouts_cp >= 0 ? 'acc' : 'loss'}">${pts(v.wagered_cp - v.payouts_cp)}</td><td class="num">${(v.payouts_cp / v.wagered_cp * 100).toFixed(1)}%</td></tr>`).join('') || '<tr><td colspan="5" class="empty">لا جولات بعد</td></tr>'}</table></div></div>
+    </div>`;
+    const b = $('#b-wd'); if (b && s.wd_pending) { b.textContent = s.wd_pending; b.classList.remove('hidden'); }
+  },
+
+  async wd(m) {
+    const st = state.wd; const j = await api('withdrawals', { status: st.status, offset: st.offset, limit: 20 });
+    const sel = (v, l) => `<button class="btn ${st.status === v ? '' : 'soft'} sm" onclick="wdFilter('${v}')">${l}</button>`;
+    m.innerHTML = `<h1>السحوبات</h1><div class="row" style="margin-bottom:12px">${sel('pending', 'معلّقة')}${sel('paid', 'مدفوعة')}${sel('rejected', 'مرفوضة')}${sel('', 'الكل')}</div>
+    <div class="card">${j.rows.length ? j.rows.map((w) => `<div class="wd">
+      <div><b>${who(w)}</b><small>سجّل ${dt(w.user_created_at)} · إعلانات ${w.ads_total} · جولات ${w.rounds_played}</small><small>رهان ${pts(w.total_wagered_cp)} · ربح ${pts(w.total_won_cp)} · رصيد ${pts(w.balance_cp)}</small></div>
+      <div><span class="tag ${w.method}">${w.method === 'gram' ? 'Gram' : 'Binance ID'}</span> <span class="tag ${w.status}">${{ pending: 'معلّق', paid: 'مدفوع', rejected: 'مرفوض' }[w.status]}</span>
+        <div style="margin:8px 0"><b class="num" style="font-size:18px">${pts(w.amount_cp)}</b> نقطة ≈ <b class="acc">$${Number(w.usd).toFixed(3)}</b></div>
+        <div class="code ltr">${esc(w.target)}</div><button class="copy" data-copy="${esc(w.target)}">نسخ العنوان</button>
+        <small>${dt(w.created_at)}${w.reviewed_at ? ' · روجع ' + dt(w.reviewed_at) + ' بواسطة ' + esc(w.reviewed_by) : ''}${w.tx_ref ? ' · Tx: <span class="ltr">' + esc(w.tx_ref) + '</span>' : ''}${w.admin_note ? ' · ' + esc(w.admin_note) : ''}</small></div>
+      <div class="row">${w.status === 'pending' ? `<button class="btn green sm" onclick="wdReview('${w.id}','approve')">تم الدفع ✓</button><button class="btn red sm" onclick="wdReview('${w.id}','reject')">رفض</button>` : ''}<button class="btn soft sm" onclick="userDetail('${w.telegram_id}')">المستخدم</button></div></div>`).join('') : '<div class="empty">لا توجد سحوبات</div>'}
+    ${pager(st, j.total, 20, 'wdPage')}</div>`;
+  },
+
+  async users(m) {
+    const st = state.users; const j = await api('users', { query: st.q, sort: st.sort, offset: st.offset, limit: 25 });
+    m.innerHTML = `<h1>المستخدمون</h1><div class="row" style="margin-bottom:12px"><input id="uq" style="max-width:300px" class="ltr" placeholder="ID / username / اسم" value="${esc(st.q)}"/>
+      <select id="us" style="max-width:170px"><option value="new">الأحدث</option><option value="balance">الأعلى رصيداً</option><option value="wagered">الأكثر رهاناً</option><option value="seen">آخر ظهور</option></select><button class="btn sm" id="ugo">بحث</button></div>
+    <div class="card tw"><table><tr><th>المستخدم</th><th>الرصيد</th><th>إعلانات</th><th>رهانات</th><th>ربح/خسارة</th><th>دعوات</th><th>آخر ظهور</th><th></th></tr>
+      ${j.rows.map((u) => `<tr class="click" onclick="userDetail('${u.telegram_id}')"><td>${who(u)}</td><td class="num">${pts(u.balance_cp)}</td><td class="num">${u.ads_total}</td><td class="num">${pts(u.total_wagered_cp)}</td>
+      <td class="num ${u.total_won_cp - u.total_wagered_cp >= 0 ? 'acc' : 'loss'}">${pts(u.total_won_cp - u.total_wagered_cp)}</td><td class="num">${u.referral_count}</td><td>${dt(u.last_seen_at)}</td><td>${u.is_banned ? '<span class="tag lose">محظور</span>' : ''}</td></tr>`).join('') || '<tr><td colspan="8" class="empty">لا نتائج</td></tr>'}</table>${pager(st, j.total, 25, 'userPage')}</div>`;
+    $('#us').value = st.sort;
+    const go = () => { st.q = $('#uq').value.trim(); st.sort = $('#us').value; st.offset = 0; render(); };
+    $('#ugo').onclick = go; $('#uq').onkeydown = (e) => e.key === 'Enter' && go(); $('#us').onchange = go;
+  },
+
+  async rounds(m) {
+    const st = state.rounds; const j = await api('rounds', { game: st.game, status: st.status, telegramId: st.tid, offset: st.offset, limit: 30 });
+    m.innerHTML = `<h1>الجولات (كل رهان)</h1><div class="row" style="margin-bottom:12px"><select id="rg" style="max-width:150px"><option value="">كل الألعاب</option><option>crash</option><option>mines</option><option>dice</option><option>blackjack</option></select>
+      <select id="rs" style="max-width:150px"><option value="">كل الحالات</option><option value="open">مفتوحة</option><option value="settled">منتهية</option></select><input id="rt" class="ltr" style="max-width:200px" placeholder="Telegram ID" value="${esc(st.tid)}"/><button class="btn sm" id="rgo">تطبيق</button></div>
+    <div class="card tw"><table><tr><th>الوقت</th><th>المستخدم</th><th>اللعبة</th><th>الرهان</th><th>الناتج</th><th>×</th><th>الحالة</th><th>Provably fair</th></tr>
+    ${j.rows.map((r) => `<tr><td>${dt(r.created_at)}</td><td class="click" onclick="userDetail('${r.telegram_id}')">${who(r)}</td><td>${esc(r.game)}</td><td class="num">${pts(r.stake_cp)}</td><td class="num ${r.payout_cp > r.stake_cp ? 'acc' : r.payout_cp < r.stake_cp ? 'loss' : ''}">${pts(r.payout_cp)}</td><td class="num">${Number(r.mult).toFixed(2)}</td><td><span class="tag ${r.status === 'open' ? 'open' : r.payout_cp > r.stake_cp ? 'win' : 'lose'}">${r.status === 'open' ? 'مفتوحة' : r.payout_cp > r.stake_cp ? 'ربح' : r.payout_cp === r.stake_cp ? 'تعادل' : 'خسارة'}</span></td>
+      <td class="code ltr" style="max-width:220px" title="seed: ${esc(r.server_seed || 'hidden until settled')}&#10;client: ${esc(r.client_seed)}&#10;nonce: ${r.nonce}">#${r.nonce} ${esc(r.commit.slice(0, 12))}…</td></tr>`).join('') || '<tr><td colspan="8" class="empty">لا جولات</td></tr>'}</table>${pager(st, j.total, 30, 'roundPage')}</div>`;
+    $('#rg').value = st.game; $('#rs').value = st.status;
+    $('#rgo').onclick = () => { st.game = $('#rg').value; st.status = $('#rs').value; st.tid = $('#rt').value.trim(); st.offset = 0; render(); };
+  },
+
+  async ledger(m) {
+    const st = state.ledger; const j = await api('ledger', { kind: st.kind, telegramId: st.tid, offset: st.offset, limit: 50 });
+    const kinds = ['welcome', 'task', 'referral', 'bet', 'payout', 'exchange', 'withdraw', 'withdraw_refund', 'admin'];
+    m.innerHTML = `<h1>السجل المالي</h1><div class="row" style="margin-bottom:12px"><select id="lk" style="max-width:190px"><option value="">كل الأنواع</option>${kinds.map((k) => `<option>${k}</option>`).join('')}</select><input id="lt" class="ltr" style="max-width:200px" placeholder="Telegram ID" value="${esc(st.tid)}"/><button class="btn sm" id="lgo">تطبيق</button></div>
+    <div class="card tw"><table><tr><th>#</th><th>الوقت</th><th>المستخدم</th><th>النوع</th><th>التغيير</th><th>الرصيد بعده</th><th>مرجع</th></tr>
+    ${j.rows.map((l) => `<tr><td class="num">${l.id}</td><td>${dt(l.created_at)}</td><td>${who(l)}</td><td>${esc(l.kind)}${l.note ? ' <small>(' + esc(l.note) + ')</small>' : ''}</td><td class="num ${l.delta_cp >= 0 ? 'acc' : 'loss'}">${l.delta_cp >= 0 ? '+' : ''}${pts(l.delta_cp)}</td><td class="num">${pts(l.balance_after_cp)}</td><td class="code ltr">${esc((l.ref || '').slice(0, 20))}</td></tr>`).join('') || '<tr><td colspan="7" class="empty">فارغ</td></tr>'}</table>${pager(st, j.total, 50, 'ledgerPage')}</div>`;
+    $('#lk').value = st.kind; $('#lgo').onclick = () => { st.kind = $('#lk').value; st.tid = $('#lt').value.trim(); st.offset = 0; render(); };
+  },
+
+  async settings(m) {
+    const S = (await api('get_settings')).settings; PPU = Number(S.points_per_usd) || PPU;
+    const G = [
+      ['عام', [['app_name', 'اسم التطبيق', 't'], ['maintenance_mode', 'وضع الصيانة (يوقف اللعب)', 'b'], ['registration_enabled', 'فتح التسجيل', 'b'], ['payment_channel', 'قناة إثباتات الدفع (@channel أو -100…) — يُرسل لها إعلان كل سحب مقبول', 't'], ['force_sub_enabled', 'تفعيل الاشتراك الإجباري', 'b'], ['support_username', 'يوزر الدعم', 't'], ['welcome_bonus_pts', 'مكافأة الترحيب (نقطة)', 'n']]],
+      ['الإعلانات والمكافآت', [['adsgram_task_reward_pts', 'نقاط مهمة AdsGram (task-59461)', 'n'], ['adsgram_int_reward_pts', 'نقاط كل إعلان int (الزر الرئيسي)', 'n'], ['adsgram_int_min_seconds', 'أقل مدة مشاهدة (ث)', 'n'], ['adsgram_int_cooldown_seconds', 'فاصل بين الإعلانات (ث)', 'n'], ['adsgram_int_daily_cap', 'عدد الإعلانات اليومي (العداد 0/N)', 'n'], ['referral_reward_pts', 'سعر الإحالة: نقاط المكافأة للداعي', 'n'], ['referral_required_tasks', 'عدد المهام المطلوبة من المدعو لقبول الإحالة (0 = بدون شرط)', 'n'], ['referral_ads_required', 'عدد الإعلانات المطلوبة من المدعو لقبول الإحالة (0 = بدون شرط)', 'n']]],
+      ['الألعاب', [['game_crash_enabled', 'Crash مفعّل', 'b'], ['game_mines_enabled', 'Mines مفعّل', 'b'], ['game_dice_enabled', 'Dice مفعّل', 'b'], ['game_blackjack_enabled', 'Blackjack مفعّل', 'b'], ['min_bet_pts', 'أقل رهان', 'n'], ['max_bet_pts', 'أعلى رهان', 'n'], ['max_payout_pts', 'أعلى ربح للجولة الواحدة', 'n']]],
+      ['السحب', [['points_per_usd', 'نقطة لكل 1 USDT (2000 = 1 USDT)', 'n'], ['min_withdrawal_pts', 'أقل سحب (200 نقطة = 0.10 USDT)', 'n'], ['max_withdrawal_pts', 'أعلى سحب (600 نقطة = 0.30 USDT)', 'n'], ['withdrawal_ads_required', 'إعلانات مطلوبة قبل السحب', 'n'], ['withdrawal_cooldown_hours', 'فاصل بين السحوبات (ساعة)', 'n'], ['gram_enabled', 'سحب Gram مفعّل', 'b'], ['binance_enabled', 'سحب Binance ID مفعّل', 'b'], ['gram_label', 'اسم شبكة Gram', 't'], ['payment_note', 'ملاحظة تظهر للمستخدم في نافذة السحب', 't']]],
+      ['تحويل النقاط إلى USDT', [['exchange_enabled', 'تفعيل التحويل', 'b'], ['exchange_points_per_usdt', 'عدد النقاط مقابل 1 USDT', 'n'], ['exchange_min_pts', 'أقل تحويل (نقطة)', 'n'], ['exchange_max_pts', 'أعلى تحويل (نقطة)', 'n']]],
+    ];
+    const fld = ([k, l, t]) => t === 'b' ? `<div class="f"><label>${l}</label><label class="sw"><input type="checkbox" data-k="${k}" ${S[k] === true ? 'checked' : ''}/> مفعّل</label></div>` : `<div class="f"><label>${l}</label><input data-k="${k}" data-t="${t}" ${t === 'n' ? 'type="number" step="any"' : ''} value="${esc(S[k])}" class="${t === 't' ? '' : 'ltr'}"/></div>`;
+    m.innerHTML = `<h1>الإعدادات</h1>${G.map(([t, f]) => `<div class="card" style="margin-bottom:12px"><h2>${t}</h2><div class="fields">${f.map(fld).join('')}</div></div>`).join('')}
+    <div class="card" style="margin-bottom:12px"><h2>رسالة البوت (/start)</h2><div class="fields" style="grid-template-columns:1fr 1fr"><div class="f"><label>العربية</label><textarea data-k="welcome_text_ar" data-t="t">${esc(S.welcome_text_ar)}</textarea></div><div class="f"><label>English</label><textarea data-k="welcome_text_en" data-t="t" class="ltr">${esc(S.welcome_text_en)}</textarea></div></div></div>
+    <p class="pill" style="display:inline-block;margin-bottom:10px">نسبة RTP ثابتة في الكود: Crash/Mines/Dice = 90% · Blackjack ≈ 88% (معلنة للاعبين)</p><br/><button class="btn" id="saveS">حفظ الإعدادات</button>`;
+    $('#saveS').onclick = guard(async () => {
+      const out = {};
+      document.querySelectorAll('[data-k]').forEach((el) => { out[el.dataset.k] = el.type === 'checkbox' ? el.checked : el.dataset.t === 'n' ? Number(el.value) : el.value; });
+      await api('save_settings', { settings: out }); toast('تم الحفظ ✓');
+    });
+  },
+
+  async admins(m) {
+    const j = await api('admins');
+    m.innerHTML = `<h1>المشرفون</h1><div class="card" style="margin-bottom:12px"><h2>إضافة / تعديل مشرف</h2><div class="fields"><div class="f"><label>Telegram ID</label><input id="mid" class="ltr"/></div></div>
+      <div class="row" style="margin:12px 0">${j.permissions.map((p) => `<label class="sw"><input type="checkbox" class="mp" value="${p}"/> ${p}</label>`).join('')}</div><button class="btn" id="msave">حفظ</button></div>
+    <div class="card tw"><table><tr><th>المشرف</th><th>الدور</th><th>الصلاحيات</th><th></th></tr>${j.admins.map((a) => `<tr><td>${who(a)}</td><td>${a.role}</td><td>${(a.permissions || []).map((p) => `<span class="tag">${esc(p)}</span>`).join(' ') || '—'}</td><td>${a.role === 'moderator' ? `<button class="btn red sm" onclick="delAdmin('${esc(a.telegram_id)}')">حذف</button>` : ''}</td></tr>`).join('') || '<tr><td colspan="4" class="empty">لا مشرفين (المالك يدخل بـ ADMIN_SECRET)</td></tr>'}</table></div>`;
+    $('#msave').onclick = guard(async () => { await api('save_admin', { telegramId: $('#mid').value.trim(), permissions: [...document.querySelectorAll('.mp:checked')].map((x) => x.value) }); toast('تم ✓'); render(); });
+  },
+
+  async tasks(m) {
+    const j = await api('tasks');
+    const row = (t) => `<tr><td class="num">${t.sort}</td><td>${esc(t.title_ar || t.title_en)}<br><small class="ltr" style="color:var(--mut)">${esc(t.title_en)}</small></td><td>${t.type === 'channel' ? 'قناة (تحقق تلقائي)' : 'رابط'}</td><td class="ltr"><a href="${esc(t.url)}" target="_blank" rel="noopener">${esc(t.url).slice(0, 36)}</a>${t.chat_id ? '<br>' + esc(t.chat_id) : ''}</td><td class="num">${(t.reward_cp / 100).toFixed(2)}</td><td class="num">${t.completions}${t.max_completions ? ' / ' + t.max_completions : ''}</td><td>${t.is_active ? '<span class="tag win">فعّالة</span>' : '<span class="tag lose">متوقفة</span>'}</td><td><button class="btn soft sm" onclick="editTask('${t.id}')">تعديل</button> <button class="btn red sm" onclick="delTask('${t.id}')">حذف</button></td></tr>`;
+    window.__tasks = j.tasks;
+    m.innerHTML = `<h1>المهام</h1>
+    <div class="card" style="margin-bottom:12px"><h2 id="tform-h">إضافة مهمة</h2>
+      <p style="color:var(--mut)">نوع «قناة»: يتحقق البوت من الاشتراك عبر Telegram (يجب أن يكون البوت مشرفاً في القناة). نوع «رابط»: لا يمكن التحقق منه، يُشترط فقط انتظار عدد ثوانٍ بعد الفتح.</p>
+      <div class="fields">
+        <div class="f"><label>العنوان (عربي)</label><input id="t_ar"/></div><div class="f"><label>Title (English)</label><input id="t_en" class="ltr"/></div>
+        <div class="f"><label>النوع</label><select id="t_type"><option value="channel">قناة / مجموعة (تحقق تلقائي)</option><option value="link">رابط عادي</option></select></div>
+        <div class="f"><label>الرابط (https://t.me/…)</label><input id="t_url" class="ltr"/></div>
+        <div class="f"><label>معرّف القناة (@channel أو -100…)</label><input id="t_chat" class="ltr"/></div>
+        <div class="f"><label>المكافأة (نقطة)</label><input id="t_rw" type="number" step="0.01" value="1"/></div>
+        <div class="f"><label>ثواني الانتظار (للرابط)</label><input id="t_wait" type="number" value="10"/></div>
+        <div class="f"><label>أقصى عدد إنجازات (فارغ = بلا حد)</label><input id="t_max" type="number"/></div>
+        <div class="f"><label>الترتيب</label><input id="t_sort" type="number" value="0"/></div>
+        <div class="f"><label>&nbsp;</label><label class="sw"><input type="checkbox" id="t_on" checked/> فعّالة</label></div>
+      </div>
+      <div class="row" style="margin-top:12px"><button class="btn" id="tsave">حفظ</button><button class="btn soft hidden" id="tcancel">إلغاء التعديل</button></div></div>
+    <div class="card tw"><table><tr><th>#</th><th>المهمة</th><th>النوع</th><th>الرابط</th><th>نقاط</th><th>إنجازات</th><th>الحالة</th><th></th></tr>${j.tasks.map(row).join('') || '<tr><td colspan="8" class="empty">لا مهام بعد</td></tr>'}</table></div>
+    <p style="color:var(--mut);margin-top:10px">شرط الإحالة (عدد المهام وسعر الإحالة) يُضبط من ⚙️ الإعدادات ← «الإعلانات والمكافآت».</p>`;
+    let editing = null;
+    const reset = () => { editing = null; ['t_ar', 't_en', 't_url', 't_chat', 't_max'].forEach((i) => ($('#' + i).value = '')); $('#t_rw').value = 1; $('#t_wait').value = 10; $('#t_sort').value = 0; $('#t_on').checked = true; $('#t_type').value = 'channel'; $('#tform-h').textContent = 'إضافة مهمة'; $('#tcancel').classList.add('hidden'); };
+    reset();
+    window.editTask = (id) => { const t = window.__tasks.find((x) => x.id === id); if (!t) return; editing = id; $('#t_ar').value = t.title_ar; $('#t_en').value = t.title_en; $('#t_type').value = t.type; $('#t_url').value = t.url; $('#t_chat').value = t.chat_id || ''; $('#t_rw').value = t.reward_cp / 100; $('#t_wait').value = t.wait_seconds; $('#t_max').value = t.max_completions ?? ''; $('#t_sort').value = t.sort; $('#t_on').checked = t.is_active; $('#tform-h').textContent = 'تعديل مهمة'; $('#tcancel').classList.remove('hidden'); window.scrollTo(0, 0); };
+    window.delTask = guard(async (id) => { if (!confirm('حذف المهمة نهائياً؟ (تُحذف سجلات إنجازها أيضاً)')) return; await api('delete_task', { id }); toast('تم ✓'); render(); });
+    $('#tcancel').onclick = reset;
+    $('#tsave').onclick = guard(async () => {
+      const task = { title_ar: $('#t_ar').value, title_en: $('#t_en').value || $('#t_ar').value, type: $('#t_type').value, url: $('#t_url').value.trim(), chat_id: $('#t_chat').value.trim(), reward_pts: $('#t_rw').value, wait_seconds: $('#t_wait').value, max_completions: $('#t_max').value, sort: $('#t_sort').value, is_active: $('#t_on').checked };
+      await api('save_task', { id: editing, task }); toast('تم ✓'); render();
+    });
+  },
+
+  async force(m) {
+    const j = await api('force_list'); window.__fc = j.channels;
+    m.innerHTML = `<h1>الاشتراك الإجباري</h1>
+    <div class="card" style="margin-bottom:12px"><h2 id="f-h">إضافة قناة</h2>
+      <p style="color:var(--mut)">لن يستطيع المستخدم اللعب أو مشاهدة الإعلانات أو السحب قبل الاشتراك في كل القنوات الفعّالة. <b>يجب أن يكون البوت مشرفاً (Admin) في كل قناة</b> ليتحقق من الاشتراك. للتشغيل/الإيقاف الكلي: ⚙️ الإعدادات ← «تفعيل الاشتراك الإجباري».</p>
+      <div class="fields"><div class="f"><label>اسم القناة (يظهر للمستخدم)</label><input id="f_t"/></div><div class="f"><label>معرّف القناة (@channel أو -100…)</label><input id="f_c" class="ltr"/></div>
+      <div class="f"><label>رابط القناة (https://t.me/…)</label><input id="f_u" class="ltr"/></div><div class="f"><label>الترتيب</label><input id="f_s" type="number" value="0"/></div>
+      <div class="f"><label>&nbsp;</label><label class="sw"><input type="checkbox" id="f_on" checked/> فعّالة</label></div></div>
+      <div class="row" style="margin-top:12px"><button class="btn" id="fsave">حفظ</button><button class="btn soft hidden" id="fcancel">إلغاء التعديل</button></div></div>
+    <div class="card tw"><table><tr><th>#</th><th>القناة</th><th>المعرّف</th><th>الرابط</th><th>الحالة</th><th></th></tr>${j.channels.map((c) => `<tr><td class="num">${c.sort}</td><td>${esc(c.title)}</td><td class="ltr">${esc(c.chat_id)}</td><td class="ltr"><a href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.url).slice(0, 34)}</a></td><td>${c.is_active ? '<span class="tag win">فعّالة</span>' : '<span class="tag lose">متوقفة</span>'}</td><td><button class="btn soft sm" onclick="editForce('${c.id}')">تعديل</button> <button class="btn red sm" onclick="delForce('${c.id}')">حذف</button></td></tr>`).join('') || '<tr><td colspan="6" class="empty">لا قنوات — الاشتراك الإجباري غير مطبّق</td></tr>'}</table></div>`;
+    let editing = null;
+    const reset = () => { editing = null; ['f_t', 'f_c', 'f_u'].forEach((i) => ($('#' + i).value = '')); $('#f_s').value = 0; $('#f_on').checked = true; $('#f-h').textContent = 'إضافة قناة'; $('#fcancel').classList.add('hidden'); };
+    window.editForce = (id) => { const c = window.__fc.find((x) => x.id === id); editing = id; $('#f_t').value = c.title; $('#f_c').value = c.chat_id; $('#f_u').value = c.url; $('#f_s').value = c.sort; $('#f_on').checked = c.is_active; $('#f-h').textContent = 'تعديل قناة'; $('#fcancel').classList.remove('hidden'); window.scrollTo(0, 0); };
+    window.delForce = guard(async (id) => { if (!confirm('حذف القناة؟')) return; await api('delete_force', { id }); toast('تم ✓'); render(); });
+    $('#fcancel').onclick = reset;
+    $('#fsave').onclick = guard(async () => { await api('save_force', { id: editing, channel: { title: $('#f_t').value, chat_id: $('#f_c').value.trim(), url: $('#f_u').value.trim(), sort: $('#f_s').value, is_active: $('#f_on').checked } }); toast('تم ✓'); render(); });
+  },
+
+  async bc(m) {
+    m.innerHTML = `<h1>بث رسالة لكل المستخدمين</h1><div class="card"><textarea id="bmsg" placeholder="نص الرسالة…"></textarea><div class="row" style="margin-top:12px"><button class="btn" id="bsend">إرسال للجميع</button><span id="bstat" class="pill"></span></div></div>`;
+    $('#bsend').onclick = guard(async () => { if (!confirm('إرسال الرسالة لكل المستخدمين؟')) return; await api('broadcast', { message: $('#bmsg').value }); poll(); });
+    const poll = guard(async () => { const j = (await api('broadcast_status')).broadcast; $('#bstat').textContent = j.running ? `جاري… ${j.sent} / ${j.total} (فشل ${j.failed})` : j.total ? `انتهى: أُرسلت ${j.sent} · فشلت ${j.failed}` : ''; if (j.running && tab === 'bc') setTimeout(poll, 1500); });
+    poll();
+  },
+
+  async audit(m) {
+    const st = state.audit; const j = await api('audit', { offset: st.offset, limit: 40 });
+    m.innerHTML = `<h1>سجل التدقيق</h1><div class="card tw"><table><tr><th>#</th><th>الوقت</th><th>المنفّذ</th><th>الإجراء</th><th>التفاصيل</th></tr>${j.rows.map((a) => `<tr><td class="num">${a.id}</td><td>${dt(a.created_at)}</td><td class="ltr">${esc(a.actor)}</td><td>${esc(a.action)}</td><td class="code ltr">${esc(JSON.stringify(a.details))}</td></tr>`).join('') || '<tr><td colspan="5" class="empty">فارغ</td></tr>'}</table>${pager(st, j.total, 40, 'auditPage')}</div>`;
+  },
+};
+
+/* ───────── actions ───────── */
+const pg = (st, d, n) => { st.offset = Math.max(0, st.offset + d * n); render(); };
+window.wdFilter = (v) => { state.wd.status = v; state.wd.offset = 0; render(); };
+window.wdPage = (d) => pg(state.wd, d, 20); window.userPage = (d) => pg(state.users, d, 25); window.roundPage = (d) => pg(state.rounds, d, 30);
+window.ledgerPage = (d) => pg(state.ledger, d, 50); window.auditPage = (d) => pg(state.audit, d, 40);
+window.wdReview = (id, review) => modal(`<h2>${review === 'approve' ? 'تأكيد الدفع' : 'رفض السحب'}</h2>
+  ${review === 'approve' ? '<div class="f"><label>رقم العملية / Tx hash (اختياري)</label><input id="rtx" class="ltr"/></div><br/>' : '<p class="warn">ستُعاد النقاط لرصيد المستخدم تلقائياً.</p>'}
+  <div class="f"><label>ملاحظة تصل للمستخدم (اختياري)</label><input id="rnote"/></div><div class="row" style="margin-top:14px"><button class="btn ${review === 'approve' ? 'green' : 'red'}" id="rok">تأكيد</button><button class="btn soft" onclick="closeModal()">إلغاء</button></div>`) || ($('#rok').onclick = guard(async () => {
+  await api('review_withdrawal', { id, review, txRef: $('#rtx')?.value || '', note: $('#rnote').value }); closeModal(); toast('تم ✓ وأُرسل إشعار للمستخدم'); render();
+}));
+window.closeModal = closeModal;
+window.delAdmin = guard(async (id) => { if (confirm('حذف المشرف؟')) { await api('delete_admin', { telegramId: id }); render(); } });
+window.userDetail = guard(async (id) => {
+  const j = await api('user_detail', { telegramId: id }); const u = j.user; if (!u) return toast('غير موجود', true);
+  modal(`<div class="row sp"><h2>${esc(u.first_name || '')} <span class="ltr acc">${u.username ? '@' + esc(u.username) : ''}</span> <small class="ltr">${esc(u.telegram_id)}</small></h2><button class="btn soft sm" onclick="closeModal()">✕</button></div>
+  <div class="grid g4" style="margin:10px 0"><div class="card stat"><span>الرصيد</span><b class="num">${pts(u.balance_cp)}</b><small>${usd(u.balance_cp)}</small></div><div class="card stat"><span>رهانات</span><b class="num">${pts(u.total_wagered_cp)}</b></div><div class="card stat"><span>ربح</span><b class="num">${pts(u.total_won_cp)}</b></div><div class="card stat"><span>الإعلانات</span><b class="num">${u.ads_total}</b></div></div>
+  <p style="color:var(--mut)">سجّل ${dt(u.created_at)} · آخر ظهور ${dt(u.last_seen_at)} · دعوات ${u.referral_count}${u.referred_by ? ' · دعاه <span class="ltr">' + esc(u.referred_by) + '</span>' : ''}${u.is_banned ? ' · <span class="loss">محظور: ' + esc(u.ban_reason || '') + '</span>' : ''}</p>
+  <div class="row" style="margin:10px 0"><input id="adjp" type="number" step="any" placeholder="± نقاط" style="max-width:120px"/><input id="adjn" placeholder="سبب" style="max-width:200px"/><button class="btn green sm" onclick="doAdjust('${u.telegram_id}')">تعديل الرصيد</button>
+    <input id="banr" placeholder="سبب الحظر" style="max-width:180px"/><button class="btn ${u.is_banned ? 'green' : 'red'} sm" onclick="doBan('${u.telegram_id}',${!u.is_banned})">${u.is_banned ? 'فك الحظر' : 'حظر'}</button></div>
+  <h2>آخر الحركات المالية</h2><div class="tw"><table>${j.ledger.slice(0, 12).map((l) => `<tr><td>${dt(l.created_at)}</td><td>${esc(l.kind)}</td><td class="num ${l.delta_cp >= 0 ? 'acc' : 'loss'}">${pts(l.delta_cp)}</td><td class="num">${pts(l.balance_after_cp)}</td></tr>`).join('')}</table></div>
+  <h2 style="margin-top:12px">آخر الجولات</h2><div class="tw"><table>${j.rounds.slice(0, 10).map((r) => `<tr><td>${dt(r.created_at)}</td><td>${esc(r.game)}</td><td class="num">${pts(r.stake_cp)}</td><td class="num ${r.payout_cp > r.stake_cp ? 'acc' : 'loss'}">${pts(r.payout_cp)}</td><td>${r.status}</td></tr>`).join('') || '<tr><td class="empty">—</td></tr>'}</table></div>
+  <h2 style="margin-top:12px">سحوباته</h2><div class="tw"><table>${j.withdrawals.map((w) => `<tr><td>${dt(w.created_at)}</td><td>${w.method}</td><td class="num">${pts(w.amount_cp)}</td><td class="code ltr">${esc(w.target)}</td><td><span class="tag ${w.status}">${w.status}</span></td></tr>`).join('') || '<tr><td class="empty">—</td></tr>'}</table></div>`);
+});
+window.doAdjust = guard(async (id) => { const d = Number($('#adjp').value); if (!d) return toast('أدخل مبلغاً', true); await api('adjust_balance', { telegramId: id, deltaPts: d, note: $('#adjn').value }); toast('تم ✓'); userDetail(id); });
+window.doBan = guard(async (id, banned) => { await api('ban_user', { telegramId: id, banned, reason: $('#banr').value }); toast('تم ✓'); userDetail(id); });
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><defs>
+<linearGradient id="c" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#D5DCEA"/></linearGradient>
+<linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE9A0"/><stop offset=".5" stop-color="#E7A92B"/><stop offset="1" stop-color="#9A5F0C"/></linearGradient>
+<radialGradient id="sh" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".5"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs>
+<ellipse cx="102" cy="180" rx="72" ry="10" fill="url(#sh)"/>
+<g transform="rotate(-14 66 100)"><rect x="26" y="26" width="78" height="112" rx="10" fill="url(#c)"/><rect x="26" y="26" width="78" height="112" rx="10" fill="none" stroke="#fff" stroke-width="2"/>
+<text x="38" y="56" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="26" fill="#0F1524">A</text>
+<g transform="translate(65 96) scale(20)"><path d="M0,-1 C.9,-.1 1,.5 .5,.7 C.25,.8 .05,.65 0,.4 C.02,.8 .12,1 .3,1.15 L-.3,1.15 C-.12,1 -.02,.8 0,.4 C-.05,.65 -.25,.8 -.5,.7 C-1,.5 -.9,-.1 0,-1Z" fill="#0F1524"/></g></g>
+<g transform="rotate(12 130 94)"><rect x="88" y="18" width="78" height="112" rx="10" fill="url(#c)"/><rect x="88" y="18" width="78" height="112" rx="10" fill="none" stroke="#fff" stroke-width="2"/>
+<text x="100" y="48" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="26" fill="#D8283A">K</text>
+<g transform="translate(127 88) scale(21)"><path d="M0,.95 C-1.2,-.1 -.7,-.95 -.2,-.75 C-.1,-.7 0,-.55 0,-.4 C0,-.55 .1,-.7 .2,-.75 C.7,-.95 1.2,-.1 0,.95Z" fill="#D8283A"/></g></g>
+<circle cx="144" cy="146" r="24" fill="url(#g)"/><circle cx="144" cy="146" r="24" fill="none" stroke="#FFF3C4" stroke-width="2" opacity=".7"/><circle cx="144" cy="146" r="15" fill="none" stroke="#FFF3C4" stroke-width="3" stroke-dasharray="6 5" opacity=".85"/><ellipse cx="136" cy="136" rx="9" ry="4" fill="#fff" opacity=".4" transform="rotate(-35 136 136)"/></svg>

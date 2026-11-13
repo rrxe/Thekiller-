@@ -1,0 +1,36 @@
+{
+  "name": "oddxs",
+  "private": true,
+  "version": "6.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build && npm run build:server",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "preview": "vite preview --host 0.0.0.0",
+    "start": "node server/index.js",
+    "build:server": "esbuild shared/game-service.ts --bundle --platform=node --format=esm --outfile=server/game-service.gen.js --log-level=warning"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "compression": "^1.7.5",
+    "gsap": "^3.13.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "@supabase/supabase-js": "^2.112.2",
+    "dotenv": "^17.4.2",
+    "framer-motion": "^12.0.0",
+    "howler": "^2.2.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.0",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.3",
+    "tailwindcss": "^4.1.0",
+    "typescript": "~6.0.2",
+    "vite": "^8.1.1",
+    "esbuild": "^0.28.0",
+    "@types/howler": "^2.2.12"
+  }
+}
