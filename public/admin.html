@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0b0f17" />
+<title>ODDXS — لوحة الإدارة</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
+<style>
+:root{--bg:#0b0f17;--card:rgba(21,28,41,.94);--card2:#1a2333;--line:rgba(255,255,255,.08);--line2:#303b4d;--ink:#fff;--mut:#92a1b7;--acc:#40a7e3;--blue:#40a7e3;--win:#4caf50;--loss:#ff6b6b;--warn:#ffca57;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--ink);background:radial-gradient(circle at top,#142238 0%,#0b0f17 45%) fixed;font-family:system-ui,-apple-system,"Segoe UI",Tajawal,"Noto Sans Arabic",sans-serif;font-size:14px;line-height:1.5}
+button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}
+.ltr{direction:ltr;unicode-bidi:plaintext;text-align:left}.num{font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate}.hidden{display:none!important}
+a{color:var(--acc);word-break:break-all}
+/* login */
+#login{min-height:100dvh;display:grid;place-items:center;padding:20px}
+.login-box{width:min(100%,400px);background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px;box-shadow:0 10px 35px rgba(0,0,0,.25)}
+.logo{font-weight:900;font-size:28px;letter-spacing:1px}.logo b{color:var(--acc)}.login-box p{color:var(--mut);margin:8px 0 16px}
+/* inputs / buttons */
+input,select,textarea{width:100%;background:#0f1520;border:1px solid var(--line2);border-radius:11px;padding:12px;outline:none;margin:0}
+input:focus,select:focus,textarea:focus{border-color:var(--acc)}textarea{min-height:96px;resize:vertical}
+.btn{border:0;border-radius:11px;padding:11px 16px;font-weight:800;background:var(--acc);color:#fff;transition:.15s}
+.btn:hover{opacity:.92}.btn:active{transform:scale(.98)}.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.soft{background:#273449;color:#e6eefb}.btn.red{background:#d32f2f}.btn.green{background:#388e3c}.btn.sm{padding:7px 12px;font-size:12px;border-radius:9px}.btn.full{width:100%}
+/* header */
+.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(11,15,23,.94);border-bottom:1px solid var(--line);backdrop-filter:blur(8px)}
+.top .logo{font-size:18px;line-height:1}.ttl{flex:1;min-width:0}.ttl #pageTitle{color:var(--mut);font-size:12px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pill{font-size:11px;padding:4px 10px;border-radius:999px;background:rgba(64,167,227,.12);border:1px solid rgba(64,167,227,.25);color:#b9dfff}
+.back{width:38px;height:38px;border-radius:12px;border:1px solid var(--line2);background:#1a2333;font-size:18px;font-weight:800}
+.wrap{max-width:780px;margin:0 auto;padding:16px 14px 90px}
+/* page titles + help */
+h1{font-size:22px;margin:0 0 6px;font-weight:800;color:var(--acc)}h2{font-size:16px;margin:0 0 12px;color:#e6eefb}h3{font-size:17px;margin:0 0 12px;color:var(--acc)}
+.help{margin:0 0 14px;padding:10px 12px;border-radius:12px;background:rgba(64,167,227,.08);border:1px solid rgba(64,167,227,.18);color:#c9e4f7;font-size:13px}
+/* cards */
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px;min-width:0;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+.grid{display:grid;gap:10px}.g4{grid-template-columns:repeat(4,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:1fr 1fr}
+.stat{margin:0;padding:12px;border-radius:14px;box-shadow:none;background:rgba(255,255,255,.04)}.stat span{display:block;color:var(--mut);font-size:12px}.stat b{display:block;font-size:22px;margin-top:4px}.stat small{display:block;color:var(--mut);font-size:11px;margin-top:2px}
+.acc{color:var(--acc)}.loss{color:var(--loss)}.warn{color:var(--warn)}.win{color:var(--win)}
+/* home */
+.alert{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;text-align:start;padding:14px 16px;margin-bottom:14px;border-radius:16px;border:1px solid rgba(255,202,87,.4);background:rgba(255,202,87,.1);color:#ffe3a1;font-size:14px}
+.alert span{font-weight:800;white-space:nowrap}
+.okbar{padding:12px 16px;margin-bottom:14px;border-radius:16px;border:1px solid rgba(76,175,80,.25);background:rgba(76,175,80,.08);color:#a5e0ab}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.sbox{padding:12px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid var(--line)}.sbox .sv{font-size:24px;font-weight:800}.sbox .sl{color:var(--mut);font-size:12px;margin-top:2px}
+.group{margin:18px 2px 8px;color:var(--mut);font-size:12px;font-weight:700;letter-spacing:.04em}
+.nav-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.nav-btn{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:14px;text-align:start;background:#1a2333;border:1px solid var(--line2);border-radius:16px;color:#e6eefb;min-height:96px}
+.nav-btn:active{transform:scale(.98)}.nav-btn .ic{font-size:26px;line-height:1}.nav-btn b{font-size:14px}.nav-btn small{color:var(--mut);font-size:11.5px;line-height:1.35}
+.nav-btn .badge{position:absolute;top:10px;inset-inline-end:10px;background:#e53935;color:#fff;border-radius:999px;font-size:11px;font-weight:800;padding:2px 8px}
+/* lists */
+.li{display:block;padding:12px;margin-bottom:8px;border-radius:14px;background:rgba(255,255,255,.035);border:1px solid var(--line)}.li.click{cursor:pointer}.li.click:active{background:rgba(64,167,227,.1)}
+.li .l1{display:flex;align-items:center;justify-content:space-between;gap:8px}.li .l2{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:6px;color:var(--mut);font-size:12px}.li strong{font-size:15px}.li small{color:var(--mut)}
+.av{display:grid;place-items:center;flex:none;width:38px;height:38px;border-radius:50%;background:rgba(64,167,227,.16);color:var(--acc);font-weight:800}
+.urow{display:flex;align-items:center;gap:10px}.urow .ui{flex:1;min-width:0}.urow .ui>*{display:block}
+.tag{display:inline-block;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:800;background:#273449;color:#cfd9e8}
+.tag.paid,.tag.win{background:rgba(76,175,80,.15);color:#8be59a}.tag.rejected,.tag.lose{background:rgba(229,57,53,.14);color:#ff9999}.tag.pending,.tag.open{background:rgba(255,202,87,.15);color:#ffd77a}.tag.gram{background:rgba(64,167,227,.15);color:#9fd4f5}.tag.binance{background:rgba(255,202,87,.12);color:#ffd77a}
+/* withdrawals */
+.wd{display:block;padding:14px;margin-bottom:10px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.035)}
+.wd>div{margin-bottom:10px}.wd>div:last-child{margin:0}.wd small{display:block;color:var(--mut);margin-top:3px;font-size:12px}
+.wd .row{margin-top:4px}.wd .row .btn{flex:1;padding:12px}
+.copy{background:#273449;border:0;border-radius:8px;padding:5px 10px;font-size:11px;color:#e6eefb;margin-top:6px}
+.code{font-family:ui-monospace,Menlo,monospace;font-size:12px;word-break:break-all;color:#b9dfff}
+/* misc */
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.row.sp{justify-content:space-between}.row>input,.row>select{flex:1;min-width:130px;max-width:none!important;width:auto}
+.fields{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}.f label{display:block;color:var(--mut);font-size:12px;margin-bottom:5px}
+.sw{display:flex;align-items:center;gap:8px;background:#0f1520;border:1px solid var(--line2);border-radius:11px;padding:11px 12px;color:#e6eefb}.sw input{width:auto}
+details.fold{padding:0}details.fold>summary{list-style:none;cursor:pointer;padding:14px 16px;font-weight:800;font-size:15px;color:#e6eefb;display:flex;align-items:center;justify-content:space-between}
+details.fold>summary::-webkit-details-marker{display:none}details.fold>summary::after{content:"＋";color:var(--acc);font-size:18px}details.fold[open]>summary::after{content:"－"}
+details.fold>.inner{padding:0 16px 16px}
+.savebar{position:sticky;bottom:12px;z-index:10;margin-top:6px}.savebar .btn{width:100%;padding:14px;font-size:15px;box-shadow:0 8px 24px rgba(0,0,0,.45)}
+table{width:100%;border-collapse:collapse}th,td{padding:9px 8px;border-top:1px solid var(--line);text-align:start;font-size:12px;vertical-align:middle}th{color:var(--mut);font-weight:700;font-size:11px;border-top:0}.tw{overflow:auto}
+.bars{display:flex;align-items:flex-end;gap:8px;height:150px}.bars div.col{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;height:100%;justify-content:flex-end}.bars .b{display:flex;gap:3px;align-items:flex-end;height:100px;width:100%;justify-content:center}.bars i{display:block;width:38%;border-radius:3px 3px 0 0;min-height:2px}.bars small{color:var(--mut);font-size:10px}
+.modal{position:fixed;inset:0;background:#000b;display:none;align-items:flex-end;justify-content:center;z-index:50}.modal.open{display:flex}.modal .box{background:#121a27;border:1px solid var(--line2);border-radius:20px 20px 0 0;padding:18px;width:min(100%,760px);max-height:92vh;overflow:auto}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#1a2333;border:1px solid var(--acc);border-radius:12px;padding:12px 18px;z-index:99;font-weight:700}.toast.err{border-color:var(--loss);color:#ffb3b3}
+.empty{color:var(--mut);text-align:center;padding:26px}.pager{display:flex;gap:10px;align-items:center;justify-content:center;margin-top:12px;color:var(--mut)}
+.section-anim{animation:fi .18s ease}@keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media(max-width:560px){.g4{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr}}
+
+/* [ref-admin-v1] referrals */
+.rf-hero{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+.rf-box{padding:14px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.04)}
+.rf-box .v{font-size:26px;font-weight:800;line-height:1.1}.rf-box .l{color:var(--mut);font-size:12px;margin-top:4px}
+.rf-box.a{background:linear-gradient(135deg,rgba(64,167,227,.18),rgba(64,167,227,.04));border-color:rgba(64,167,227,.3)}
+.rf-box.b{background:linear-gradient(135deg,rgba(255,202,87,.16),rgba(255,202,87,.03));border-color:rgba(255,202,87,.3)}
+.rf-box.c{background:linear-gradient(135deg,rgba(76,175,80,.17),rgba(76,175,80,.03));border-color:rgba(76,175,80,.3)}
+.rf-box.d{background:linear-gradient(135deg,rgba(171,130,255,.17),rgba(171,130,255,.03));border-color:rgba(171,130,255,.3)}
+.rf-funnel{margin-top:10px}.rf-bar{height:8px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden;display:flex}
+.rf-bar i{display:block;height:100%}.rf-bar .j{background:var(--acc)}.rf-bar .p{background:var(--warn)}.rf-bar .q{background:var(--win)}
+.rf-legend{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:7px;font-size:11.5px;color:var(--mut)}
+.rf-legend b{color:#fff}.rf-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-inline-end:5px}
+.rf-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.rf-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;font-size:11.5px;font-weight:700;background:#222d40;color:#cfd9e8}
+.rf-chip.j{background:rgba(64,167,227,.15);color:#9fd4f5}.rf-chip.p{background:rgba(255,202,87,.15);color:#ffd77a}.rf-chip.q{background:rgba(76,175,80,.15);color:#8be59a}.rf-chip.m{background:rgba(171,130,255,.15);color:#cdb7ff}
+.rf-rank{display:grid;place-items:center;flex:none;width:30px;height:30px;border-radius:10px;background:#222d40;color:#cfd9e8;font-weight:800;font-size:12px}
+.rf-rank.t1{background:rgba(255,202,87,.2);color:#ffd77a}.rf-rank.t2{background:rgba(190,200,215,.18);color:#dfe6f0}.rf-rank.t3{background:rgba(205,127,50,.2);color:#e6a266}
+.rf-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}.rf-row:first-child{border-top:0}
+.rf-row .m{flex:1;min-width:0}.rf-row .m strong{display:block;font-size:14px}.rf-row .m small{display:block;color:var(--mut);font-size:11.5px}
+.rf-pill{font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.rf-pill.s0{background:#273449;color:#b8c4d6}.rf-pill.s1{background:rgba(255,202,87,.16);color:#ffd77a}.rf-pill.s2{background:rgba(76,175,80,.17);color:#8be59a}
+.rf-tabs{display:flex;gap:8px;margin:12px 0 4px}.rf-tab{flex:1;padding:9px 6px;border-radius:11px;border:1px solid var(--line2);background:#1a2333;color:#cfd9e8;font-weight:800;font-size:12.5px}
+.rf-tab.on{background:rgba(64,167,227,.18);border-color:var(--acc);color:#fff}
+.rf-note{margin-top:10px;padding:9px 11px;border-radius:11px;background:rgba(255,255,255,.04);color:var(--mut);font-size:12px}
+@media(max-width:560px){.rf-box .v{font-size:22px}}
+</style>
+</head>
+<body>
+<div id="login">
+  <form class="login-box" id="loginForm">
+    <div class="logo">ODD<b>X</b>S</div>
+    <p>لوحة تحكم ODDXS — أدخل كلمة سر الإدارة (ADMIN_SECRET) للدخول</p>
+    <input id="secret" type="password" class="ltr" placeholder="ADMIN_SECRET" autocomplete="current-password" />
+    <button class="btn full" style="margin-top:12px">دخول</button>
+    <div id="loginErr" class="loss" style="margin-top:10px;font-size:13px"></div>
+  </form>
+</div>
+
+<div id="app" class="hidden">
+  <header class="top">
+    <button class="back hidden" id="backBtn" aria-label="رجوع" onclick="go('home')">→</button>
+    <div class="ttl"><div class="logo">ODD<b>X</b>S</div><div id="pageTitle">الرئيسية</div></div>
+    <span class="pill" id="meRole"></span>
+    <button class="btn soft sm" id="refreshBtn" aria-label="تحديث">↻</button>
+    <button class="btn soft sm" id="logoutBtn">خروج</button>
+  </header>
+  <main class="wrap" id="main"></main>
+</div>
+
+<div class="modal" id="modal"><div class="box" id="modalBox"></div></div>
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const pts = (cp) => (Number(cp || 0) / 100).toLocaleString('en', { maximumFractionDigits: 2, minimumFractionDigits: 2 });
+const dt = (s) => s ? new Date(s).toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' }) : '—';
+let PPU = 5000, ME = null, tab = 'dash', SECRET = '';
+const usd = (cp) => '$' + (Number(cp || 0) / 100 / PPU).toFixed(3);
+const who = (r) => `${esc(r.first_name || '')} ${r.username ? '<span class="ltr acc">@' + esc(r.username) + '</span>' : ''}<small class="ltr">${esc(r.telegram_id)}</small>`;
+
+function toast(m, err) { const t = document.createElement('div'); t.className = 'toast' + (err ? ' err' : ''); t.textContent = m; document.body.appendChild(t); setTimeout(() => t.remove(), 3200); }
+async function api(action, body = {}) {
+  const headers = { 'content-type': 'application/json', 'x-admin-secret': SECRET };
+  const tg = window.Telegram?.WebApp?.initData; if (tg) headers['x-telegram-init-data'] = tg;
+  const r = await fetch('/api/admin', { method: 'POST', headers, body: JSON.stringify({ action, ...body }) });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.error || 'Request failed (' + r.status + ')');
+  return j;
+}
+const guard = (fn) => async (...a) => { try { return await fn(...a); } catch (e) { toast(e.message, true); } };
+function modal(html) { $('#modalBox').innerHTML = html; $('#modal').classList.add('open'); }
+function closeModal() { $('#modal').classList.remove('open'); }
+$('#modal').addEventListener('click', (e) => { if (e.target.id === 'modal') closeModal(); });
+document.addEventListener('click', (e) => { const c = e.target.closest('[data-copy]'); if (c) { navigator.clipboard?.writeText(c.dataset.copy); toast('تم النسخ ✓'); } });
+
+/* ───────── login ───────── */
+$('#loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault(); SECRET = $('#secret').value.trim(); $('#loginErr').textContent = '';
+  try { const j = await api('stats'); ME = j.me; sessionStorage.setItem('oddxs_admin', SECRET); start(j); }
+  catch (err) { $('#loginErr').textContent = err.message; SECRET = ''; }
+});
+$('#logoutBtn').onclick = () => { sessionStorage.removeItem('oddxs_admin'); location.reload(); };
+$('#refreshBtn').onclick = () => render();
+(async () => { SECRET = sessionStorage.getItem('oddxs_admin') || ''; if (SECRET || window.Telegram?.WebApp?.initData) { try { const j = await api('stats'); ME = j.me; start(j); } catch { /* show login */ } } })();
+
+const SECTIONS = [
+  ['الأساسية', [
+    ['wd', '💸', 'طلبات السحب', 'راجع طلبات السحب وادفع أو ارفض', 'withdrawals'],
+    ['users', '👥', 'اللاعبون', 'ابحث عن لاعب، عدّل رصيده أو احظره', 'users'],
+    ['referrals', '🔗', 'الإحالات', 'كم دعا كل لاعب، كم دخل، وكم لعب', 'users'],
+    ['tasks', '✅', 'المهام', 'أضف مهام قنوات أو روابط وعدّلها', 'tasks'],
+    ['dash', '📊', 'الإحصائيات', 'أرباحك، الأرصدة، الألعاب، آخر 7 أيام', 'dashboard']]],
+  ['الإعدادات والتواصل', [
+    ['settings', '⚙️', 'الإعدادات', 'المكافآت، حدود السحب، تشغيل الألعاب', 'settings'],
+    ['force', '🔒', 'الاشتراك الإجباري', 'قنوات لازم اللاعب يشترك بيها', 'settings'],
+    ['bc', '📣', 'رسالة جماعية', 'ارسل رسالة لكل اللاعبين', 'broadcast']]],
+  ['متقدم', [
+    ['rounds', '🎲', 'سجل الألعاب', 'كل رهان لعبه اللاعبون', 'rounds'],
+    ['ledger', '📒', 'السجل المالي', 'كل حركة نقاط (دخول وخروج)', 'ledger'],
+    ['audit', '🧾', 'سجل العمليات', 'شنو سوّت الإدارة ومتى', 'audit'],
+    ['admins', '🛡️', 'المشرفون', 'أضف مشرفين وحدد صلاحياتهم', 'moderators']]],
+];
+const TITLE = { home: 'الرئيسية', dash: 'الإحصائيات' }; SECTIONS.forEach(([, a]) => a.forEach((t) => (TITLE[t[0]] = t[2])));
+const HELP = {
+  wd: 'هنا طلبات سحب اللاعبين. «معلّقة» = تنتظر قرارك. حوّل المبلغ للعنوان الظاهر ثم اضغط «تم الدفع»، أو اضغط «رفض» وترجع النقاط للاعب تلقائياً.',
+  users: 'اضغط على أي لاعب لترى تفاصيله، تعدّل رصيده، أو تحظره.',
+  referrals: 'ترتيب اللاعبين حسب عدد اللي دخلوا برابطهم. لكل داعي: كم دخل، كم لعب، كم أكمل الشرط. اضغط على أي داعي لترى كل مدعو وحالته.',
+  tasks: 'المهام اللي تظهر للاعبين مقابل نقاط. استخدم الزر «إضافة مهمة جديدة» لإضافة مهمة.',
+  rounds: 'سجل كل جولة لُعبت (رهان واحد = جولة). للمراجعة فقط.',
+  ledger: 'كل حركة تغيّر رصيد اللاعبين: الأخضر = دخل له، الأحمر = خرج منه.',
+  force: 'اللاعب ما يقدر يلعب أو يسحب قبل ما يشترك بالقنوات الفعّالة هنا. لازم البوت يكون مشرف بالقناة.',
+  settings: 'كل إعدادات التطبيق. غيّر ما تريد ثم اضغط «حفظ الإعدادات» بالأسفل.',
+  admins: 'المشرفون يدخلون عن طريق تلغرام ويشوفون فقط الأقسام اللي تعطيهم صلاحيتها.',
+  bc: 'الرسالة توصل لكل مستخدمي البوت. تأكد من النص قبل الإرسال.',
+  audit: 'سجل بكل إجراء نفّذته الإدارة (دفع، رفض، حظر، تعديل رصيد...).',
+  dash: 'ملخص حالة المنصة. الأرقام بالنقاط، والتقدير بالدولار بجانبها.',
+};
+let LAST = '';
+window.go = (t) => { tab = t; render(); };
+function start(first) {
+  $('#login').classList.add('hidden'); $('#app').classList.remove('hidden');
+  $('#meRole').textContent = ME.role === 'owner' ? 'المالك' : 'مشرف';
+  api('get_settings').then((j) => { PPU = Number(j.settings.points_per_usd) || 5000; }).catch(() => {});
+  tab = 'home'; render(first);
+}
+const allowed = (perm) => ME.role === 'owner' || perm === 'dashboard' || (ME.permissions || []).includes(perm);
+const state = { wd: { status: 'pending', offset: 0 }, users: { q: '', sort: 'new', offset: 0 }, referrals: { q: '', sort: 'total', offset: 0 }, rounds: { game: '', status: '', tid: '', offset: 0 }, ledger: { kind: '', tid: '', offset: 0 }, audit: { offset: 0 } };
+async function render(pre) {
+  const m = $('#main'); $('#backBtn').classList.toggle('hidden', tab === 'home'); $('#pageTitle').textContent = TITLE[tab] || '';
+  m.innerHTML = '<div class="empty">جاري التحميل…</div>';
+  try {
+    await VIEWS[tab](m, pre);
+    const h = m.querySelector('h1'); if (h && HELP[tab]) h.insertAdjacentHTML('afterend', `<p class="help">${HELP[tab]}</p>`);
+    m.classList.remove('section-anim'); void m.offsetWidth; m.classList.add('section-anim');
+  } catch (e) { m.innerHTML = `<div class="empty loss">${esc(e.message)}</div>`; }
+  if (LAST !== tab) { window.scrollTo(0, 0); LAST = tab; }
+}
+const pager = (st, total, per, cb) => `<div class="pager"><button class="btn soft sm" ${st.offset <= 0 ? 'disabled' : ''} onclick="${cb}(-1)">السابق</button><span>${total ? st.offset + 1 : 0}–${Math.min(total, st.offset + per)} / ${total}</span><button class="btn soft sm" ${st.offset + per >= total ? 'disabled' : ''} onclick="${cb}(1)">التالي</button></div>`;
+
+/* ───────── views ───────── */
+
+/* [ref-admin-v1] referral helpers */
+const nf = (n) => Number(n || 0).toLocaleString('en');
+const pct = (a, b) => (b > 0 ? Math.round((a / b) * 100) : 0);
+function rfFunnel(total, played, paid) {
+  const t = Math.max(1, total);
+  const onlyJoin = Math.max(0, total - played);
+  const playedNotPaid = Math.max(0, played - paid);
+  return `<div class="rf-funnel"><div class="rf-bar"><i class="q" style="width:${pct(paid, t)}%"></i><i class="p" style="width:${pct(playedNotPaid, t)}%"></i><i class="j" style="width:${pct(onlyJoin, t)}%"></i></div>
+    <div class="rf-legend"><span><i class="rf-dot" style="background:var(--win)"></i>أكملوا الشرط <b class="num">${nf(paid)}</b></span><span><i class="rf-dot" style="background:var(--warn)"></i>لعبوا ولسه <b class="num">${nf(playedNotPaid)}</b></span><span><i class="rf-dot" style="background:var(--acc)"></i>دخلوا بس <b class="num">${nf(onlyJoin)}</b></span></div></div>`;
+}
+function rfChips(r) {
+  return `<div class="rf-chips"><span class="rf-chip j">👥 دخلوا <b class="num">${nf(r.ref_total)}</b></span><span class="rf-chip p">🎲 لعبوا <b class="num">${nf(r.ref_played)}</b></span><span class="rf-chip q">✅ أكملوا الشرط <b class="num">${nf(r.ref_paid)}</b></span>${r.ref_rounds !== undefined ? `<span class="rf-chip m">🔁 جولات <b class="num">${nf(r.ref_rounds)}</b></span>` : ''}</div>`;
+}
+function rfStatus(x) {
+  if (x.referral_paid) return '<span class="rf-pill s2">✅ أكمل الشرط</span>';
+  if (Number(x.rounds_played) > 0) return '<span class="rf-pill s1">🎲 لعب · ما أكمل</span>';
+  return '<span class="rf-pill s0">👤 دخل فقط</span>';
+}
+const VIEWS = {
+  async home(m, pre) {
+    const s = (pre || await api('stats')).stats; const profit = s.wagered_cp - s.payouts_cp;
+    const pendingUsd = Number(s.wd_pending_usd ?? (Number(s.wd_pending_cp || 0) / 100 / PPU));
+    const box = (l, v, cls = '') => `<div class="sbox"><div class="sv num ${cls}">${v}</div><div class="sl">${l}</div></div>`;
+    const wdAlert = s.wd_pending && allowed('withdrawals')
+      ? `<button class="alert" onclick="go('wd')"><span style="font-weight:600">💸 عندك <b>${s.wd_pending}</b> طلب سحب ينتظر مراجعتك (≈ ${pendingUsd.toFixed(4)} USDT)</span><span>افتح ←</span></button>`
+      : '<div class="okbar">✅ ما عندك طلبات سحب معلّقة</div>';
+    const groups = SECTIONS.map(([title, items]) => {
+      const vis = items.filter((t) => allowed(t[4])); if (!vis.length) return '';
+      return `<div class="group">${title}</div><div class="nav-grid">${vis.map((t) => `<button class="nav-btn" onclick="go('${t[0]}')"><span class="ic">${t[1]}</span><b>${t[2]}</b><small>${t[3]}</small>${t[0] === 'wd' && s.wd_pending ? `<span class="badge">${s.wd_pending}</span>` : ''}</button>`).join('')}</div>`;
+    }).join('');
+    m.innerHTML = `${wdAlert}
+    <div class="card"><h3>📊 نظرة سريعة</h3><div class="sgrid">
+      ${box('إجمالي اللاعبين', s.users)}${box('متصلون الآن', s.online_5m, 'acc')}
+      ${box('لاعبون جدد اليوم', s.new_today)}${box('أرباح المنصة (نقطة)', pts(profit), profit >= 0 ? 'win' : 'loss')}
+    </div></div>${groups}`;
+  },
+
+  async dash(m, pre) {
+    const s = (pre || await api('stats')).stats; const profit = s.wagered_cp - s.payouts_cp;
+    const pendingUsd = Number(s.wd_pending_usd ?? (Number(s.wd_pending_cp || 0) / 100 / PPU));
+    const rtp = s.wagered_cp ? (s.payouts_cp / s.wagered_cp * 100).toFixed(1) : '—';
+    const card = (l, v, sub = '', cls = '') => `<div class="card stat"><span>${l}</span><b class="num ${cls}">${v}</b><small>${sub}</small></div>`;
+    const sec = (title, body) => `<div class="card"><h2>${title}</h2><div class="grid g2">${body}</div></div>`;
+    const maxv = Math.max(1, ...s.daily.map((d) => Math.max(d.wagered_cp, d.payouts_cp)));
+    const gn = { crash: 'Crash', mines: 'Mines', dice: 'Dice', blackjack: 'Blackjack', goldrush: 'Gold Rush Mines' };
+    m.innerHTML = `<h1>الإحصائيات</h1>
+    ${sec('👥 اللاعبون',
+      card('إجمالي اللاعبين', s.users, `جدد اليوم: ${s.new_today}`) + card('متصلون الآن', s.online_5m, 'آخر 5 دقائق', 'acc') +
+      card('نشطون آخر 24 ساعة', s.active_24h) + card('محظورون', s.banned))}
+    ${sec('💰 أموال المنصة',
+      card('أرباح المنصة (نقطة)', pts(profit), `${profit >= 0 ? 'المنصة رابحة' : 'المنصة خاسرة'} · الرهانات − الأرباح المدفوعة`, profit >= 0 ? 'win' : 'loss') +
+      card('نسبة رجوع المبلغ للاعبين', rtp + (rtp === '—' ? '' : '%'), 'كل 100 رهان يرجع منها هذا الرقم') +
+      card('إجمالي الرهانات', pts(s.wagered_cp), usd(s.wagered_cp)) +
+      card('مجموع أرصدة اللاعبين', pts(s.liabilities_cp), `${usd(s.liabilities_cp)} · هذا اللي يملكونه حالياً`, 'warn'))}
+    ${sec('💸 السحب والتحويل',
+      card('سحوبات معلّقة', s.wd_pending, `${pts(s.wd_pending_cp)} نقطة · ${pendingUsd.toFixed(4)} USDT` , s.wd_pending ? 'warn' : '') +
+      card('إجمالي ما تم دفعه', '$' + Number(s.wd_paid_usd).toFixed(2), `${pts(s.wd_paid_cp)} نقطة`) +
+      card('أرصدة USDT الداخلية', Number(s.usdt_balance_total || 0).toFixed(4), `بعد تحويل النقاط · ${s.exchange_count || 0} عملية`, 'acc') +
+      card('إجمالي USDT المحوّل', Number(s.exchange_usdt_total || 0).toFixed(4), 'حجم التحويلات الكلي'))}
+    ${sec('📺 الإعلانات والألعاب',
+      card('إعلانات اليوم', s.ads_today, `الإجمالي: ${s.ads_total}`) + card('مكافآت الإعلانات المدفوعة', pts(s.ad_rewards_cp), usd(s.ad_rewards_cp)) +
+      card('جولات مفتوحة', s.open_rounds, 'ألعاب بدأت ولم تنتهِ بعد'))}
+    <div class="card"><h2>آخر 7 أيام <small style="color:var(--mut);font-weight:400">— <span class="acc">■</span> رهانات · <span class="loss">■</span> مدفوعات</small></h2>
+      <div class="bars">${s.daily.map((d) => `<div class="col"><div class="b"><i style="height:${d.wagered_cp / maxv * 100}%;background:var(--acc)" title="${pts(d.wagered_cp)}"></i><i style="height:${d.payouts_cp / maxv * 100}%;background:var(--loss)" title="${pts(d.payouts_cp)}"></i></div><small>${d.day.slice(5)}</small><small>👤${d.users} 📺${d.ads}</small></div>`).join('')}</div></div>
+    <div class="card"><h2>🎲 الألعاب</h2><div class="tw"><table><tr><th>اللعبة</th><th>جولات</th><th>رهانات</th><th>ربح المنصة</th><th>رجوع</th></tr>
+      ${Object.entries(s.games).map(([g, v]) => `<tr><td>${gn[g] || g}</td><td class="num">${v.rounds}</td><td class="num">${pts(v.wagered_cp)}</td><td class="num ${v.wagered_cp - v.payouts_cp >= 0 ? 'win' : 'loss'}">${pts(v.wagered_cp - v.payouts_cp)}</td><td class="num">${(v.payouts_cp / v.wagered_cp * 100).toFixed(1)}%</td></tr>`).join('') || '<tr><td colspan="5" class="empty">لا جولات بعد</td></tr>'}</table></div></div>`;
+  },
+
+  async wd(m) {
+    const st = state.wd; const j = await api('withdrawals', { status: st.status, offset: st.offset, limit: 20 });
+    const sel = (v, l) => `<button class="btn ${st.status === v ? '' : 'soft'} sm" onclick="wdFilter('${v}')">${l}</button>`;
+    m.innerHTML = `<h1>السحوبات</h1><div class="row" style="margin-bottom:12px">${sel('pending', 'معلّقة')}${sel('paid', 'مدفوعة')}${sel('rejected', 'مرفوضة')}${sel('', 'الكل')}</div>
+    <div>${j.rows.length ? j.rows.map((w) => `<div class="wd">
+      <div><b>${who(w)}</b><small>سجّل ${dt(w.user_created_at)} · إعلانات ${w.ads_total} · جولات ${w.rounds_played}</small><small>رهان ${pts(w.total_wagered_cp)} · ربح ${pts(w.total_won_cp)} · رصيد ${pts(w.balance_cp)}</small></div>
+      <div><span class="tag ${w.method}">${w.method === 'gram' ? 'Gram' : 'Binance ID'}</span> <span class="tag ${w.status}">${{ pending: 'معلّق', paid: 'مدفوع', rejected: 'مرفوض' }[w.status]}</span>
+        <div style="margin:8px 0"><b class="num" style="font-size:18px">${w.is_usdt ? Number(w.usd).toFixed(4) : pts(w.amount_cp)}</b> ${w.is_usdt ? 'USDT' : 'نقطة'} ≈ <b class="acc">$${Number(w.usd).toFixed(3)}</b></div>
+        <div class="code ltr">${esc(w.target)}</div><button class="copy" data-copy="${esc(w.target)}">نسخ العنوان</button>
+        <small>${dt(w.created_at)}${w.reviewed_at ? ' · روجع ' + dt(w.reviewed_at) + ' بواسطة ' + esc(w.reviewed_by) : ''}${w.tx_ref ? ' · Tx: <span class="ltr">' + esc(w.tx_ref) + '</span>' : ''}${w.admin_note ? ' · ' + esc(w.admin_note) : ''}</small></div>
+      <div class="row">${w.status === 'pending' ? `<button class="btn green sm" onclick="wdReview('${w.id}','approve')">تم الدفع ✓</button><button class="btn red sm" onclick="wdReview('${w.id}','reject')">رفض</button>` : ''}<button class="btn soft sm" onclick="userDetail('${w.telegram_id}')">المستخدم</button></div></div>`).join('') : '<div class="empty">لا توجد سحوبات</div>'}
+    ${pager(st, j.total, 20, 'wdPage')}</div>`;
+  },
+
+
+  /* [ref-admin-v1] */
+  async referrals(m) {
+    const st = state.referrals; const j = await api('referrals', { query: st.q, sort: st.sort, offset: st.offset, limit: 20 });
+    const s = j.summary || {};
+    m.innerHTML = `<h1>الإحالات</h1>
+    <div class="rf-hero">
+      <div class="rf-box a"><div class="v num">${nf(s.total_invited)}</div><div class="l">👥 إجمالي اللي دخلوا بروابط الدعوة</div></div>
+      <div class="rf-box b"><div class="v num">${nf(s.played)}</div><div class="l">🎲 لعبوا جولة واحدة على الأقل (${pct(s.played, s.total_invited)}%)</div></div>
+      <div class="rf-box c"><div class="v num">${nf(s.paid)}</div><div class="l">✅ أكملوا الشرط واستحق الداعي (${pct(s.paid, s.total_invited)}%)</div></div>
+      <div class="rf-box d"><div class="v num">${pts(s.rewards_cp)}</div><div class="l">🎁 نقاط انصرفت مكافآت إحالة</div></div>
+    </div>
+    <div class="card" style="margin-bottom:14px"><b>مسار المدعوين</b>${rfFunnel(s.total_invited, s.played, s.paid)}
+      <div class="rf-note">دخلوا اليوم: <b class="num">${nf(s.today)}</b> · عدد الدعاة: <b class="num">${nf(s.inviters)}</b> · جولات لعبها المدعوون: <b class="num">${nf(s.rounds)}</b> · محظورون بينهم: <b class="num">${nf(s.banned)}</b></div></div>
+    <div class="card"><div class="row"><input id="rq" class="ltr" placeholder="ID / يوزر / اسم الداعي" value="${esc(st.q)}"/>
+      <select id="rs"><option value="total">الأكثر دعوة</option><option value="paid">الأكثر استحقاقاً</option><option value="played">الأكثر لعباً</option><option value="new">آخر دعوة</option></select><button class="btn" id="rgo">بحث</button></div></div>
+    <div class="card">${(j.rows || []).map((r, i) => { const rk = st.offset + i + 1; return `<div class="click" style="cursor:pointer;padding:10px 0;border-top:${i ? '1px solid var(--line)' : '0'}" onclick="userDetail('${esc(r.telegram_id)}','ref')">
+      <div class="urow"><span class="rf-rank ${rk <= 3 ? 't' + rk : ''}">${rk}</span><div class="ui"><strong>${esc(r.first_name || '—')} ${r.is_banned ? '<span class="tag lose">محظور</span>' : ''}</strong><small class="ltr">${r.username ? '@' + esc(r.username) + ' · ' : ''}${esc(r.telegram_id)}</small></div><div style="text-align:end"><b class="num acc">${pts(r.earned_cp)}</b><small style="display:block;color:var(--mut)">مكافآته</small></div></div>
+      ${rfChips(r)}${rfFunnel(r.ref_total, r.ref_played, r.ref_paid)}<div class="rf-note" style="margin-top:8px">آخر دخول عن طريقه: ${dt(r.last_invite_at)}</div></div>`; }).join('') || '<div class="empty">ما في إحالات بعد</div>'}</div>
+    ${pager(st, j.total || 0, 20, 'refPage')}
+    <div class="rf-note">«أكملوا الشرط» = المدعو شاهد عدد الإعلانات/المهام المطلوب بالإعدادات، وبعدها انصرفت المكافأة للداعي. «لعبوا» = لعب جولة واحدة على الأقل.</div>`;
+    $('#rs').value = st.sort;
+    const go = () => { st.q = $('#rq').value.trim(); st.sort = $('#rs').value; st.offset = 0; render(); };
+    $('#rgo').onclick = go; $('#rq').onkeydown = (e) => e.key === 'Enter' && go(); $('#rs').onchange = go;
+  },
+  async users(m) {
+    const st = state.users; const j = await api('users', { query: st.q, sort: st.sort, offset: st.offset, limit: 25 });
+    m.innerHTML = `<h1>اللاعبون</h1><div class="card"><div class="row"><input id="uq" class="ltr" placeholder="ID / يوزر / اسم" value="${esc(st.q)}"/>
+      <select id="us"><option value="new">الأحدث</option><option value="balance">الأعلى رصيداً</option><option value="wagered">الأكثر لعباً</option><option value="seen">آخر ظهور</option><option value="refs">الأكثر دعوة</option></select><button class="btn" id="ugo">بحث</button></div></div>
+    ${j.rows.map((u) => { const pl = u.total_won_cp - u.total_wagered_cp; return `<div class="li click" onclick="userDetail('${u.telegram_id}')"><div class="urow"><span class="av">${esc(Array.from(u.first_name || u.username || '?')[0] || '?').toUpperCase()}</span><div class="ui"><strong>${esc(u.first_name || '—')} ${u.is_banned ? '<span class="tag lose">محظور</span>' : ''}</strong><small class="ltr">${u.username ? '@' + esc(u.username) + ' · ' : ''}${esc(u.telegram_id)}</small></div><div style="text-align:end"><b class="num acc">${pts(u.balance_cp)}</b><small style="display:block">الرصيد</small></div></div>
+      <div class="l2"><span>إعلانات: <b class="num">${u.ads_total}</b></span><span>دعوات: <b class="num">${u.referral_count}</b></span><span>ربح/خسارة: <b class="num ${pl >= 0 ? 'win' : 'loss'}">${pts(pl)}</b></span><span>آخر ظهور: ${dt(u.last_seen_at)}</span></div>${Number(u.ref_total) > 0 ? `<div class="rf-chips"><span class="rf-chip j">👥 دخلوا برابطه <b class="num">${nf(u.ref_total)}</b></span><span class="rf-chip p">🎲 لعبوا <b class="num">${nf(u.ref_played)}</b></span><span class="rf-chip q">✅ أكملوا <b class="num">${nf(u.ref_paid)}</b></span></div>` : ''}</div>`; }).join('') || '<div class="empty">لا نتائج</div>'}
+    ${pager(st, j.total, 25, 'userPage')}`;
+    $('#us').value = st.sort;
+    const go = () => { st.q = $('#uq').value.trim(); st.sort = $('#us').value; st.offset = 0; render(); };
+    $('#ugo').onclick = go; $('#uq').onkeydown = (e) => e.key === 'Enter' && go(); $('#us').onchange = go;
+  },
+
+  async rounds(m) {
+    const st = state.rounds; const j = await api('rounds', { game: st.game, status: st.status, telegramId: st.tid, offset: st.offset, limit: 30 });
+    m.innerHTML = `<h1>سجل الألعاب</h1><div class="card"><div class="row"><select id="rg"><option value="">كل الألعاب</option><option>crash</option><option>mines</option><option>dice</option><option>blackjack</option><option>goldrush</option></select>
+      <select id="rs"><option value="">كل الحالات</option><option value="open">مفتوحة</option><option value="settled">منتهية</option></select><input id="rt" class="ltr" placeholder="Telegram ID (اختياري)" value="${esc(st.tid)}"/><button class="btn" id="rgo">تطبيق</button></div></div>
+    ${j.rows.map((r) => { const res = r.status === 'open' ? ['open', 'مفتوحة'] : r.payout_cp > r.stake_cp ? ['win', 'ربح'] : r.payout_cp === r.stake_cp ? ['', 'تعادل'] : ['lose', 'خسارة']; return `<div class="li"><div class="l1"><span class="click" style="cursor:pointer" onclick="userDetail('${r.telegram_id}')">${who(r)}</span><span class="tag ${res[0]}">${res[1]}</span></div>
+      <div class="l2"><span><b>${esc(r.game)}</b></span><span>الرهان: <b class="num">${pts(r.stake_cp)}</b></span><span>الناتج: <b class="num ${r.payout_cp > r.stake_cp ? 'win' : r.payout_cp < r.stake_cp ? 'loss' : ''}">${pts(r.payout_cp)}</b></span><span>×<b class="num">${Number(r.mult).toFixed(2)}</b></span><span>${dt(r.created_at)}</span></div>
+      <div class="code ltr" style="margin-top:6px;font-size:10.5px;opacity:.7" title="seed: ${esc(r.server_seed || 'hidden until settled')}&#10;client: ${esc(r.client_seed)}&#10;nonce: ${r.nonce}">fair #${r.nonce} ${esc(r.commit.slice(0, 16))}…</div></div>`; }).join('') || '<div class="empty">لا جولات</div>'}
+    ${pager(st, j.total, 30, 'roundPage')}`;
+    $('#rg').value = st.game; $('#rs').value = st.status;
+    $('#rgo').onclick = () => { st.game = $('#rg').value; st.status = $('#rs').value; st.tid = $('#rt').value.trim(); st.offset = 0; render(); };
+  },
+
+  async ledger(m) {
+    const st = state.ledger; const j = await api('ledger', { kind: st.kind, telegramId: st.tid, offset: st.offset, limit: 50 });
+    const KN = { welcome: 'مكافأة ترحيب', task: 'مهمة', referral: 'إحالة', bet: 'رهان', payout: 'ربح لعبة', exchange: 'تحويل إلى USDT', withdraw: 'سحب', withdraw_refund: 'إرجاع سحب مرفوض', admin: 'تعديل من الإدارة' };
+    m.innerHTML = `<h1>السجل المالي</h1><div class="card"><div class="row"><select id="lk"><option value="">كل الأنواع</option>${Object.entries(KN).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select><input id="lt" class="ltr" placeholder="Telegram ID (اختياري)" value="${esc(st.tid)}"/><button class="btn" id="lgo">تطبيق</button></div></div>
+    ${j.rows.map((l) => `<div class="li"><div class="l1"><span>${who(l)}</span><b class="num ${l.delta_cp >= 0 ? 'win' : 'loss'}" style="font-size:16px">${l.delta_cp >= 0 ? '+' : ''}${pts(l.delta_cp)}</b></div>
+      <div class="l2"><span class="tag">${esc(KN[l.kind] || l.kind)}</span>${l.note ? `<span>${esc(l.note)}</span>` : ''}<span>الرصيد بعدها: <b class="num">${pts(l.balance_after_cp)}</b></span><span>${dt(l.created_at)}</span></div></div>`).join('') || '<div class="empty">فارغ</div>'}
+    ${pager(st, j.total, 50, 'ledgerPage')}`;
+    $('#lk').value = st.kind; $('#lgo').onclick = () => { st.kind = $('#lk').value; st.tid = $('#lt').value.trim(); st.offset = 0; render(); };
+  },
+
+  async settings(m) {
+    const S = (await api('get_settings')).settings; PPU = Number(S.points_per_usd) || 5000;
+    const G = [
+      ['عام', [['app_name', 'اسم التطبيق', 't'], ['maintenance_mode', 'وضع الصيانة (يوقف اللعب)', 'b'], ['registration_enabled', 'فتح التسجيل', 'b'], ['payment_channel', 'قناة إثباتات الدفع (رابط https://t.me/اسم_القناة) — يُرسل لها إعلان كل سحب مقبول', 't'], ['force_sub_enabled', 'تفعيل الاشتراك الإجباري', 'b'], ['support_username', 'يوزر الدعم', 't'], ['welcome_bonus_pts', 'مكافأة الترحيب (نقطة)', 'n']]],
+      ['الإعلانات والمكافآت', [['adsgram_task_block_id', 'AdsGram Task Block ID (للمهام) — task-12345', 't'], ['adsgram_interstitial_block_id', 'AdsGram Interstitial Block ID (الإعلان الرئيسي / السحب / التحويل) — int-12345', 't'], ['adsgram_game_open_block_id', 'AdsGram Interstitial Block ID (فتح اللعبة) — int-12345', 't'], ['adsgram_task_reward_pts', 'نقاط مهمة AdsGram', 'n'], ['adsgram_int_reward_pts', 'نقاط كل إعلان int (الزر الرئيسي)', 'n'], ['adsgram_int_min_seconds', 'أقل مدة مشاهدة (ث)', 'n'], ['adsgram_int_cooldown_seconds', 'فاصل بين الإعلانات (ث)', 'n'], ['adsgram_int_daily_cap', 'عدد الإعلانات اليومي (العداد 0/N)', 'n'], ['referral_reward_pts', 'سعر الإحالة: نقاط المكافأة للداعي', 'n'], ['referral_required_tasks', 'عدد المهام المطلوبة من المدعو لقبول الإحالة (0 = بدون شرط)', 'n'], ['referral_ads_required', 'عدد الإعلانات المطلوبة من المدعو لقبول الإحالة (0 = بدون شرط)', 'n']]],
+      ['الألعاب', [['game_crash_enabled', 'Crash مفعّل', 'b'], ['game_mines_enabled', 'Mines مفعّل', 'b'], ['game_dice_enabled', 'Dice مفعّل', 'b'], ['game_blackjack_enabled', 'Blackjack مفعّل', 'b'], ['game_goldrush_enabled', 'Gold Rush Mines مفعّل', 'b'], ['min_bet_pts', 'أقل رهان', 'n'], ['max_bet_pts', 'أعلى رهان', 'n'], ['max_payout_pts', 'أعلى ربح للجولة الواحدة', 'n']]],
+      ['السحب', [['points_per_usd', 'عدد النقاط مقابل 1 USDT (سعر موحّد للسحب والتحويل)', 'n'], ['min_withdrawal_pts', 'أقل سحب (نقطة)', 'n'], ['max_withdrawal_pts', 'أعلى سحب (نقطة)', 'n'], ['withdrawal_ads_required', 'إعلانات مطلوبة قبل السحب', 'n'], ['withdrawal_cooldown_hours', 'فاصل بين السحوبات (ساعة)', 'n'], ['gram_enabled', 'سحب Gram مفعّل', 'b'], ['binance_enabled', 'سحب Binance ID مفعّل', 'b'], ['gram_label', 'اسم شبكة Gram', 't'], ['payment_note', 'ملاحظة تظهر للمستخدم في نافذة السحب', 't']]],
+      ['تحويل النقاط إلى USDT', [['exchange_enabled', 'تفعيل التحويل', 'b'], ['exchange_ads_required', 'إعلان قبل كل تحويل (1 = نعم، 0 = لا)', 'n'], ['rate', 'سعر التحويل الموحّد', 'r'], ['exchange_min_pts', 'أقل تحويل (نقطة)', 'n'], ['exchange_max_pts', 'أعلى تحويل (نقطة)', 'n']]],
+    ];
+    const fld = ([k, l, t]) => t === 'r' ? `<div class="f"><label>${l}</label><div class="pill" style="display:inline-block">${Number(S.points_per_usd || 5000).toLocaleString('en')} نقطة = 1 USDT</div></div>` : t === 'b' ? `<div class="f"><label>${l}</label><label class="sw"><input type="checkbox" data-k="${k}" ${S[k] === true ? 'checked' : ''}/> مفعّل</label></div>` : `<div class="f"><label>${l}</label><input data-k="${k}" data-t="${t}" ${t === 'n' ? 'type="number" step="any"' : ''} value="${esc(S[k])}" class="${t === 't' ? (String(k).startsWith('adsgram_') ? 'ltr' : '') : 'ltr'}"/></div>`;
+    m.innerHTML = `<h1>الإعدادات</h1>${G.map(([t, f], n) => `<details class="card fold" ${n === 0 ? 'open' : ''}><summary>${t}</summary><div class="inner">${t === 'الإعلانات والمكافآت' ? '<p style="color:var(--mut);margin:0 0 12px">اكتب الـ Block ID كاملًا مثل task-59461 أو int-59439، أو اكتب الأرقام فقط. التغيير يُحفظ مباشرة ويُستخدم عند طلب الإعلان التالي؛ عنصر المهام المفتوح يحدّث نفسه تلقائيًا.</p>' : ''}<div class="fields">${f.map(fld).join('')}</div></div></details>`).join('')}
+    <details class="card fold"><summary>رسالة البوت (/start)</summary><div class="inner"><div class="fields" style="grid-template-columns:1fr"><div class="f"><label>العربية</label><textarea data-k="welcome_text_ar" data-t="t">${esc(S.welcome_text_ar)}</textarea></div><div class="f"><label>English</label><textarea data-k="welcome_text_en" data-t="t" class="ltr">${esc(S.welcome_text_en)}</textarea></div></div></div></details>
+    <p class="pill" style="display:inline-block;margin-bottom:10px;white-space:normal">نسبة RTP ثابتة في الكود: Crash/Mines/Dice = 90% · Blackjack ≈ 88% · Gold Rush Mines ≈ 100% عند السحب من أول خطوة ثم تنزل (معلنة للاعبين)</p><div class="savebar"><button class="btn" id="saveS">💾 حفظ الإعدادات</button></div>`;
+    $('#saveS').onclick = guard(async () => {
+      const out = {};
+      document.querySelectorAll('[data-k]').forEach((el) => { out[el.dataset.k] = el.type === 'checkbox' ? el.checked : el.dataset.t === 'n' ? Number(el.value) : el.value; });
+      await api('save_settings', { settings: out }); toast('تم الحفظ ✓');
+    });
+  },
+
+  async admins(m) {
+    const j = await api('admins');
+    m.innerHTML = `<h1>المشرفون</h1><div class="card" style="margin-bottom:12px"><h2>إضافة / تعديل مشرف</h2><div class="fields"><div class="f"><label>Telegram ID</label><input id="mid" class="ltr"/></div></div>
+      <div class="row" style="margin:12px 0">${j.permissions.map((p) => `<label class="sw"><input type="checkbox" class="mp" value="${p}"/> ${p}</label>`).join('')}</div><button class="btn" id="msave">حفظ</button></div>
+    <div class="card tw"><table><tr><th>المشرف</th><th>الدور</th><th>الصلاحيات</th><th></th></tr>${j.admins.map((a) => `<tr><td>${who(a)}</td><td>${a.role}</td><td>${(a.permissions || []).map((p) => `<span class="tag">${esc(p)}</span>`).join(' ') || '—'}</td><td>${a.role === 'moderator' ? `<button class="btn red sm" onclick="delAdmin('${esc(a.telegram_id)}')">حذف</button>` : ''}</td></tr>`).join('') || '<tr><td colspan="4" class="empty">لا مشرفين (المالك يدخل بـ ADMIN_SECRET)</td></tr>'}</table></div>`;
+    $('#msave').onclick = guard(async () => { await api('save_admin', { telegramId: $('#mid').value.trim(), permissions: [...document.querySelectorAll('.mp:checked')].map((x) => x.value) }); toast('تم ✓'); render(); });
+  },
+
+  async tasks(m) {
+    const j = await api('tasks');
+    const taskCard = (t) => `<div class="li"><div class="l1"><div><strong>${esc(t.title_ar || t.title_en)}</strong><small class="ltr" style="display:block">${esc(t.title_en)}</small></div>${t.is_active ? '<span class="tag win">فعّالة</span>' : '<span class="tag lose">متوقفة</span>'}</div>
+      <div class="l2"><span>${t.type === 'channel' ? '📢 قناة (تحقق تلقائي)' : '🔗 رابط'}</span><span>المكافأة: <b class="num">${(t.reward_cp / 100).toFixed(2)}</b></span><span>الإنجازات: <b class="num">${t.completions}${t.max_completions ? ' / ' + t.max_completions : ''}</b></span><span>الترتيب: ${t.sort}</span></div>
+      <div class="ltr" style="margin-top:6px;font-size:12px"><a href="${esc(t.url)}" target="_blank" rel="noopener">${esc(t.url).slice(0, 48)}</a></div>
+      <div class="row" style="margin-top:10px"><button class="btn soft sm" onclick="editTask('${t.id}')">✏️ تعديل</button><button class="btn red sm" onclick="delTask('${t.id}')">🗑 حذف</button></div></div>`;
+    window.__tasks = j.tasks;
+    m.innerHTML = `<h1>المهام</h1>
+    <details class="card fold" id="tdet"><summary id="tform-h">➕ إضافة مهمة جديدة</summary><div class="inner">
+      <p style="color:var(--mut)">نوع «قناة»: يتحقق البوت من الاشتراك عبر Telegram (يجب أن يكون البوت مشرفاً في القناة). نوع «رابط»: لا يمكن التحقق منه، يُشترط فقط انتظار عدد ثوانٍ بعد الفتح.</p>
+      <div class="fields">
+        <div class="f"><label>العنوان (عربي)</label><input id="t_ar"/></div><div class="f"><label>Title (English)</label><input id="t_en" class="ltr"/></div>
+        <div class="f"><label>النوع</label><select id="t_type"><option value="channel">قناة / مجموعة (تحقق تلقائي)</option><option value="link">رابط عادي</option></select></div>
+        <div class="f"><label>الرابط (https://t.me/…)</label><input id="t_url" class="ltr"/></div>
+        <div class="f"><label>المكافأة (نقطة)</label><input id="t_rw" type="number" step="0.01" value="1"/></div>
+        <div class="f"><label>ثواني الانتظار (للرابط)</label><input id="t_wait" type="number" value="10"/></div>
+        <div class="f"><label>أقصى عدد إنجازات (فارغ = بلا حد)</label><input id="t_max" type="number"/></div>
+        <div class="f"><label>الترتيب</label><input id="t_sort" type="number" value="0"/></div>
+        <div class="f"><label>&nbsp;</label><label class="sw"><input type="checkbox" id="t_on" checked/> فعّالة</label></div>
+      </div>
+      <div class="row" style="margin-top:12px"><button class="btn" id="tsave">حفظ</button><button class="btn soft hidden" id="tcancel">إلغاء التعديل</button></div></div></details>
+    ${j.tasks.map(taskCard).join('') || '<div class="empty">لا مهام بعد</div>'}
+    <p style="color:var(--mut);margin-top:10px">شرط الإحالة (عدد المهام وسعر الإحالة) يُضبط من ⚙️ الإعدادات ← «الإعلانات والمكافآت».</p>`;
+    let editing = null;
+    const reset = () => { editing = null; ['t_ar', 't_en', 't_url', 't_max'].forEach((i) => ($('#' + i).value = '')); $('#t_rw').value = 1; $('#t_wait').value = 10; $('#t_sort').value = 0; $('#t_on').checked = true; $('#t_type').value = 'channel'; $('#tform-h').textContent = '➕ إضافة مهمة جديدة'; $('#tcancel').classList.add('hidden'); };
+    reset();
+    window.editTask = (id) => { const t = window.__tasks.find((x) => x.id === id); if (!t) return; editing = id; $('#t_ar').value = t.title_ar; $('#t_en').value = t.title_en; $('#t_type').value = t.type; $('#t_url').value = t.url; $('#t_rw').value = t.reward_cp / 100; $('#t_wait').value = t.wait_seconds; $('#t_max').value = t.max_completions ?? ''; $('#t_sort').value = t.sort; $('#t_on').checked = t.is_active; $('#tform-h').textContent = '✏️ تعديل مهمة'; $('#tdet').open = true; $('#tcancel').classList.remove('hidden'); window.scrollTo(0, 0); };
+    window.delTask = guard(async (id) => { if (!confirm('حذف المهمة نهائياً؟ (تُحذف سجلات إنجازها أيضاً)')) return; await api('delete_task', { id }); toast('تم ✓'); render(); });
+    $('#tcancel').onclick = reset;
+    $('#tsave').onclick = guard(async () => {
+      const task = { title_ar: $('#t_ar').value, title_en: $('#t_en').value || $('#t_ar').value, type: $('#t_type').value, url: $('#t_url').value.trim(), reward_pts: $('#t_rw').value, wait_seconds: $('#t_wait').value, max_completions: $('#t_max').value, sort: $('#t_sort').value, is_active: $('#t_on').checked };
+      await api('save_task', { id: editing, task }); toast('تم ✓'); render();
+    });
+  },
+
+  async force(m) {
+    const j = await api('force_list'); window.__fc = j.channels;
+    m.innerHTML = `<h1>الاشتراك الإجباري</h1>
+    <details class="card fold" id="fdet"><summary id="f-h">➕ إضافة قناة</summary><div class="inner">
+      <p style="color:var(--mut)">لن يستطيع المستخدم اللعب أو مشاهدة الإعلانات أو السحب قبل الاشتراك في كل القنوات الفعّالة. <b>يجب أن يكون البوت مشرفاً (Admin) في كل قناة</b> ليتحقق من الاشتراك. للتشغيل/الإيقاف الكلي: ⚙️ الإعدادات ← «تفعيل الاشتراك الإجباري».</p>
+      <div class="fields"><div class="f"><label>اسم القناة (يظهر للمستخدم)</label><input id="f_t"/></div><div class="f"><label>رابط القناة العامة (https://t.me/اسم_القناة)</label><input id="f_u" class="ltr"/></div><div class="f"><label>الترتيب</label><input id="f_s" type="number" value="0"/></div>
+      <div class="f"><label>&nbsp;</label><label class="sw"><input type="checkbox" id="f_on" checked/> فعّالة</label></div></div>
+      <div class="row" style="margin-top:12px"><button class="btn" id="fsave">حفظ</button><button class="btn soft hidden" id="fcancel">إلغاء التعديل</button></div></div></details>
+    ${j.channels.map((c) => `<div class="li"><div class="l1"><strong>${esc(c.title)}</strong>${c.is_active ? '<span class="tag win">فعّالة</span>' : '<span class="tag lose">متوقفة</span>'}</div><div class="l2 ltr"><a href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.url).slice(0, 40)}</a></div><div class="row" style="margin-top:10px"><button class="btn soft sm" onclick="editForce('${c.id}')">✏️ تعديل</button><button class="btn red sm" onclick="delForce('${c.id}')">🗑 حذف</button></div></div>`).join('') || '<div class="empty">لا قنوات — الاشتراك الإجباري غير مطبّق</div>'}`;
+    let editing = null;
+    const reset = () => { editing = null; ['f_t', 'f_u'].forEach((i) => ($('#' + i).value = '')); $('#f_s').value = 0; $('#f_on').checked = true; $('#f-h').textContent = '➕ إضافة قناة'; $('#fcancel').classList.add('hidden'); };
+    window.editForce = (id) => { const c = window.__fc.find((x) => x.id === id); editing = id; $('#f_t').value = c.title; $('#f_u').value = c.url; $('#f_s').value = c.sort; $('#f_on').checked = c.is_active; $('#f-h').textContent = '✏️ تعديل قناة'; $('#fdet').open = true; $('#fcancel').classList.remove('hidden'); window.scrollTo(0, 0); };
+    window.delForce = guard(async (id) => { if (!confirm('حذف القناة؟')) return; await api('delete_force', { id }); toast('تم ✓'); render(); });
+    $('#fcancel').onclick = reset;
+    $('#fsave').onclick = guard(async () => { await api('save_force', { id: editing, channel: { title: $('#f_t').value, url: $('#f_u').value.trim(), sort: $('#f_s').value, is_active: $('#f_on').checked } }); toast('تم ✓'); render(); });
+  },
+
+  async bc(m) {
+    m.innerHTML = `<h1>رسالة جماعية</h1><div class="card"><textarea id="bmsg" placeholder="نص الرسالة…"></textarea><div class="row" style="margin-top:12px"><button class="btn" id="bsend">إرسال للجميع</button><span id="bstat" class="pill"></span></div></div>`;
+    $('#bsend').onclick = guard(async () => { if (!confirm('إرسال الرسالة لكل المستخدمين؟')) return; await api('broadcast', { message: $('#bmsg').value }); poll(); });
+    const poll = guard(async () => { const j = (await api('broadcast_status')).broadcast; $('#bstat').textContent = j.running ? `جاري… ${j.sent} / ${j.total} (فشل ${j.failed})` : j.total ? `انتهى: أُرسلت ${j.sent} · فشلت ${j.failed}` : ''; if (j.running && tab === 'bc') setTimeout(poll, 1500); });
+    poll();
+  },
+
+  async audit(m) {
+    const st = state.audit; const j = await api('audit', { offset: st.offset, limit: 40 });
+    m.innerHTML = `<h1>سجل التدقيق</h1><div class="card tw"><table><tr><th>#</th><th>الوقت</th><th>المنفّذ</th><th>الإجراء</th><th>التفاصيل</th></tr>${j.rows.map((a) => `<tr><td class="num">${a.id}</td><td>${dt(a.created_at)}</td><td class="ltr">${esc(a.actor)}</td><td>${esc(a.action)}</td><td class="code ltr">${esc(JSON.stringify(a.details))}</td></tr>`).join('') || '<tr><td colspan="5" class="empty">فارغ</td></tr>'}</table>${pager(st, j.total, 40, 'auditPage')}</div>`;
+  },
+};
+
+/* ───────── actions ───────── */
+const pg = (st, d, n) => { st.offset = Math.max(0, st.offset + d * n); render(); };
+window.wdFilter = (v) => { state.wd.status = v; state.wd.offset = 0; render(); };
+window.wdPage = (d) => pg(state.wd, d, 20); window.userPage = (d) => pg(state.users, d, 25); window.refPage = (d) => pg(state.referrals, d, 20); window.roundPage = (d) => pg(state.rounds, d, 30);
+window.ledgerPage = (d) => pg(state.ledger, d, 50); window.auditPage = (d) => pg(state.audit, d, 40);
+window.wdReview = (id, review) => modal(`<h2>${review === 'approve' ? 'تأكيد الدفع' : 'رفض السحب'}</h2>
+  ${review === 'approve' ? '<div class="f"><label>رقم العملية / Tx hash (اختياري)</label><input id="rtx" class="ltr"/></div><br/>' : '<p class="warn">ستُعاد النقاط لرصيد المستخدم تلقائياً.</p>'}
+  <div class="f"><label>ملاحظة تصل للمستخدم (اختياري)</label><input id="rnote"/></div><div class="row" style="margin-top:14px"><button class="btn ${review === 'approve' ? 'green' : 'red'}" id="rok">تأكيد</button><button class="btn soft" onclick="closeModal()">إلغاء</button></div>`) || ($('#rok').onclick = guard(async () => {
+  const rr = await api('review_withdrawal', { id, review, txRef: $('#rtx')?.value || '', note: $('#rnote').value }); closeModal(); toast(review === 'approve' && rr.proof && !rr.proof.posted ? '⚠️ تم الدفع لكن فشل النشر بالقناة: ' + rr.proof.error : 'تم ✓ وأُرسل إشعار للمستخدم'); render();
+}));
+window.closeModal = closeModal;
+window.delAdmin = guard(async (id) => { if (confirm('حذف المشرف؟')) { await api('delete_admin', { telegramId: id }); render(); } });
+window.userDetail = guard(async (id, focus) => {
+  if (focus !== 'ref') window.__rfF = 'all';
+  const j = await api('user_detail', { telegramId: id }); const u = j.user; if (!u) return toast('غير موجود', true);
+  modal(`<div class="row sp"><h2>${esc(u.first_name || '')} <span class="ltr acc">${u.username ? '@' + esc(u.username) : ''}</span> <small class="ltr">${esc(u.telegram_id)}</small></h2><button class="btn soft sm" onclick="closeModal()">✕</button></div>
+  <div class="grid g4" style="margin:10px 0"><div class="card stat"><span>الرصيد</span><b class="num">${pts(u.balance_cp)}</b><small>${usd(u.balance_cp)}</small></div><div class="card stat"><span>رهانات</span><b class="num">${pts(u.total_wagered_cp)}</b></div><div class="card stat"><span>ربح</span><b class="num">${pts(u.total_won_cp)}</b></div><div class="card stat"><span>الإعلانات</span><b class="num">${u.ads_total}</b></div></div>
+  <p style="color:var(--mut)">سجّل ${dt(u.created_at)} · آخر ظهور ${dt(u.last_seen_at)} · دعوات ${u.referral_count}${u.referred_by ? ' · دعاه <span class="ltr">' + esc(u.referred_by) + '</span>' : ''}${u.is_banned ? ' · <span class="loss">محظور: ' + esc(u.ban_reason || '') + '</span>' : ''}</p>
+  <div class="row" style="margin:10px 0"><input id="adjp" type="number" step="any" placeholder="± نقاط" style="max-width:120px"/><input id="adjn" placeholder="سبب" style="max-width:200px"/><button class="btn green sm" onclick="doAdjust('${u.telegram_id}')">تعديل الرصيد</button>
+    <input id="banr" placeholder="سبب الحظر" style="max-width:180px"/><button class="btn ${u.is_banned ? 'green' : 'red'} sm" onclick="doBan('${u.telegram_id}',${!u.is_banned})">${u.is_banned ? 'فك الحظر' : 'حظر'}</button></div>
+
+  ${(() => { const rs = j.referral_stats || {}; const list = j.referrals || []; const f = (window.__rfF || 'all');
+    const shown = list.filter((x) => f === 'all' || (f === 'paid' && x.referral_paid) || (f === 'played' && Number(x.rounds_played) > 0) || (f === 'idle' && !x.referral_paid && !Number(x.rounds_played)));
+    return `<h2 id="rfSec" style="margin-top:14px">👥 الإحالات</h2>
+    ${j.referrer ? `<div class="rf-note" style="margin:0 0 8px">جاء عن طريق: <b>${esc(j.referrer.first_name || '')}</b> <span class="ltr acc">${j.referrer.username ? '@' + esc(j.referrer.username) : ''}</span> <span class="ltr">${esc(j.referrer.telegram_id)}</span> <button class="btn soft sm" onclick="userDetail('${esc(j.referrer.telegram_id)}','ref')">فتح</button></div>` : ''}
+    <div class="grid g2" style="margin-bottom:8px"><div class="rf-box a"><div class="v num">${nf(rs.total)}</div><div class="l">دخلوا برابطه</div></div><div class="rf-box b"><div class="v num">${nf(rs.played)}</div><div class="l">لعبوا جولة</div></div><div class="rf-box c"><div class="v num">${nf(rs.paid)}</div><div class="l">أكملوا الشرط</div></div><div class="rf-box d"><div class="v num">${pts(rs.earned_cp)}</div><div class="l">كسب من الإحالات</div></div></div>
+    ${rfFunnel(rs.total, rs.played, rs.paid)}
+    <div class="rf-chips"><span class="rf-chip m">🔁 جولات المدعوين <b class="num">${nf(rs.rounds)}</b></span><span class="rf-chip">💰 رهانات المدعوين <b class="num">${pts(rs.wagered_cp)}</b></span></div>
+    <div class="rf-tabs">${[['all', 'الكل ' + list.length], ['paid', '✅ أكملوا'], ['played', '🎲 لعبوا'], ['idle', '👤 دخلوا فقط']].map(([k, l]) => `<button class="rf-tab ${f === k ? 'on' : ''}" onclick="window.__rfF='${k}';userDetail('${esc(u.telegram_id)}','ref')">${l}</button>`).join('')}</div>
+    <div class="card" style="margin-top:8px;padding:6px 14px">${shown.map((x) => `<div class="rf-row click" style="cursor:pointer" onclick="userDetail('${esc(x.telegram_id)}')"><span class="av">${esc(Array.from(x.first_name || x.username || '?')[0] || '?').toUpperCase()}</span><div class="m"><strong>${esc(x.first_name || '—')} ${x.is_banned ? '<span class="tag lose">محظور</span>' : ''}</strong><small class="ltr">${x.username ? '@' + esc(x.username) + ' · ' : ''}${esc(x.telegram_id)} · دخل ${dt(x.created_at)}</small><small>🎲 جولات: <b class="num">${nf(x.rounds_played)}</b> · 📺 إعلانات: <b class="num">${nf(x.ads_total)}</b> · ✅ مهام: <b class="num">${nf(x.tasks_done)}</b> · رهانات: <b class="num">${pts(x.total_wagered_cp)}</b></small></div>${rfStatus(x)}</div>`).join('') || '<div class="empty">لا يوجد</div>'}</div>
+    ${rs.total > list.length ? `<div class="rf-note">معروض آخر ${list.length} من ${rs.total}</div>` : ''}`; })()}
+  <h2 style="margin-top:14px">آخر الحركات المالية</h2><div class="tw"><table>${j.ledger.slice(0, 12).map((l) => `<tr><td>${dt(l.created_at)}</td><td>${esc(l.kind)}</td><td class="num ${l.delta_cp >= 0 ? 'acc' : 'loss'}">${pts(l.delta_cp)}</td><td class="num">${pts(l.balance_after_cp)}</td></tr>`).join('')}</table></div>
+  <h2 style="margin-top:12px">آخر الجولات</h2><div class="tw"><table>${j.rounds.slice(0, 10).map((r) => `<tr><td>${dt(r.created_at)}</td><td>${esc(r.game)}</td><td class="num">${pts(r.stake_cp)}</td><td class="num ${r.payout_cp > r.stake_cp ? 'acc' : 'loss'}">${pts(r.payout_cp)}</td><td>${r.status}</td></tr>`).join('') || '<tr><td class="empty">—</td></tr>'}</table></div>
+  <h2 style="margin-top:12px">سحوباته</h2><div class="tw"><table>${j.withdrawals.map((w) => `<tr><td>${dt(w.created_at)}</td><td>${w.method}</td><td class="num">${pts(w.amount_cp)}</td><td class="code ltr">${esc(w.target)}</td><td><span class="tag ${w.status}">${w.status}</span></td></tr>`).join('') || '<tr><td class="empty">—</td></tr>'}</table></div>`);
+  if (focus === 'ref') { const el = document.getElementById('rfSec'); if (el) el.scrollIntoView({ block: 'start' }); }
+});
+window.doAdjust = guard(async (id) => { const d = Number($('#adjp').value); if (!d) return toast('أدخل مبلغاً', true); await api('adjust_balance', { telegramId: id, deltaPts: d, note: $('#adjn').value }); toast('تم ✓'); userDetail(id); });
+window.doBan = guard(async (id, banned) => { await api('ban_user', { telegramId: id, banned, reason: $('#banr').value }); toast('تم ✓'); userDetail(id); });
+</script>
+</body>
+</html>
